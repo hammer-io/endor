@@ -8,10 +8,10 @@ A web API to generate node.js applications in an opinionated way.
 ### Installation for Development
 1. Fork this repository
 2. Open your favorite terminal and go to the directory you want to install.
-3. git clone https://github.com/username/yggdrasil
-4. `cd yggdrasil/endor && npm install`
+3. git clone https://github.com/username/endor
+4. `npm install`
 5. Follow the steps below to [set up the database](#setting-up-the-database)
-6. Create an endorConfig.json in the endor folder with the following inside:
+6. Create an `endorConfig.json` in the endor folder with the following inside:
 ```json
 {
   "session": {
@@ -20,8 +20,7 @@ A web API to generate node.js applications in an opinionated way.
 }
 ```
 
-7. Run the tests using `npm test` from the endor folder. This will generate
-  the `emailConfig.json` file that is needed to run the application locally.
+7. Follow the steps below to [set up the email configuration](#email-setup)
 8. You're all set!
 
 ### Usage
@@ -37,15 +36,12 @@ A web API to generate node.js applications in an opinionated way.
 Documentation is generated and displayed using [apidoc](http://apidocjs.com/).
 
 ### Generate Documenation
-Prereq: `npm install apidoc -g`
-1. `cd /endor/`
-2. `apidoc -i src/`
+1. Prereq: `npm install apidoc -g`
+2. Then run: `apidoc -i src/`
 
 ### View Documentation
-1. `cd /endor/`
-2. `npm start`
-3. visit `localhost:3000/`
-
+1. `npm start`
+2. visit `localhost:3000/`
 
 
 ### Setting up the Database
@@ -116,10 +112,10 @@ A token is used to authenticate the user.
 * Post a new Token - post /oauth2/token
     - Use a request body similar to the JSON below to retrieve a token for the user with the given username and password 
     - Returns authentication token
-```javascript
+```json
 {
     "username": "<username>",
-    "password": "<password>"
+    "password": "<password>",
     "grant_type": "password"
 } 
 ```
@@ -132,9 +128,13 @@ A token is used to authenticate the user.
 
 ## Email Setup
 
-To generate the `emailConfig.json` file, just run `npm test` from the endor folder.
+To configure email for development, do the following:
+
+1. Run `echo {} > emailConfig.json` to create an empty json file.
+2. Run `npm test` to fill in the information needed to run the application locally.
+
 For more information on using the email templates, view the
-[zurb-email-templates README](https://github.com/hammer-io/yggdrasil/tree/master/endor/zurb-email-templates).
+[zurb-email-templates README](https://github.com/hammer-io/endor/tree/master/zurb-email-templates#using-the-zurb-email-templates).
 
 Endor uses the [Nodemailer](https://nodemailer.com/about/) module for sending emails.
 For development and testing, we're using [Ethereal](https://ethereal.email/) to mock
@@ -156,8 +156,8 @@ as detailed below and the endpoint must be authenticated to verify the identity 
 making the requests.
 
 - For project authorization, the projectId must be labeled as such in the request's params.
-There are two levels: Owner level (the user must be an owner of the project)
-or Contributor level (the user must be a contributor or an owner).
+  There are two levels: Owner level (the user must be an owner of the project)
+  or Contributor level (the user must be a contributor or an owner).
 - For user authorization, the username/id must be labeled as user and be located in the
-request's params.  There is only one level: User level (the user must be the one editing
-themselves.)
+  request's params.  There is only one level: User level (the user must be the one editing
+  themselves.)
