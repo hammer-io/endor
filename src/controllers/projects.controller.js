@@ -74,7 +74,7 @@ export async function getProjectById(req, res, next) {
     const project = await projectService.getProjectById(projectId);
     res.send(project);
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
 

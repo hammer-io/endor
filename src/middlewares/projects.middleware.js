@@ -9,7 +9,7 @@ export function checkCreateProject() {
     check('projectName').exists().withMessage('Project name is required.'),
     check('description').exists().withMessage('Project description is required.'),
     check('version').exists().withMessage('Project version is required.').matches(/^(\d+\.)?(\d+\.)?(\*|\d+)/),
-  ]
+  ];
 }
 
 /**
@@ -19,5 +19,5 @@ export function checkCreateProject() {
 export function checkUpdateProject() {
   return [
     check('version').exists().withMessage('Project version is required.').matches(/^(\d+\.)?(\d+\.)?(\*|\d+)/)
-  ]
+  ];
 }
