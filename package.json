@@ -1,5 +1,6 @@
 {
-  "name": "yggdrasil",
+  "name": "endor",
+  "description": "The backend web service for Yggdrasil.",
   "version": "0.0.0",
   "private": false,
   "main": "src/index.js",
