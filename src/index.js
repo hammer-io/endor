@@ -4,7 +4,7 @@ import logger from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import session from 'express-session'
+import session from 'express-session';
 
 import * as auth from './routes/auth.routes';
 import * as client from './routes/client.routes';
@@ -108,7 +108,7 @@ app.use((req, res) => {
 // route error logging
 // will print any errors that the middleware spits out
 app.use((err, req, res, next) => {
-  getActiveLogger().error(`Routing: ${req.method} ${req.originalUrl} : ${err}`)
+  getActiveLogger().error(`Routing: ${req.method} ${req.originalUrl} : ${err}`);
   next(err);
 });
 
@@ -136,7 +136,7 @@ app.use((err, req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log('Yggdrasil has now started on port 3000!')
+  console.log('Yggdrasil has now started on port 3000!');
 });
 
 module.exports = app;

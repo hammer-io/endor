@@ -74,7 +74,7 @@ export default class InviteService {
     if (status) {
       if (isValidInviteStatus(status)) {
         // eslint-disable-next-line no-param-reassign
-        filter.status = status
+        filter.status = status;
       } else {
         throw new InvalidRequestException([new RequestParamError('status', getInvalidStatusMessage())]);
       }

@@ -16,7 +16,7 @@ export function checkCreateUser() {
       .normalizeEmail(),
     check('firstName').exists().withMessage('First Name is required.'),
     check('lastName').exists().withMessage('Last Name is required.')
-  ]
+  ];
 }
 
 /**
@@ -30,5 +30,5 @@ export function checkUpdateUser() {
       .isEmail().withMessage('Must be a valid email.')
       .trim()
       .normalizeEmail(),
-  ]
+  ];
 }

@@ -23,7 +23,7 @@ passport.use('basic', new BasicStrategy('basic', (username, password, next) => {
         return next(null, false);
       }
       return next(err);
-    })
+    });
 }));
 
 /**
@@ -63,7 +63,7 @@ passport.use(new BearerStrategy('bearer', (accessToken, next) => {
         })
         .catch(err => next(err));
     })
-    .catch(err => next(err))
+    .catch(err => next(err));
 }));
 
 /**
@@ -184,7 +184,7 @@ export function authorization() {
     server.authorization((clientId, redirectUri, next) => {
       clientService.findOneClientByClientId(clientId)
         .then(client => next(null, client, redirectUri))
-        .catch((err) => { next(err); })
+        .catch((err) => { next(err); });
     }),
     (req, res) => {
       res.send({
@@ -193,7 +193,7 @@ export function authorization() {
         client: req.oauth2.client
       });
     }
-  ]
+  ];
 }
 
 /**
@@ -211,7 +211,7 @@ export function decision() {
 export function token() {
   return [
     server.token()
-  ]
+  ];
 }
 
 /**

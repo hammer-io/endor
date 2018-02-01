@@ -76,7 +76,7 @@ export default class UserService {
       }
 
       if (!('lastName' in user)) {
-        errors.push(new RequestParamError('lastName', 'Last Name is required.'))
+        errors.push(new RequestParamError('lastName', 'Last Name is required.'));
       }
     }
 
@@ -116,7 +116,7 @@ export default class UserService {
     const errors = [];
 
     if (password === null || password === undefined || password.length < 8 || !password.match(/\d/g) || !password.match(/[a-zA-Z]/)) {
-      errors.push(new RequestParamError('password', 'Must contain at least one digit, one letter and have at least eight characters.'))
+      errors.push(new RequestParamError('password', 'Must contain at least one digit, one letter and have at least eight characters.'));
     }
 
     return errors;
@@ -194,7 +194,7 @@ export default class UserService {
     const match = bcrypt.compareSync(password, cred.password);
 
     if (!match) {
-      return Promise.reject(new InvalidCredentialsException('Username and/or password are incorrect.'))
+      return Promise.reject(new InvalidCredentialsException('Username and/or password are incorrect.'));
     }
 
     return userFound;
