@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hammer-io/yggdrasil.svg?branch=master)](https://travis-ci.org/hammer-io/yggdrasil)
+[![Build Status](https://travis-ci.org/hammer-io/endor.svg?branch=master)](https://travis-ci.org/hammer-io/endor)
 
 # endor
 A web API to generate node.js applications in an opinionated way.
@@ -12,10 +12,10 @@ A web API to generate node.js applications in an opinionated way.
 4. `cd yggdrasil/endor && npm install`
 5. Follow the steps below to [set up the database](#setting-up-the-database)
 6. Create an endorConfig.json in the endor folder with the following inside:
-```javascript
+```json
 {
-  session: {
-    secret: "<get this value from one of the other contributors or make your own for local development>"
+  "session": {
+    "secret": "<get this value from one of the other contributors or make your own for local development>"
   }
 }
 ```
