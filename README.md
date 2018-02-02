@@ -1,17 +1,19 @@
 [![Build Status](https://travis-ci.org/hammer-io/endor.svg?branch=master)](https://travis-ci.org/hammer-io/endor)
 
 # endor
+
 A web API to generate node.js applications in an opinionated way.
 
-### Installation
+
+## Installation
 
 ### Installation for Development
 1. Fork this repository
 2. Open your favorite terminal and go to the directory you want to install.
-3. git clone https://github.com/username/yggdrasil
-4. `cd yggdrasil/endor && npm install`
+3. git clone https://github.com/username/endor
+4. `npm install`
 5. Follow the steps below to [set up the database](#setting-up-the-database)
-6. Create an endorConfig.json in the endor folder with the following inside:
+6. Create an `endorConfig.json` in the endor folder with the following inside:
 ```json
 {
   "session": {
@@ -20,11 +22,11 @@ A web API to generate node.js applications in an opinionated way.
 }
 ```
 
-7. Run the tests using `npm test` from the endor folder. This will generate
-  the `emailConfig.json` file that is needed to run the application locally.
+7. Follow the steps below to [set up the email configuration](#email-setup)
 8. You're all set!
 
-### Usage
+
+## Usage
 `npm start`: starts the API server on `localhost:3000`
 
 `npm test`: runs the test suite
@@ -32,23 +34,20 @@ A web API to generate node.js applications in an opinionated way.
 `npm run lint`: runs the linter
 
 
-### Documentation
+## Documentation
 
 Documentation is generated and displayed using [apidoc](http://apidocjs.com/).
 
 ### Generate Documenation
-Prereq: `npm install apidoc -g`
-1. `cd /endor/`
-2. `apidoc -i src/`
+1. Prereq: `npm install apidoc -g`
+2. Then run: `apidoc -i src/`
 
 ### View Documentation
-1. `cd /endor/`
-2. `npm start`
-3. visit `localhost:3000/`
+1. `npm start`
+2. visit `localhost:3000/`
 
 
-
-### Setting up the Database
+## Setting up the Database
 
 First, create a file named "dbConfig.json" in the root directory of the project,
 and fill it with the following contents (updating as necessary for your local database):
@@ -74,7 +73,8 @@ and fill it with the following contents (updating as necessary for your local da
 Finally, run `npm run createDB && npm run initDB` to create the database and
 initialize the tables within it.
 
-### Querying the Data Model
+
+## Querying the Data Model
 
 - [Sequelize Querying Tutorial](http://docs.sequelizejs.com/manual/tutorial/querying.html)
 - [Various Sequelize Query Methods](http://docs.sequelizejs.com/class/lib/model.js~Model.html)
@@ -102,6 +102,7 @@ sequelize.User.findAll({
 });
 ```
 
+
 ## Authentication
 
 ### Basic-Auth
@@ -116,10 +117,10 @@ A token is used to authenticate the user.
 * Post a new Token - post /oauth2/token
     - Use a request body similar to the JSON below to retrieve a token for the user with the given username and password 
     - Returns authentication token
-```javascript
+```json
 {
     "username": "<username>",
-    "password": "<password>"
+    "password": "<password>",
     "grant_type": "password"
 } 
 ```
@@ -130,11 +131,31 @@ A token is used to authenticate the user.
 
 **Note:** All steps must be authenticated, posting a token requires Client-Basic
 
+
+## Permissions
+
+The middleware for checking if a user is authorized to view certain data is contained in the 
+authorization folder. The authorization middleware requires specific naming of the parameters
+as detailed below and the endpoint must be authenticated to verify the identity of the user
+making the requests.
+
+- For project authorization, the projectId must be labeled as such in the request's params.
+  There are two levels: Owner level (the user must be an owner of the project)
+  or Contributor level (the user must be a contributor or an owner).
+- For user authorization, the username/id must be labeled as user and be located in the
+  request's params.  There is only one level: User level (the user must be the one editing
+  themselves.)
+
+
 ## Email Setup
 
-To generate the `emailConfig.json` file, just run `npm test` from the endor folder.
+To configure email for development, do the following:
+
+1. Run `echo {} > emailConfig.json` to create an empty json file.
+2. Run `npm test` to fill in the information needed to run the application locally.
+
 For more information on using the email templates, view the
-[zurb-email-templates README](https://github.com/hammer-io/yggdrasil/tree/master/endor/zurb-email-templates).
+[zurb-email-templates README](https://github.com/hammer-io/endor/tree/master/zurb-email-templates#using-the-zurb-email-templates).
 
 Endor uses the [Nodemailer](https://nodemailer.com/about/) module for sending emails.
 For development and testing, we're using [Ethereal](https://ethereal.email/) to mock
@@ -149,15 +170,34 @@ was just sent. Scroll up to the email service test, and you'll see an email prev
 URL. Copy/paste that into your browser to see the email as it would have been delivered
 to a real user.
 
-## Permissions
-The middleware for checking if a user is authorized to view certain data is contained in the 
-authorization folder. The authorization middleware requires specific naming of the parameters
-as detailed below and the endpoint must be authenticated to verify the identity of the user
-making the requests.
 
-- For project authorization, the projectId must be labeled as such in the request's params.
-There are two levels: Owner level (the user must be an owner of the project)
-or Contributor level (the user must be a contributor or an owner).
-- For user authorization, the username/id must be labeled as user and be located in the
-request's params.  There is only one level: User level (the user must be the one editing
-themselves.)
+## Deployment
+
+A [docker](https://www.docker.com) image is built to run the application in
+production. The following commands will help you deploy Endor in a docker
+container on your local machine (for development, normally you don't need
+to do this; just run `npm start`):
+
+```bash
+# Building the image (-t gives a tag name)
+docker build -t hammerio/endor .
+# List docker images
+docker images
+# Runs the image, redirecting port 8888 on your machine to
+# the exposed port in the image 
+docker run -p 8888:3000 hammerio/endor
+# For production, we change the port and add -d flag to detach
+# the process
+docker run -p 80:3000 -d hammerio/endor
+# Get container ID
+docker ps
+# Print app output
+docker logs <container_id>
+# Enter the container, if necessary
+docker exec -it <container_id> /bin/sh
+# Stop the container
+docker stop <container_id>
+```
+
+Most of this information was found in
+[this guide from nodejs.org](https://nodejs.org/en/docs/guides/nodejs-docker-webapp/).
