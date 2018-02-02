@@ -24,7 +24,7 @@ router.get('/v1', (req, res) => {
     documentation_url: `http://${req.get('host')}`,
     user_url: `http://${req.get('host')}/api/v1/user`,
     users_url: `http://${req.get('host')}/api/v1/users`,
-    projects_url: `http://${req.get('host')}/api/v1/projects`
+    projects_url: `http://${req.get('host')}/api/v1/projects`,
   });
 });
 

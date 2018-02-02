@@ -39,7 +39,7 @@ Documentation is generated and displayed using [apidoc](http://apidocjs.com/).
 
 ### Generate Documenation
 1. Prereq: `npm install apidoc -g`
-2. Then run: `apidoc -i src/`
+2. Then run: `apidoc -i src/ -o docs/`
 
 ### View Documentation
 1. `npm start`

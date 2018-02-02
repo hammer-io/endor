@@ -75,7 +75,7 @@ invites.setDependencies(inviteService, userService, projectService, emailService
 // end dependency injections //
 
 // API ENDPOINTS //
-app.use('/', express.static('doc'));
+app.use('/', express.static('docs'));
 app.use('/api', [index]);
 app.use('/api/v1', [auth.router, client.router, projects.router, users.router, contributors.router, owners.router, invites.router]);
 // END API ENDPOINTS //
