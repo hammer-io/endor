@@ -4,6 +4,16 @@
 
 A web API to generate node.js applications in an opinionated way.
 
+- [Installation](#installation)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Setting up the Database](#setting-up-the-database)
+- [Querying the Data Model](#querying-the-data-model)
+- [Authentication](#authentication)
+- [Permissions](#permissions)
+- [Email Setup](#email-setup)
+- [Docker Deployment](#docker-deployment)
+
 
 ## Installation
 
@@ -12,18 +22,7 @@ A web API to generate node.js applications in an opinionated way.
 2. Open your favorite terminal and go to the directory you want to install.
 3. git clone https://github.com/username/endor
 4. `npm install`
-5. Follow the steps below to [set up the database](#setting-up-the-database)
-6. Create an `endorConfig.json` in the endor folder with the following inside:
-```json
-{
-  "session": {
-    "secret": "<get this value from one of the other contributors or make your own for local development>"
-  }
-}
-```
-
-7. Follow the steps below to [set up the email configuration](#email-setup)
-8. You're all set!
+5. You're all set!
 
 
 ## Usage
@@ -49,28 +48,7 @@ Documentation is generated and displayed using [apidoc](http://apidocjs.com/).
 
 ## Setting up the Database
 
-First, create a file named "dbConfig.json" in the root directory of the project,
-and fill it with the following contents (updating as necessary for your local database):
-
-```json
-{
-  "database": "hammer_endor",
-  "username": "root",
-  "password": "root",
-  "options": {
-    "host": "localhost",
-    "dialect": "mysql",
-    "pool": {
-      "max": 5,
-      "min": 0,
-      "acquire": 30000,
-      "idle": 10000
-    }
-  }
-}
-```
-
-Finally, run `npm run createDB && npm run initDB` to create the database and
+Run `npm run createDB && npm run initDB` to create the database and
 initialize the tables within it.
 
 
@@ -149,11 +127,6 @@ making the requests.
 
 ## Email Setup
 
-To configure email for development, do the following:
-
-1. Run `echo {} > emailConfig.json` to create an empty json file.
-2. Run `npm test` to fill in the information needed to run the application locally.
-
 For more information on using the email templates, view the
 [zurb-email-templates README](https://github.com/hammer-io/endor/tree/master/zurb-email-templates#using-the-zurb-email-templates).
 
@@ -171,7 +144,7 @@ URL. Copy/paste that into your browser to see the email as it would have been de
 to a real user.
 
 
-## Deployment
+## Docker Deployment
 
 A [docker](https://www.docker.com) image is built to run the application in
 production. The following commands will help you deploy Endor in a docker

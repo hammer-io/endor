@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import session from 'express-session';
+import config from 'config';
 
 import * as auth from './routes/auth.routes';
 import * as client from './routes/client.routes';
@@ -22,29 +23,13 @@ import UserService from './services/users.service';
 import AuthService from './services/auth.service';
 import ClientService from './services/client.service';
 import EmailService from './services/email.service';
-// eslint-disable-next-line import/no-unresolved
-import config from '../endorConfig.json';
-// eslint-disable-next-line import/no-unresolved
-import dbConfig from '../dbConfig.json';
-import dbTestConfig from '../dbTestConfig.json';
-// eslint-disable-next-line import/no-unresolved
-import emailConfig from '../emailConfig.json';
 
-// TODO: Set email from address and email transport options for production
-const emailFromAddress = '"Hammer-IO" <hello@hammer-io.github.io>';
-const emailTransportOptions = {
-  host: 'smtp.ethereal.email',
-  port: 587,
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: emailConfig.user,
-    pass: emailConfig.pass
-  }
-};
-
-let db = dbConfig;
+// Get various configuration details
+const emailFromAddress = config.get('email.from');
+const emailTransportOptions = config.get('email.transport');
+let db = config.get('db');
 if (process.env.NODE_ENV === 'test') {
-  db = dbTestConfig;
+  db = config.get('dbTest');
 }
 
 if (!sequelize.isInitialized()) {
@@ -68,7 +53,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(session({
-  secret: config.session.secret,
+  secret: config.get('session').secret,
   saveUninitialized: true,
   resave: true
 }));

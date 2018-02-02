@@ -1,19 +1,19 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import config from 'config';
 
 import {defineTables, populateTools} from '../src/db/init_database';
 import { populateUsers, populateProjects } from '../src/db/import_test_data';
 // Using Expect style
 const sequelize = require('../src/db/sequelize');
-import dbTestConfig from '../dbTestConfig.json';
-import UserService from './../src/services/users.service';
-import { getMockLogger } from './mockLogger';
 import * as apiUtil from './util/api.util';
 import server from '../src';
 
 chai.use(chaiHttp);
 const should = chai.should();
 const expect = chai.expect;
+
+const dbTestConfig = config.get('dbTest');
 
 // Initialize Sequelize with sqlite for testing
 if (!sequelize.isInitialized()) {

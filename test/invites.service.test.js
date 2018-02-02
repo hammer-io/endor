@@ -1,14 +1,16 @@
 import { expect } from 'chai';
+import config from 'config';
 
 import { defineTables } from '../src/db/init_database';
 import { populateUsers, populateProjects, populateInvites } from '../src/db/import_test_data';
 // Using Expect style
 const sequelize = require('../src/db/sequelize');
-import dbTestConfig from '../dbTestConfig.json';
 import InviteService from './../src/services/invites.service';
 import { getMockLogger } from './mockLogger';
 
 const InviteStatus = sequelize.InviteStatus;
+
+const dbTestConfig = config.get('dbTest');
 
 // Initialize Sequelize with sqlite for testing
 if (!sequelize.isInitialized()) {

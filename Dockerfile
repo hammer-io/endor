@@ -20,8 +20,8 @@ RUN npm install --only=production && npm install \
 
 # Bundle app source
 COPY apidoc.json .babelrc README.md ./
-# TODO: These config files need to be modified for production
-COPY *Config.json ./
+# TODO: Do we need to worry about this copying production configs in?
+COPY ./config ./config
 COPY ./src ./src
 
 EXPOSE 3000

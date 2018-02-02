@@ -5,9 +5,6 @@ import {defineTables, populateTools} from '../src/db/init_database';
 import { populateUsers, populateProjects } from '../src/db/import_test_data';
 // Using Expect style
 const sequelize = require('../src/db/sequelize');
-import dbTestConfig from '../dbTestConfig.json';
-import UserService from './../src/services/users.service';
-import { getMockLogger } from './mockLogger';
 import * as apiUtil from './util/api.util';
 import server from '../src';
 

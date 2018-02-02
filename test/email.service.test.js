@@ -1,15 +1,17 @@
 import { expect } from 'chai';
 import nodemailer from 'nodemailer';
-const sequelize = require('../src/db/sequelize');
+import config from 'config';
 
+const sequelize = require('../src/db/sequelize');
 import { defineTables } from '../src/db/init_database';
 import { populateUsers, populateProjects, populateInvites } from '../src/db/import_test_data';
-import dbTestConfig from '../dbTestConfig.json';
 import * as emailUtil from './util/email';
 import EmailService from '../src/services/email.service';
 import { getMockLogger } from './mockLogger';
 
 const InviteStatus = sequelize.InviteStatus;
+
+const dbTestConfig = config.get('dbTest');
 
 // Initialize Sequelize with sqlite for testing
 if (!sequelize.isInitialized()) {

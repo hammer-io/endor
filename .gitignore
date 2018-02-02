@@ -13,9 +13,8 @@ coverage
 build/Release
 npm-debug.lo
 
-dbConfig.json
-endorConfig.json
-emailConfig.json
+config/*
+!config/default.json
 
 .DS_Store
 */.DS_Store
