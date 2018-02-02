@@ -19,7 +19,7 @@ RUN npm install --only=production && npm install \
   babel-preset-env@1.6.0
 
 # Bundle app source
-COPY apidoc.json .babelrc ./
+COPY apidoc.json .babelrc README.md ./
 # TODO: These config files need to be modified for production
 COPY *Config.json ./
 COPY ./src ./src
