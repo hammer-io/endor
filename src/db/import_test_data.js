@@ -243,7 +243,8 @@ async function populateTestData() {
  */
 function main() {
   // eslint-disable-next-line global-require
-  const dbConfig = require('../../dbConfig.json');
+  const config = require('config');
+  const dbConfig = config.get('db');
 
   // First, we need to initialize the data model
   sequelize.initSequelize(

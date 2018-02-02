@@ -1,0 +1,63 @@
+{
+  "db": {
+    "database": "hammer_endor",
+    "username": "root",
+    "password": "root",
+    "options": {
+      "host": "localhost",
+      "dialect": "mysql",
+      "pool": {
+        "max": 5,
+        "min": 0,
+        "acquire": 30000,
+        "idle": 10000
+      }
+    }
+  },
+  "dbTest": {
+    "database": "database",
+    "username": "root",
+    "password": "root",
+    "options": {
+      "dialect": "sqlite",
+      "logging": false
+    }
+  },
+  "email": {
+    "account": {
+      "user": "hp3s6sozyj2ypybm@ethereal.email",
+      "pass": "uf8UmbvJc4VD7vsdbX",
+      "smtp": {
+        "host": "smtp.ethereal.email",
+        "port": 587,
+        "secure": false
+      },
+      "imap": {
+        "host": "imap.ethereal.email",
+        "port": 993,
+        "secure": true
+      },
+      "pop3": {
+        "host": "pop3.ethereal.email",
+        "port": 995,
+        "secure": true
+      },
+      "web": "https://ethereal.email"
+    },
+    "transport": {
+      "host": "smtp.ethereal.email",
+      "port": 587,
+      "secure": false,
+      "auth": {
+        "user": "hp3s6sozyj2ypybm@ethereal.email",
+        "pass": "uf8UmbvJc4VD7vsdbX"
+      }
+    },
+    "from": {
+      "address": "\"Hammer-IO\" <hammer.io.team@gmail.com>"
+    }
+  },
+  "session": {
+    "secret": "<get this value from one of the other contributors or make your own for local development>"
+  }
+}

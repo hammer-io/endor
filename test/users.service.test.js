@@ -1,11 +1,14 @@
 import { expect } from 'chai';
+import config from 'config';
+
 import { defineTables } from '../src/db/init_database';
 import { populateUsers } from '../src/db/import_test_data';
 // Using Expect style
 const sequelize = require('../src/db/sequelize');
-import dbTestConfig from '../dbTestConfig.json';
 import UserService from './../src/services/users.service';
 import { getMockLogger } from './mockLogger';
+
+const dbTestConfig = config.get('dbTest');
 
 // Initialize Sequelize with sqlite for testing
 if (!sequelize.isInitialized()) {
@@ -365,7 +368,7 @@ describe('Testing User Service', () => {
         expect(error.errors).to.not.be.an('undefined');
         expect(error.errors.length).to.equal(1);
         expect(error.errors[0].field).to.equal('email');
-        expect(error.errors[0].message).to.equal('User with email Bob@AFV.com already exists.')
+        expect(error.errors[0].message).to.equal('User with email Bob@AFV.com already exists.');
 
         // check that the user was not created
         const users = await userService.getAllUsers();
