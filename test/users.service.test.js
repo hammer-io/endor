@@ -179,7 +179,7 @@ describe('Testing User Service', () => {
         expect(error.errors).to.not.be.an('undefined');
         expect(error.errors.length).to.equal(1);
         expect(error.errors[0].field).to.equal('username');
-        expect(error.errors[0].message).to.equal('User with username BobSagat already exists.');
+        expect(error.errors[0].message).to.equal('This username is already taken.');
 
         // check that the user was not created
         const users = await userService.getAllUsers();
@@ -368,7 +368,7 @@ describe('Testing User Service', () => {
         expect(error.errors).to.not.be.an('undefined');
         expect(error.errors.length).to.equal(1);
         expect(error.errors[0].field).to.equal('email');
-        expect(error.errors[0].message).to.equal('User with email Bob@AFV.com already exists.');
+        expect(error.errors[0].message).to.equal('This email is already taken.');
 
         // check that the user was not created
         const users = await userService.getAllUsers();
@@ -470,7 +470,7 @@ describe('Testing User Service', () => {
       } catch (error) {
         expect(error.errors.length).to.equal(1);
         expect(error.errors[0].field).to.equal('username');
-        expect(error.errors[0].message).to.equal('User with username BobSagat already exists.');
+        expect(error.errors[0].message).to.equal('This username is already taken.');
       }
     });
 
@@ -488,7 +488,7 @@ describe('Testing User Service', () => {
       } catch (error) {
         expect(error.errors.length).to.equal(1);
         expect(error.errors[0].field).to.equal('email');
-        expect(error.errors[0].message).to.equal('User with email Bob@AFV.com already exists.');
+        expect(error.errors[0].message).to.equal('This email is already taken.');
       }
     });
   });
@@ -646,11 +646,11 @@ describe('Testing User Service', () => {
 
       const errors = await userService.validateUser(newUser, false);
 
-      expect(errors.filter(e => e.field === 'username' && e.message === 'User with username' +
-        ' BobSagat already exists.').length === 1).to.equal(true);
+      expect(errors.filter(e => e.field === 'username' && e.message === 'This username is ' +
+        'already taken.').length === 1).to.equal(true);
 
-      expect(errors.filter(e => e.field === 'email' && e.message === 'User with email Bob@AFV.com' +
-        ' already exists.').length === 1).to.equal(true);
+      expect(errors.filter(e => e.field === 'email' && e.message === 'This email is ' +
+        'already taken.').length === 1).to.equal(true);
     });
   });
 

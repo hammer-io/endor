@@ -89,7 +89,7 @@ export default class UserService {
       if (user.username.match(/[^a-zA-Z_0-9]/)) {
         errors.push(new RequestParamError('username', 'Usernames should only contain letters, numbers, and underscores.'));
       } else if (await this.isDuplicateUsername(user.username)) {
-        errors.push(new RequestParamError('username', `User with username ${user.username} already exists.`));
+        errors.push(new RequestParamError('username', 'This username is already taken.'));
       }
     }
 
@@ -99,7 +99,7 @@ export default class UserService {
       }
 
       if (await this.isDuplicateEmail(user.email)) {
-        errors.push(new RequestParamError('email', `User with email ${user.email} already exists.`));
+        errors.push(new RequestParamError('email', 'This email is already taken.'));
       }
     }
 
