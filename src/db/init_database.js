@@ -29,6 +29,9 @@ export async function populateTools() {
   await sequelize.Tool.create({
     name: 'Docker',
     toolType: sequelize.ToolType.CONTAINERIZATION,
+    websiteUrl: 'https://docker.com/',
+    apiUrl: 'https://index.docker.io/v1/',
+    documentationUrl: 'https://docs.docker.com/',
     logoLargeUrl: 'https://www.docker.com/sites/default/files/vertical_large.png',
     logoSmallUrl: 'https://www.docker.com/sites/default/files/vertical_small.png',
   });
@@ -45,7 +48,7 @@ export async function populateTools() {
     usageRequirements: 'You must have created a Heroku account before using this tool.'
   });
   await sequelize.Tool.create({
-    name: 'Express.js',
+    name: 'ExpressJS',
     toolType: sequelize.ToolType.WEB_FRAMEWORK,
     websiteUrl: 'http://expressjs.com/',
     documentationUrl: 'http://expressjs.com/en/4x/api.html',
@@ -56,11 +59,11 @@ export async function populateTools() {
     toolType: sequelize.ToolType.TEST,
     websiteUrl: 'https://mochajs.org/',
     documentationUrl: 'https://mochajs.org/#getting-started',
-    logoLargeUrl: 'https://worldvectorlogo.com/logo/mocha-1'
+    logoLargeUrl: 'https://cdn.worldvectorlogo.com/logos/mocha-1.svg'
   });
   await sequelize.Tool.create({
     name: 'Sequelize',
-    toolType: sequelize.ToolType.TEST,
+    toolType: sequelize.ToolType.DATABASE,
     websiteUrl: 'http://docs.sequelizejs.com/',
     documentationUrl: 'http://docs.sequelizejs.com/',
     logoSmallUrl: 'http://docs.sequelizejs.com/manual/asset/logo-small.png'
