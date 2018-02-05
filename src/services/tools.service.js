@@ -32,7 +32,6 @@ export default class ToolsService {
 
   async getCITools() {
     return this.getToolsByType(sequelize.ToolType.CONTINUOUS_INTEGRATION);
-
   }
 
   async getContainerizationTools() {
