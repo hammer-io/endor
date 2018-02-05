@@ -675,7 +675,7 @@ describe('Testing User Service', () => {
       } catch (err) {
         expect(err.type).to.equal('Invalid Credentials');
         expect(err.status).to.equal(403);
-        expect(err.message).to.equal('Username and/or password are incorrect.');
+        expect(err.message).to.equal('Username and/or password are incorrect');
       }
       expect(user).to.be.an('undefined');
     });
@@ -689,7 +689,7 @@ describe('Testing User Service', () => {
       } catch (err) {
         expect(err.type).to.equal('Invalid Credentials');
         expect(err.status).to.equal(403);
-        expect(err.message).to.equal('Username and/or password are incorrect.');
+        expect(err.message).to.equal('Username and/or password are incorrect');
       }
       expect(user).to.be.an('undefined');
     });
@@ -703,7 +703,7 @@ describe('Testing User Service', () => {
       } catch (err) {
         expect(err.type).to.equal('Invalid Credentials');
         expect(err.status).to.equal(403);
-        expect(err.message).to.equal('Username and/or password are incorrect.');
+        expect(err.message).to.equal('Username and/or password are incorrect');
       }
       expect(user).to.be.an('undefined');
     });

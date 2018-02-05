@@ -183,7 +183,7 @@ export default class UserService {
       }
     });
     if (userFound === null) {
-      return Promise.reject(new InvalidCredentialsException('Username and/or password are incorrect.'));
+      return Promise.reject(new InvalidCredentialsException('username', 'Username does not exist'));
     }
 
     const cred = await this.credentialsRepository.findOne({
@@ -194,7 +194,7 @@ export default class UserService {
     const match = bcrypt.compareSync(password, cred.password);
 
     if (!match) {
-      return Promise.reject(new InvalidCredentialsException('Username and/or password are incorrect.'));
+      return Promise.reject(new InvalidCredentialsException('password', 'Username and/or password are incorrect'));
     }
 
     return userFound;

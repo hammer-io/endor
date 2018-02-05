@@ -3,7 +3,8 @@ import { getActiveLogger } from '../utils/winston';
 const log = getActiveLogger();
 
 export default class InvalidCredentialsException {
-  constructor(message) {
+  constructor(field, message) {
+    this.field = field;
     this.message = message;
     this.type = 'Invalid Credentials';
     this.status = 403;
@@ -11,6 +12,6 @@ export default class InvalidCredentialsException {
   }
 
   toString() {
-    return `${this.type} ${this.status} ${this.message}`;
+    return `${this.type} ${this.status}: ${this.field} ${this.message}`;
   }
 }
