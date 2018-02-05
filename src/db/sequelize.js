@@ -10,10 +10,13 @@ const {
 } = Sequelize.DataTypes;
 
 const ToolType = {
+  SOURCE_CONTROL: 'sourceControl',
   CONTAINERIZATION: 'containerization',
-  CONTINUOUS_INTEGRATION: 'continuousIntegration',
+  CONTINUOUS_INTEGRATION: 'ci',
   DEPLOYMENT: 'deployment',
-  WEB_FRAMEWORK: 'webFramework'
+  WEB_FRAMEWORK: 'web',
+  TEST: 'test',
+  DATABASE: 'database'
 };
 
 const InviteStatus = {
@@ -114,20 +117,23 @@ module.exports.initSequelize = (database, username, password, options) => {
     toolType: {
       type: Sequelize.DataTypes.ENUM,
       values: [
-        ToolType.CONTAINERIZATION,
+        ToolType.SOURCE_CONTROL,
         ToolType.CONTINUOUS_INTEGRATION,
+        ToolType.CONTAINERIZATION,
+        ToolType.WEB_FRAMEWORK,
         ToolType.DEPLOYMENT,
-        ToolType.WEB_FRAMEWORK
+        ToolType.TEST,
+        ToolType.DATABASE
       ]
     },
-    websiteUrl: STRING,
-    apiUrl: STRING,
-    documentationUrl: STRING,
+    websiteUrl: STRING(2000),
+    apiUrl: STRING(2000),
+    documentationUrl: STRING(2000),
     logoSvgUrl: STRING(2000),
     logoLargeUrl: STRING(2000),
     logoSmallUrl: STRING(2000),
-    usageRequirements: STRING,
-    specialConsiderations: STRING
+    usageRequirements: STRING(2000),
+    specialConsiderations: STRING(2000)
   });
 
 
