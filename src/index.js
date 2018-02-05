@@ -14,6 +14,7 @@ import * as projects from './routes/projects.routes';
 import * as contributors from './routes/contributors.routes';
 import * as users from './routes/users.routes';
 import * as invites from './routes/invites.routes';
+import * as tools from './routes/tools.routes';
 import InviteService from './services/invites.service';
 import ProjectService from './services/projects.service';
 import sequelize from './db/sequelize';
@@ -23,6 +24,7 @@ import UserService from './services/users.service';
 import AuthService from './services/auth.service';
 import ClientService from './services/client.service';
 import EmailService from './services/email.service';
+import ToolsService from './services/tools.service';
 
 // Get various configuration details
 const emailFromAddress = config.get('email.from');
@@ -65,6 +67,7 @@ const inviteService = new InviteService(sequelize.Invite, getActiveLogger());
 const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getActiveLogger());
 const clientService = new ClientService(sequelize.Client, getActiveLogger());
 const emailService = new EmailService(emailFromAddress, getActiveLogger(), emailTransportOptions);
+const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
 auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);
 projects.setProjectService(projectService);
@@ -72,12 +75,13 @@ users.setDependencies(userService);
 contributors.setDependencies(projectService);
 owners.setDependencies(projectService);
 invites.setDependencies(inviteService, userService, projectService, emailService);
+tools.setDependencies(toolsService);
 // end dependency injections //
 
 // API ENDPOINTS //
 app.use('/', express.static('docs'));
 app.use('/api', [index]);
-app.use('/api/v1', [auth.router, client.router, projects.router, users.router, contributors.router, owners.router, invites.router]);
+app.use('/api/v1', [auth.router, client.router, projects.router, users.router, contributors.router, owners.router, invites.router, tools.router]);
 // END API ENDPOINTS //
 
 // default 404 handler
