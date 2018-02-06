@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import config from 'config';
 
 // Using Expect style
 const sequelize = require('../src/db/sequelize');
@@ -9,17 +8,7 @@ import { populateClients, populateUsers } from '../src/db/import_test_data';
 import ClientService from './../src/services/client.service';
 import { getMockLogger } from './mockLogger';
 
-const dbTestConfig = config.get('dbTest');
-
-// Initialize Sequelize with sqlite for testing
-if (!sequelize.isInitialized()) {
-  sequelize.initSequelize(
-    dbTestConfig.database,
-    dbTestConfig.username,
-    dbTestConfig.password,
-    dbTestConfig.options
-  );
-}
+sequelize.initSequelize();
 
 const clientService = new ClientService(sequelize.Client, getMockLogger());
 

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import bcrypt from 'bcrypt';
 import sequelize from './sequelize';
 
@@ -242,17 +241,8 @@ async function populateTestData() {
  * The main function only gets run if this file is run as a script
  */
 function main() {
-  // eslint-disable-next-line global-require
-  const config = require('config');
-  const dbConfig = config.get('db');
-
   // First, we need to initialize the data model
-  sequelize.initSequelize(
-    dbConfig.database,
-    dbConfig.username,
-    dbConfig.password,
-    dbConfig.options
-  );
+  sequelize.initSequelize();
 
   // Then, continue populating the test data
   populateTestData().then(() => {

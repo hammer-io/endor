@@ -1,10 +1,8 @@
-import config from 'config';
-
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 
 import server from './../src/index';
-import sequelize from './../dist/db/sequelize';
+import sequelize from './../src/db/sequelize';
 import * as apiUtil from './util/api.util';
 import { defineTables, populateTools } from '../src/db/init_database';
 import {
@@ -18,8 +16,8 @@ chai.use(chaiHttp);
 const should = chai.should();
 const expect = chai.expect;
 
-// Initialize Sequelize with sqlite for testing
-const dbTestConfig = config.get('dbTest');
+sequelize.initSequelize();
+
 describe('Tools Route Test', () => {
   beforeEach(async () => {
     await defineTables();

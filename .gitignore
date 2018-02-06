@@ -15,6 +15,7 @@ npm-debug.lo
 
 config/*
 !config/default.json
+!config/test.json
 
 .DS_Store
 */.DS_Store

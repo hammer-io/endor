@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import session from 'express-session';
+import sequelizeStore from 'connect-session-sequelize';
 import config from 'config';
 
 import * as auth from './routes/auth.routes';
@@ -29,20 +30,11 @@ import ToolsService from './services/tools.service';
 // Get various configuration details
 const emailFromAddress = config.get('email.from');
 const emailTransportOptions = config.get('email.transport');
-let db = config.get('db');
-if (process.env.NODE_ENV === 'test') {
-  db = config.get('dbTest');
-}
+getActiveLogger().info(`NODE_ENV = ${process.env.NODE_ENV}`);
 
-if (!sequelize.isInitialized()) {
-  // Initialize the data model
-  sequelize.initSequelize(
-    db.database,
-    db.username,
-    db.password,
-    db.options
-  );
-}
+// Initialize sequelize
+const SequelizeStore = sequelizeStore(session.Store);
+sequelize.initSequelize();
 
 const app = express();
 
@@ -56,6 +48,9 @@ app.use(cookieParser());
 
 app.use(session({
   secret: config.get('session').secret,
+  store: new SequelizeStore({
+    db: sequelize.model
+  }),
   saveUninitialized: true,
   resave: true
 }));

@@ -1,22 +1,11 @@
 import { expect } from 'chai';
-import config from 'config';
 
 import { defineTables, populateTools } from '../src/db/init_database';
 import { getMockLogger } from './mockLogger';
 const sequelize = require('../src/db/sequelize');
 import ToolsService from '../dist/services/tools.service';
 
-const dbTestConfig = config.get('dbTest');
-
-// Initialize Sequelize with sqlite for testing
-if (!sequelize.isInitialized()) {
-  sequelize.initSequelize(
-    dbTestConfig.database,
-    dbTestConfig.username,
-    dbTestConfig.password,
-    dbTestConfig.options
-  );
-}
+sequelize.initSequelize();
 
 const toolsService = new ToolsService(sequelize.Tool, getMockLogger());
 
