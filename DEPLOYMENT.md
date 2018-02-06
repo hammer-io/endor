@@ -23,7 +23,7 @@
         or `bind-address` declarations. Also, for any files/directories they import,
         do the same.
       - Grant privileges to root mysql user (either by domain, IP, or subnet):
-        - `GRANT ALL PRIVILEGES ON *.* TO 'root'@'%.ece.iastate.edu'
+        - `GRANT ALL PRIVILEGES ON *.* TO 'root'@'%.example.com'
              IDENTIFIED BY 'some_characters'  
              WITH GRANT OPTION;
            FLUSH PRIVILEGES;`
@@ -64,7 +64,7 @@ docker build -t hammerio/endor .
 # Run the image on the defined virtual host
 docker run --add-host=dockerhost:$(ip route | awk '/docker0/ { print $NF }') \
   -e NODE_ENV=production \
-  -e VIRTUAL_HOST=api-hammer-io-test.ece.iastate.edu \
+  -e VIRTUAL_HOST=example.com \
   -d hammerio/endor
 ```
 
