@@ -12,7 +12,7 @@ A web API to generate node.js applications in an opinionated way.
 - [Authentication](#authentication)
 - [Permissions](#permissions)
 - [Email Setup](#email-setup)
-- [Deployment Instructions](https://github.com/hammer-io/endor/blob/master/zurb-email-templates/DEPLOYMENT.md)
+- [Deployment Instructions](https://github.com/hammer-io/endor/blob/master/DEPLOYMENT.md)
 
 
 ## Installation
