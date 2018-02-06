@@ -7,7 +7,16 @@ const overwriteExistingTables = true;
 
 export async function populateTools() {
   await sequelize.Tool.create({
-    name: 'TravisCI (open source)',
+    name: 'GitHub',
+    toolType: sequelize.ToolType.SOURCE_CONTROL,
+    websiteUrl: 'https://github.com/',
+    apiUrl: 'https://api.github.com/',
+    documentationUrl: 'https://developer.github.com/v3/',
+    logoLargeUrl: 'https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png'
+  });
+
+  await sequelize.Tool.create({
+    name: 'TravisCI',
     toolType: sequelize.ToolType.CONTINUOUS_INTEGRATION,
     websiteUrl: 'https://travis-ci.org/',
     apiUrl: 'https://api.travis-ci.org/',
@@ -18,9 +27,9 @@ export async function populateTools() {
     specialConsiderations: 'To use the open source version of TravisCI, you must have a GitHub account.'
   });
   await sequelize.Tool.create({
-    name: 'Docker Hub',
+    name: 'Docker',
     toolType: sequelize.ToolType.CONTAINERIZATION,
-    websiteUrl: 'https://hub.docker.com/',
+    websiteUrl: 'https://docker.com/',
     apiUrl: 'https://index.docker.io/v1/',
     documentationUrl: 'https://docs.docker.com/',
     logoLargeUrl: 'https://www.docker.com/sites/default/files/vertical_large.png',
@@ -39,11 +48,25 @@ export async function populateTools() {
     usageRequirements: 'You must have created a Heroku account before using this tool.'
   });
   await sequelize.Tool.create({
-    name: 'Express.js',
+    name: 'ExpressJS',
     toolType: sequelize.ToolType.WEB_FRAMEWORK,
     websiteUrl: 'http://expressjs.com/',
     documentationUrl: 'http://expressjs.com/en/4x/api.html',
     logoLargeUrl: 'https://camo.githubusercontent.com/fc61dcbdb7a6e49d3adecc12194b24ab20dfa25b/68747470733a2f2f692e636c6f756475702e636f6d2f7a6659366c4c376546612d3330303078333030302e706e67',
+  });
+  await sequelize.Tool.create({
+    name: 'Mocha',
+    toolType: sequelize.ToolType.TEST,
+    websiteUrl: 'https://mochajs.org/',
+    documentationUrl: 'https://mochajs.org/#getting-started',
+    logoLargeUrl: 'https://cdn.worldvectorlogo.com/logos/mocha-1.svg'
+  });
+  await sequelize.Tool.create({
+    name: 'Sequelize',
+    toolType: sequelize.ToolType.DATABASE,
+    websiteUrl: 'http://docs.sequelizejs.com/',
+    documentationUrl: 'http://docs.sequelizejs.com/',
+    logoSmallUrl: 'http://docs.sequelizejs.com/manual/asset/logo-small.png'
   });
 }
 
