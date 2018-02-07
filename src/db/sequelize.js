@@ -1,3 +1,4 @@
+import config from 'config';
 import Sequelize from 'sequelize';
 import { getActiveLogger } from '../utils/winston';
 
@@ -34,8 +35,7 @@ module.exports.DataTypes = Sequelize.DataTypes;
 
 let initialized = false;
 
-module.exports.isInitialized = () => initialized;
-module.exports.initSequelize = (database, username, password, options) => {
+function initManually(database, username, password, options) {
   if (initialized) {
     getActiveLogger().warn('Sequelize can only be initialized once!');
     return;
@@ -227,4 +227,23 @@ module.exports.initSequelize = (database, username, password, options) => {
   module.exports.Project = Project;
   module.exports.ProjectOwner = ProjectOwner;
   module.exports.ProjectContributor = ProjectContributor;
-};
+}
+
+function initWithConfigs() {
+  if (!initialized) {
+    const db = config.get('db');
+    initManually(db.database, db.username, db.password, db.options);
+  }
+}
+
+module.exports.isInitialized = () => initialized;
+/**
+ * This function lets you initialize sequelize with the configuration file
+ * @type {initWithConfigs}
+ */
+module.exports.initSequelize = initWithConfigs;
+/**
+ * This function, on the other hand, lets you initialize sequelize manually
+ * @type {initManually}
+ */
+module.exports.initManually = initManually;

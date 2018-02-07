@@ -1,6 +1,5 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import config from 'config';
 
 import {defineTables, populateTools} from '../src/db/init_database';
 import { populateUsers, populateProjects } from '../src/db/import_test_data';
@@ -13,17 +12,7 @@ chai.use(chaiHttp);
 const should = chai.should();
 const expect = chai.expect;
 
-const dbTestConfig = config.get('dbTest');
-
-// Initialize Sequelize with sqlite for testing
-if (!sequelize.isInitialized()) {
-  sequelize.initSequelize(
-    dbTestConfig.database,
-    dbTestConfig.username,
-    dbTestConfig.password,
-    dbTestConfig.options
-  );
-}
+sequelize.initSequelize();
 
 describe('Testing Project Routes', () => {
   beforeEach(async () => {

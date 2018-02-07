@@ -1,5 +1,8 @@
-/* eslint-disable import/no-unresolved */
+import session from 'express-session';
+import sequelizeStore from 'connect-session-sequelize';
 import sequelize from './sequelize';
+
+const SequelizeStore = sequelizeStore(session.Store);
 
 // When syncing tables, this corresponds to the 'force' option.
 // force: true will drop the table if it already exists
@@ -70,6 +73,12 @@ export async function populateTools() {
   });
 }
 
+export function initializeSequelizeStore() {
+  return new SequelizeStore({
+    db: sequelize.model
+  });
+}
+
 export async function defineTables() {
   // Make all calls to initialize tables here!
   await sequelize.User.sync({ force: overwriteExistingTables });
@@ -82,6 +91,7 @@ export async function defineTables() {
   await sequelize.Client.sync({ force: overwriteExistingTables });
   await sequelize.AccessCode.sync({ force: overwriteExistingTables });
   await sequelize.Token.sync({ force: overwriteExistingTables });
+  await initializeSequelizeStore().sync();
 }
 
 
@@ -91,17 +101,8 @@ export async function defineTables() {
  */
 async function main() {
   try {
-    // eslint-disable-next-line global-require
-    const config = require('config');
-    const dbConfig = config.get('db');
-
     // First, we need to initialize the data model
-    await sequelize.initSequelize(
-      dbConfig.database,
-      dbConfig.username,
-      dbConfig.password,
-      dbConfig.options
-    );
+    await sequelize.initSequelize();
 
     // Then, define the tables and set initial values
     await defineTables();

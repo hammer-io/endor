@@ -1,4 +1,4 @@
-FROM node:carbon-alpine
+FROM node:carbon
 
 # This was developed based on the guide at:
 # https://nodejs.org/en/docs/guides/nodejs-docker-webapp/
@@ -20,7 +20,6 @@ RUN npm install --only=production && npm install \
 
 # Bundle app source
 COPY apidoc.json .babelrc README.md ./
-# TODO: Do we need to worry about this copying production configs in?
 COPY ./config ./config
 COPY ./src ./src
 
