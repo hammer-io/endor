@@ -91,6 +91,8 @@ export async function defineTables() {
   await sequelize.Client.sync({ force: overwriteExistingTables });
   await sequelize.AccessCode.sync({ force: overwriteExistingTables });
   await sequelize.Token.sync({ force: overwriteExistingTables });
+  await sequelize.GithubToken.sync({ force: overwriteExistingTables });
+  await sequelize.GithubTokenOwner.sync({ force: overwriteExistingTables });
   await initializeSequelizeStore().sync();
 }
 

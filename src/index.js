@@ -9,6 +9,8 @@ import sequelizeStore from 'connect-session-sequelize';
 import config from 'config';
 
 import * as auth from './routes/auth.routes';
+import * as githubauth from './routes/githubauth.routes';
+
 import * as client from './routes/client.routes';
 import index from './routes/index.routes';
 import * as projects from './routes/projects.routes';
@@ -26,6 +28,7 @@ import AuthService from './services/auth.service';
 import ClientService from './services/client.service';
 import EmailService from './services/email.service';
 import ToolsService from './services/tools.service';
+import GithubAuthenticationService from './services/githubauth.service';
 
 // Get various configuration details
 const emailFromAddress = config.get('email.from');
@@ -63,6 +66,11 @@ const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getAc
 const clientService = new ClientService(sequelize.Client, getActiveLogger());
 const emailService = new EmailService(emailFromAddress, getActiveLogger(), emailTransportOptions);
 const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
+const githubAuthenticationService = new GithubAuthenticationService(
+  sequelize.GithubToken,
+  userService,
+  getActiveLogger()
+);
 auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);
 projects.setProjectService(projectService);
@@ -71,12 +79,23 @@ contributors.setDependencies(projectService);
 owners.setDependencies(projectService);
 invites.setDependencies(inviteService, userService, projectService, emailService);
 tools.setDependencies(toolsService);
+githubauth.setDependencies(githubAuthenticationService);
 // end dependency injections //
 
 // API ENDPOINTS //
 app.use('/', express.static('docs'));
 app.use('/api', [index]);
-app.use('/api/v1', [auth.router, client.router, projects.router, users.router, contributors.router, owners.router, invites.router, tools.router]);
+app.use('/api/v1', [
+  auth.router,
+  client.router,
+  projects.router,
+  users.router,
+  contributors.router,
+  owners.router,
+  invites.router,
+  tools.router,
+  githubauth.router
+]);
 // END API ENDPOINTS //
 
 // default 404 handler
