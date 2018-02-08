@@ -211,6 +211,26 @@ function initManually(database, username, password, options) {
   Invite.belongsTo(User, { as: 'userInvited' });
   Invite.belongsTo(Project, { as: 'projectInvitedTo' });
 
+  const GithubToken = model.define('githubToken', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4,
+    },
+    token: STRING(2000)
+  });
+
+  const GithubTokenOwner = model.define('githubTokenOwner', {
+    // ASSOCIATIONS DEFINED BELOW
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4,
+    }
+  });
+  GithubToken.belongsToMany(User, { as: 'owner', through: 'githubTokenOwner' });
+  User.belongsToMany(GithubToken, { as: 'githubToken', through: 'githubTokenOwner' });
+
   // --------------------------- MODEL DEFINITION END ---------------------------
 
   // Model Instance
@@ -227,6 +247,8 @@ function initManually(database, username, password, options) {
   module.exports.Project = Project;
   module.exports.ProjectOwner = ProjectOwner;
   module.exports.ProjectContributor = ProjectContributor;
+  module.exports.GithubToken = GithubToken;
+  module.exports.GithubTokenOwner = GithubTokenOwner;
 }
 
 function initWithConfigs() {
