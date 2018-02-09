@@ -22,7 +22,7 @@ export default class GithubAuthenticationService {
     const token = await this.getGithubTokenForUser(userId);
 
     const isUserAuthenticated =
-      await githubService.isUserAuthenticated(encryptionUtil.decrypt(token.token));
+      await githubService.isUserAuthenticated(token);
 
     if (token && isUserAuthenticated) {
       return true;
@@ -44,7 +44,7 @@ export default class GithubAuthenticationService {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getGithubToken();
     if (token) {
-      return token[0];
+      return encryptionUtil.decrypt(token[0].token);
     }
 
     return null;

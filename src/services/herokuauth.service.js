@@ -1,4 +1,5 @@
 import * as encryptUtil from '../utils/encryption';
+import * as herokuService from '../services/heroku.service';
 import HerokuTokenNotFoundException from '../error/HerokuTokenNotFoundException';
 
 export default class HerokuAuthService {
@@ -18,7 +19,17 @@ export default class HerokuAuthService {
   async checkIfUserIsAuthenticatedOnHeroku(userId) {
     const token = await this.getHerokuTokenForUser(userId);
     if (token) {
-      return true;
+      const decryptedToken = encryptUtil.decrypt(token.token);
+      const isAuthenticatedOnHeroku =
+        await herokuService.checkIfUserIsAuthenticated(decryptedToken);
+
+      // if the user is authenticated on heroku, return true
+      if (isAuthenticatedOnHeroku) {
+        return true;
+      }
+
+      // remove the token if there was one in the DB, but was not valid on heroku.
+      await this.deleteHerokuTokenForUser(userId);
     }
 
     return false;
