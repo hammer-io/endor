@@ -11,6 +11,7 @@ import config from 'config';
 import * as auth from './routes/auth.routes';
 import * as githubauth from './routes/githubauth.routes';
 import * as travisauth from './routes/travisauth.routes';
+import * as herokuauth from './routes/herokuauth.routes';
 import * as client from './routes/client.routes';
 import index from './routes/index.routes';
 import * as projects from './routes/projects.routes';
@@ -30,6 +31,7 @@ import EmailService from './services/email.service';
 import ToolsService from './services/tools.service';
 import GithubAuthenticationService from './services/githubauth.service';
 import TravisAuthenticationService from './services/travisauth.service';
+import HerokuAuthService from './services/herokuauth.service';
 
 // Get various configuration details
 const emailFromAddress = config.get('email.from');
@@ -77,6 +79,11 @@ const travisAuthenticationService = new TravisAuthenticationService(
   userService,
   getActiveLogger()
 );
+const herokuAuthenticationService = new HerokuAuthService(
+  sequelize.HerokuToken,
+  userService,
+  getActiveLogger()
+);
 
 auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);
@@ -88,6 +95,7 @@ invites.setDependencies(inviteService, userService, projectService, emailService
 tools.setDependencies(toolsService);
 githubauth.setDependencies(githubAuthenticationService);
 travisauth.setDependencies(travisAuthenticationService);
+herokuauth.setDependencies(herokuAuthenticationService);
 // end dependency injections //
 
 // API ENDPOINTS //
@@ -103,7 +111,8 @@ app.use('/api/v1', [
   invites.router,
   tools.router,
   githubauth.router,
-  travisauth.router
+  travisauth.router,
+  herokuauth.router
 ]);
 // END API ENDPOINTS //
 

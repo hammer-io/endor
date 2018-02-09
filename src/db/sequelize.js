@@ -248,6 +248,25 @@ function initManually(database, username, password, options) {
   });
   TravisToken.belongsToMany(User, { as: 'owner', through: 'travisTokenOwner' });
   User.belongsToMany(TravisToken, { as: 'travisToken', through: 'travisTokenOwner' });
+
+  const HerokuToken = model.define('herokuToken', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4
+    },
+    token: STRING(2000)
+  });
+
+  const HerokuTokenOwner = model.define('herokuTokenOwner', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4
+    }
+  });
+  HerokuToken.belongsToMany(User, { as: 'owner', through: 'herokuTokenOwner' });
+  User.belongsToMany(HerokuToken, { as: 'herokuToken', through: 'herokuTokenOwner' });
   // --------------------------- MODEL DEFINITION END ---------------------------
 
   // Model Instance
@@ -268,6 +287,8 @@ function initManually(database, username, password, options) {
   module.exports.GithubTokenOwner = GithubTokenOwner;
   module.exports.TravisToken = TravisToken;
   module.exports.TravisTokenOwner = TravisTokenOwner;
+  module.exports.HerokuToken = HerokuToken;
+  module.exports.HerokuTokenOwner = HerokuTokenOwner;
 }
 
 function initWithConfigs() {

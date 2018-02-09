@@ -2,8 +2,8 @@
 import express from 'express';
 
 import * as authController from '../controllers/auth.controller';
-import * as travisAuthController from '../controllers/travisauth.controller';
-import * as travisAuthValidator from '../middlewares/travisauth.middleware';
+import * as herokuAuthAuthController from '../controllers/herokuauth.controller';
+import * as herokuAuthValidator from '../middlewares/herokuauth.middlware';
 
 export const router = express.Router();
 
@@ -24,7 +24,11 @@ export const router = express.Router();
  *  "isHerokuAuthenticated": true
  * }
  */
-router.get('/auth/heroku', authController.isAuthenticated, travisAuthController.checkIfUserIsAuthenticatedOnTravis);
+router.get(
+  '/auth/heroku',
+  authController.isAuthenticated,
+  herokuAuthAuthController.checkIfUserIsAuthenticatedOnHeroku
+);
 
 /**
  * @api {POST} /auth/heroku Add Heroku Authentication Token
@@ -45,8 +49,8 @@ router.get('/auth/heroku', authController.isAuthenticated, travisAuthController.
 router.post(
   '/auth/heroku',
   authController.isAuthenticated,
-  travisAuthValidator.checkIsValidRequest(),
-  travisAuthController.addTravisTokenForUser
+  herokuAuthValidator.checkIsValidRequest(),
+  herokuAuthAuthController.addHerokuTokenForUser
 );
 
 /**
@@ -68,8 +72,8 @@ router.post(
 router.put(
   '/auth/heroku',
   authController.isAuthenticated,
-  travisAuthValidator.checkIsValidRequest,
-  travisAuthController.updateTravisTokenForUser
+  herokuAuthValidator.checkIsValidRequest(),
+  herokuAuthAuthController.updateHerokuTokenForUser
 );
 
 /**
@@ -84,9 +88,9 @@ router.put(
 router.delete(
   '/auth/heroku',
   authController.isAuthenticated,
-  travisAuthController.deleteTravisTokenForUser
+  herokuAuthAuthController.deleteHerokuTokenForUser
 );
 
 export function setDependencies(newHerokuAuthService) {
-  travisAuthController.setDependencies(newHerokuAuthService);
+  herokuAuthAuthController.setDependencies(newHerokuAuthService);
 }
