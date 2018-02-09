@@ -70,6 +70,7 @@ export async function getProjectsByUser(req, res, next) {
  */
 export async function getProjectById(req, res, next) {
   const projectId = req.params.projectId;
+
   try {
     const project = await projectService.getProjectById(projectId);
     res.send(project);
