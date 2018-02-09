@@ -221,7 +221,6 @@ function initManually(database, username, password, options) {
   });
 
   const GithubTokenOwner = model.define('githubTokenOwner', {
-    // ASSOCIATIONS DEFINED BELOW
     id: {
       primaryKey: true,
       type: UUID,
@@ -231,6 +230,24 @@ function initManually(database, username, password, options) {
   GithubToken.belongsToMany(User, { as: 'owner', through: 'githubTokenOwner' });
   User.belongsToMany(GithubToken, { as: 'githubToken', through: 'githubTokenOwner' });
 
+  const TravisToken = model.define('travisToken', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4
+    },
+    token: STRING(2000)
+  });
+
+  const TravisTokenOwner = model.define('travisTokenOwner', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4
+    }
+  });
+  TravisToken.belongsToMany(User, { as: 'owner', through: 'travisTokenOwner' });
+  User.belongsToMany(TravisToken, { as: 'travisToken', through: 'travisTokenOwner' });
   // --------------------------- MODEL DEFINITION END ---------------------------
 
   // Model Instance
@@ -249,6 +266,8 @@ function initManually(database, username, password, options) {
   module.exports.ProjectContributor = ProjectContributor;
   module.exports.GithubToken = GithubToken;
   module.exports.GithubTokenOwner = GithubTokenOwner;
+  module.exports.TravisToken = TravisToken;
+  module.exports.TravisTokenOwner = TravisTokenOwner;
 }
 
 function initWithConfigs() {

@@ -10,7 +10,7 @@ import config from 'config';
 
 import * as auth from './routes/auth.routes';
 import * as githubauth from './routes/githubauth.routes';
-
+import * as travisauth from './routes/travisauth.routes';
 import * as client from './routes/client.routes';
 import index from './routes/index.routes';
 import * as projects from './routes/projects.routes';
@@ -29,6 +29,7 @@ import ClientService from './services/client.service';
 import EmailService from './services/email.service';
 import ToolsService from './services/tools.service';
 import GithubAuthenticationService from './services/githubauth.service';
+import TravisAuthenticationService from './services/travisauth.service';
 
 // Get various configuration details
 const emailFromAddress = config.get('email.from');
@@ -71,6 +72,12 @@ const githubAuthenticationService = new GithubAuthenticationService(
   userService,
   getActiveLogger()
 );
+const travisAuthenticationService = new TravisAuthenticationService(
+  sequelize.TravisToken,
+  userService,
+  getActiveLogger()
+);
+
 auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);
 projects.setProjectService(projectService);
@@ -80,6 +87,7 @@ owners.setDependencies(projectService);
 invites.setDependencies(inviteService, userService, projectService, emailService);
 tools.setDependencies(toolsService);
 githubauth.setDependencies(githubAuthenticationService);
+travisauth.setDependencies(travisAuthenticationService);
 // end dependency injections //
 
 // API ENDPOINTS //
@@ -94,7 +102,8 @@ app.use('/api/v1', [
   owners.router,
   invites.router,
   tools.router,
-  githubauth.router
+  githubauth.router,
+  travisauth.router
 ]);
 // END API ENDPOINTS //
 
