@@ -123,7 +123,7 @@ export default class ProjectService {
     this.log.info(`ProjectService: check if user ${user} is an owner on project with id ${projectId}`);
     const projectOwners = await this.getOwnersByProjectId(projectId);
     const filteredOwners = projectOwners.filter(userObject =>
-      userObject.id === parseInt(user, 10) || userObject.username === user);
+      userObject.id === user || userObject.username === user);
 
     return filteredOwners.length > 0;
   }
