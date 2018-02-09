@@ -1,24 +1,17 @@
 import { expect } from 'chai';
 
+import sequelize from '../../src/db/sequelize';
+import InviteService from '../../src/services/invites.service';
+import { assertInvite } from '../util/assertions';
 import { defineTables } from '../../src/db/init_database';
 import { populateUsers, populateProjects, populateInvites } from '../../src/db/import_test_data';
-// Using Expect style
-const sequelize = require('../../src/db/sequelize');
-import InviteService from '../../src/services/invites.service';
 import { getMockLogger } from '../util/mockLogger';
 
+// Initialize the data model
+sequelize.initSequelize();
 const InviteStatus = sequelize.InviteStatus;
 
-sequelize.initSequelize();
-
 const inviteService = new InviteService(sequelize.Invite, getMockLogger());
-
-function assertInvite(actual, expected) {
-  expect(actual.status).to.equal(expected.status);
-  expect(actual.daysFromCreationUntilExpiration).to.equal(expected.days);
-  expect(actual.userInvitedId).to.equal(expected.userId);
-  expect(actual.projectInvitedToId).to.equal(expected.projectId);
-}
 
 describe('Testing Invite Service', () => {
   beforeEach(async () => {
