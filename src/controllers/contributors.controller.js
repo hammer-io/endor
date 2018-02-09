@@ -12,7 +12,7 @@ let projectService = {};
  */
 export async function getContributorsByProjectId(req, res, next) {
   try {
-    const projectId = req.params.id;
+    const projectId = req.params.projectId;
     const contributors = await projectService.getContributorsByProjectId(projectId);
     res.send(contributors);
   } catch (error) {
@@ -28,7 +28,7 @@ export async function getContributorsByProjectId(req, res, next) {
  */
 export async function checkIfUserIsContributor(req, res, next) {
   try {
-    const projectId = req.params.id;
+    const projectId = req.params.projectId;
     const user = req.params.user;
     const isUserAContributor =
       await projectService.checkIfUserIsContributorOnProject(projectId, user);
@@ -36,7 +36,7 @@ export async function checkIfUserIsContributor(req, res, next) {
     if (isUserAContributor) {
       responseHelper.noContent(res);
     } else {
-      throw new ContributorNotFoundException(`User ${projectId} not found as a contributor on project with id ${projectId}`);
+      throw new ContributorNotFoundException(`User ${user} not found as a contributor on project with id ${projectId}`);
     }
   } catch (error) {
     next(error);
