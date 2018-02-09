@@ -1,22 +1,22 @@
 import * as encryptUtil from '../utils/encryption';
-import TravisTokenNotFoundException from '../error/TravisTokenNotFoundException';
+import HerokuTokenNotFoundException from '../error/HerokuTokenNotFoundException';
 
-export default class TravisAuthenticationService {
-  constructor(travisTokenRepository, userService, logger) {
-    this.travisTokenRepository = travisTokenRepository;
+export default class HerokuAuthService {
+  constructor(herokuTokenRepository, userService, logger) {
+    this.herokuTokenRepository = herokuTokenRepository;
     this.userService = userService;
     this.log = logger;
   }
 
   /**
-   * Checks if the user is authenticated on Travis. If the user is not authenticated, then it
+   * Checks if the user is authenticated on Heroku. If the user is not authenticated, then it
    * will return false. Otherwise, return true. If the user is not authenticated, it will delete
    * the token if it currently exists.
    * @param userId
    * @returns {Boolean} returns true if the user is authenticated, false otherwise.
    */
-  async checkIfUserIsAuthenticatedOnTravis(userId) {
-    const token = await this.getTravisTokenForUser(userId);
+  async checkIfUserIsAuthenticatedOnHeroku(userId) {
+    const token = await this.getHerokuTokenForUser(userId);
     if (token) {
       return true;
     }
@@ -25,14 +25,14 @@ export default class TravisAuthenticationService {
   }
 
   /**
-   * Gets the Travis token a user. If the token exists, it will return the token, otherwise it
-   * will reutrn null.
+   * Gets the Heroku token a user. If the token exists, it will return the token, otherwise it
+   * will return null.
    * @param userId the user id to get the token for
    * @returns {Object} the token or null
    */
-  async getTravisTokenForUser(userId) {
+  async getHerokuTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getTravisToken();
+    const token = await user.getHerokuToken();
     if (token) {
       return token[0];
     }
@@ -41,18 +41,18 @@ export default class TravisAuthenticationService {
   }
 
   /**
-   * Adds the Travis token for a user. If the user already has a token, it will update the
+   * Adds the Heroku token for a user. If the user already has a token, it will update the
    * existing one. If the user does not have a token, it will create a new token.
    * @param userId the user id to create a token for
    * @param token the token to create
    * @returns {Object} the token that was created or updated.
    */
-  async addTravisTokenForUser(userId, token) {
+  async addHerokuTokenForUser(userId, token) {
     const user = await this.userService.getUserByIdOrUsername(userId);
 
-    const isTokenExisting = await this.getTravisTokenForUser(userId);
+    const isTokenExisting = await this.getHerokuTokenForUser(userId);
     if (isTokenExisting) {
-      const updatedToken = await this.updateTravisTokenForUser(userId, token);
+      const updatedToken = await this.updateHerokuTokenForUser(userId, token);
       return updatedToken;
     }
 
@@ -60,21 +60,21 @@ export default class TravisAuthenticationService {
       token: encryptUtil.encrypt(token.toString())
     };
 
-    const tokenCreated = await this.travisTokenRepository.create(tokenToBeCreated);
-    await user.addTravisToken(tokenCreated);
+    const tokenCreated = await this.herokuTokenRepository.create(tokenToBeCreated);
+    await user.addHerokuToken(tokenCreated);
     return tokenCreated;
   }
 
   /**
-   * Updates the Travis token for a user.
+   * Updates the Heroku token for a user.
    * @param userId the user to update the token for
-   * @param newTokenValue the travis token to update
+   * @param newTokenValue the heroku token to update
    * @returns {Object} the updated token
    */
-  async updateTravisTokenForUser(userId, newTokenValue) {
-    const token = await this.getTravisTokenForUser(userId);
+  async updateHerokuTokenForUser(userId, newTokenValue) {
+    const token = await this.getHerokuTokenForUser(userId);
     if (!token) {
-      throw new TravisTokenNotFoundException(`Travis Token for user with id ${userId} does not exist.`);
+      throw new HerokuTokenNotFoundException(`Heroku Token for user with id ${userId} does not exist.`);
     }
 
     const tokenUpdated = token.update({ token: encryptUtil.encrypt(newTokenValue.toString()) });
@@ -85,8 +85,8 @@ export default class TravisAuthenticationService {
    * Deletes the token for the user
    * @param userId the user to delete the token for
    */
-  async deleteTravisTokenForUser(userId) {
-    const token = await this.getTravisTokenForUser(userId);
+  async deleteHerokuTokenForUser(userId) {
+    const token = await this.getHerokuTokenForUser(userId);
     await token.destroy();
   }
 }
