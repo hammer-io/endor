@@ -33,7 +33,6 @@ export async function checkIfUserIsOwner(req, res, next) {
     const user = req.params.user;
     const isUserAOwner =
       await projectService.checkIfUserIsOwnerOnProject(projectId, user);
-
     if (isUserAOwner) {
       responseHelper.noContent(res);
     } else {

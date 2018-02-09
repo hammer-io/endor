@@ -10,7 +10,7 @@ export const router = express.Router();
 let projectService = {};
 
 /**
- * @api {get} /projects/:id/contributors Get contributors for a project
+ * @api {get} /projects/:projectId/contributors Get contributors for a project
  * @apiVersion 1.0.0
  * @apiName get contributors
  * @apiGroup Contributors
@@ -40,10 +40,10 @@ let projectService = {};
      }
     ]
  */
-router.get('/projects/:id/contributors', authController.isAuthenticated, contributorsController.getContributorsByProjectId);
+router.get('/projects/:projectId/contributors', authController.isAuthenticated, contributorsController.getContributorsByProjectId);
 
 /**
- * @api {get} /projects/:id/contributors/:user Check if a user is a contributor
+ * @api {get} /projects/:projectId/contributors/:user Check if a user is a contributor
  * @apiVersion 1.0.0
  * @apiName check if project is contributor
  * @apiGroup Contributors
@@ -60,10 +60,10 @@ router.get('/projects/:id/contributors', authController.isAuthenticated, contrib
  * @apiErrorExample {json} Error-Response
  * Status: 404 Not Found
  */
-router.get('/projects/:id/contributors/:user', authController.isAuthenticated, contributorsController.checkIfUserIsContributor);
+router.get('/projects/:projectId/contributors/:user', authController.isAuthenticated, contributorsController.checkIfUserIsContributor);
 
 /**
- * @api {post} /projects/:id/contributors/:user Add contributor to project
+ * @api {post} /projects/:projectId/contributors/:user Add contributor to project
  * @apiVersion 1.0.0
  * @apiName add contributor to project
  * @apiGroup Contributors
@@ -102,7 +102,7 @@ router.post(
 );
 
 /**
- * @api {delete} /projects/:id/contributors/:user Remove contributor from project
+ * @api {delete} /projects/:projectId/contributors/:user Remove contributor from project
  * @apiVersion 1.0.0
  * @apiName remove contributor from project
  * @apiGroup Contributors

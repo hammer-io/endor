@@ -108,7 +108,7 @@ export default class ProjectService {
     this.log.info(`ProjectServiceL check if user ${user} is an contributor on project with id ${projectId}`);
     const projectContributors = await this.getContributorsByProjectId(projectId);
     const filteredContributors = projectContributors.filter(userObject =>
-      userObject.id === parseInt(user, 10) || userObject.username === user);
+      userObject.id === user || userObject.username === user);
 
     return filteredContributors.length > 0;
   }

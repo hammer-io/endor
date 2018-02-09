@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import UnauthorizedException from '../error/UnauthorizedException';
 
 let projectService = {};
@@ -13,7 +14,7 @@ let projectService = {};
  */
 export async function ownerLevelAuthorization(req, res, next) {
   const authenticatedUser = req.user.id;
-  const { projectId } = req.params;
+  const projectId = req.params.projectId;
 
   try {
     const owners = await projectService.getOwnersByProjectId(projectId);
@@ -38,7 +39,7 @@ export async function ownerLevelAuthorization(req, res, next) {
  */
 export async function contributorLevelAuthorization(req, res, next) {
   const authenticatedUser = req.user.id;
-  const { projectId } = req.params;
+  const projectId = req.params.projectId;
 
   try {
     const { contributors, owners } = await projectService.getContributorsAndOwners(projectId);
