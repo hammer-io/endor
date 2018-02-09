@@ -24,14 +24,14 @@ export function setDependencies(inviteService, userService, projectService, emai
 }
 
 /**
- * @api {get} /projects/:id/invites Get all contributor invitations for a project
+ * @api {get} /projects/:projectId/invites Get all contributor invitations for a project
  * @apiVersion 1.0.0
  * @apiName get invites
  * @apiGroup Invites
  *
  * @apiPermission project owner
  *
- * @apiParam {String} id the id of the project to get contributor invites to
+ * @apiParam {String} projectId the id of the project to get contributor invites to
  * @apiParam {String} [status] the status to filter results by.
  *   May be one of the following: `['open','accepted','declined','rescinded','expired']`
  *
@@ -191,7 +191,7 @@ router.put('/invites/:id/decline', authController.isAuthenticated, invitesContro
  }
  */
 router.put(
-  '/invites/:projectId/rescind',
+  '/invites/:id/rescind',
   authController.isAuthenticated,
   projectAuth.ownerLevelAuthorization,
   invitesController.rescindInvite

@@ -19,8 +19,9 @@ export async function ownerLevelAuthorization(req, res, next) {
     const owners = await projectService.getOwnersByProjectId(projectId);
     if (owners.filter(owner => owner.id === authenticatedUser).length !== 1) {
       res.status(401).send(new UnauthorizedException('The user is unauthorized to perform this action'));
+    } else {
+      next();
     }
-    next();
   } catch (err) {
     res.status(401).send(new UnauthorizedException('The user is unauthorized to perform this action'));
   }
@@ -44,8 +45,9 @@ export async function contributorLevelAuthorization(req, res, next) {
     if (owners.filter(owner => owner.id === authenticatedUser).length !== 1
       || contributors.filter(contributor => contributor.id === authenticatedUser).length !== 1) {
       res.status(401).send(new UnauthorizedException('The user is unauthorized to perform this action'));
+    } else {
+      next();
     }
-    next();
   } catch (err) {
     res.status(401).send(new UnauthorizedException('The user is unauthorized to perform this action'));
   }

@@ -39,7 +39,7 @@ export function setEmailService(newEmailService) {
 }
 
 /**
- * Handles the GET /projects/:id/invites endpoint
+ * Handles the GET /projects/:projectId/invites endpoint
  * @param req the request
  * @param res the response
  * @param next the next middleware
@@ -123,7 +123,7 @@ export async function addInviteToProject(req, res, next) {
  */
 async function updateInvite(req, res, next, status) {
   try {
-    const inviteId = req.params.projectId;
+    const inviteId = req.params.id;
     const updatedInvite = await inviteService.updateInvite(inviteId, status);
 
     res.status(201).send(updatedInvite);
