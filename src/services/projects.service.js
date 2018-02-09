@@ -120,7 +120,7 @@ export default class ProjectService {
    * @returns {Boolean} true if the user is a owner, false if not
    */
   async checkIfUserIsOwnerOnProject(projectId, user) {
-    this.log.info(`ProjectServiceL check if user ${user} is an owner on project with id ${projectId}`);
+    this.log.info(`ProjectService: check if user ${user} is an owner on project with id ${projectId}`);
     const projectOwners = await this.getOwnersByProjectId(projectId);
     const filteredOwners = projectOwners.filter(userObject =>
       userObject.id === parseInt(user, 10) || userObject.username === user);
