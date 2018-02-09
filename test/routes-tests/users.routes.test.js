@@ -3,10 +3,10 @@ let chaiHttp = require('chai-http');
 
 // Using Expect style
 
-import server from './../src/index';
-import * as apiUtil from './util/api.util';
-import { defineTables } from '../src/db/init_database';
-import {  populateClients, populateUsers, populateAccessCodes, populateTokens } from '../src/db/import_test_data';
+import server from '../../src/index';
+import * as apiUtil from '../util/api.util';
+import { defineTables } from '../../src/db/init_database';
+import {  populateClients, populateUsers, populateAccessCodes, populateTokens } from '../../src/db/import_test_data';
 
 chai.use(chaiHttp);
 const should = chai.should();

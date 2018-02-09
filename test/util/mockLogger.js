@@ -1,4 +1,4 @@
-import { getActiveLogger } from '../dist/utils/winston';
+import { getActiveLogger } from '../../dist/utils/winston';
 
 // Doesn't do anything
 function doNothing() {}

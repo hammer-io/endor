@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 
 // Using Expect style
-const sequelize = require('../src/db/sequelize');
-import { defineTables } from '../src/db/init_database';
-import { populateClients, populateUsers } from '../src/db/import_test_data';
+const sequelize = require('../../src/db/sequelize');
+import { defineTables } from '../../src/db/init_database';
+import { populateClients, populateUsers } from '../../src/db/import_test_data';
 
-import ClientService from './../src/services/client.service';
-import { getMockLogger } from './mockLogger';
+import ClientService from '../../src/services/client.service';
+import { getMockLogger } from '../util/mockLogger';
 
 sequelize.initSequelize();
 

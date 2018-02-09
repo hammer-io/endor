@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import nodemailer from 'nodemailer';
 
-const sequelize = require('../src/db/sequelize');
-import { defineTables } from '../src/db/init_database';
-import { populateUsers, populateProjects, populateInvites } from '../src/db/import_test_data';
-import * as emailUtil from './util/email';
-import EmailService from '../src/services/email.service';
-import { getMockLogger } from './mockLogger';
+const sequelize = require('../../src/db/sequelize');
+import { defineTables } from '../../src/db/init_database';
+import { populateUsers, populateProjects, populateInvites } from '../../src/db/import_test_data';
+import * as emailUtil from '../util/email';
+import EmailService from '../../src/services/email.service';
+import { getMockLogger } from '../util/mockLogger';
 
 const InviteStatus = sequelize.InviteStatus;
 

@@ -1,10 +1,10 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 
-import server from './../src/index';
-import * as apiUtil from './util/api.util';
-import { defineTables } from '../src/db/init_database';
-import { populateClients, populateUsers } from '../src/db/import_test_data';
+import server from '../../src/index';
+import * as apiUtil from '../util/api.util';
+import { defineTables } from '../../src/db/init_database';
+import { populateClients, populateUsers } from '../../src/db/import_test_data';
 
 chai.use(chaiHttp);
 const should = chai.should();

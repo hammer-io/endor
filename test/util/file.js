@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { getMockLogger } from '../mockLogger';
+import { getMockLogger } from './mockLogger';
 
 const log = getMockLogger();
 

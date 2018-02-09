@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 
-import { defineTables } from '../src/db/init_database';
-import { populateUsers, populateProjects, populateInvites } from '../src/db/import_test_data';
+import { defineTables } from '../../src/db/init_database';
+import { populateUsers, populateProjects, populateInvites } from '../../src/db/import_test_data';
 // Using Expect style
-const sequelize = require('../src/db/sequelize');
-import InviteService from './../src/services/invites.service';
-import { getMockLogger } from './mockLogger';
+const sequelize = require('../../src/db/sequelize');
+import InviteService from '../../src/services/invites.service';
+import { getMockLogger } from '../util/mockLogger';
 
 const InviteStatus = sequelize.InviteStatus;
 

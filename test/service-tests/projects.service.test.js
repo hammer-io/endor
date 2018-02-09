@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 
 // Using Expect style
-const sequelize = require('../src/db/sequelize');
-import UserService from './../src/services/users.service';
-import { getMockLogger } from './mockLogger';
-import ProjectService from '../src/services/projects.service';
-import { defineTables, populateTools } from '../src/db/init_database';
-import { populateUsers, populateProjects } from '../src/db/import_test_data';
+const sequelize = require('../../src/db/sequelize');
+import UserService from '../../src/services/users.service';
+import { getMockLogger } from '../util/mockLogger';
+import ProjectService from '../../src/services/projects.service';
+import { defineTables, populateTools } from '../../src/db/init_database';
+import { populateUsers, populateProjects } from '../../src/db/import_test_data';
 
 sequelize.initSequelize();
 
