@@ -127,8 +127,10 @@ async function updateInvite(req, res, next, status) {
     const updatedInvite = await inviteService.updateInvite(inviteId, status);
 
     res.status(201).send(updatedInvite);
+    return updatedInvite;
   } catch (error) {
     next(error);
+    return false;
   }
 }
 
@@ -139,7 +141,14 @@ async function updateInvite(req, res, next, status) {
  * @param next the next middleware
  */
 export async function acceptInvite(req, res, next) {
-  return updateInvite(req, res, next, InviteStatus.ACCEPTED);
+  const updatedInvite = await updateInvite(req, res, next, InviteStatus.ACCEPTED);
+  if (updatedInvite) {
+    await projectService.addContributorToProject(
+      updatedInvite.projectInvitedToId,
+      updatedInvite.userInvitedId
+    );
+  }
+  return updatedInvite;
 }
 
 /**
