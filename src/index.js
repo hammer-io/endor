@@ -63,17 +63,23 @@ app.use(session({
 
 // dependency injections //
 const userService = new UserService(sequelize.User, sequelize.Credentials, getActiveLogger());
-const projectService = new ProjectService(sequelize.Project, userService, getActiveLogger());
-const inviteService = new InviteService(sequelize.Invite, getActiveLogger());
-const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getActiveLogger());
-const clientService = new ClientService(sequelize.Client, getActiveLogger());
-const emailService = new EmailService(emailFromAddress, getActiveLogger(), emailTransportOptions);
-const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
 const githubAuthenticationService = new GithubAuthenticationService(
   sequelize.GithubToken,
   userService,
   getActiveLogger()
 );
+const projectService = new ProjectService(
+  sequelize.Project,
+  userService,
+  githubAuthenticationService,
+  getActiveLogger()
+);
+const inviteService = new InviteService(sequelize.Invite, getActiveLogger());
+const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getActiveLogger());
+const clientService = new ClientService(sequelize.Client, getActiveLogger());
+const emailService = new EmailService(emailFromAddress, getActiveLogger(), emailTransportOptions);
+const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
+
 const travisAuthenticationService = new TravisAuthenticationService(
   sequelize.TravisToken,
   userService,
