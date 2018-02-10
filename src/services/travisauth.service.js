@@ -25,12 +25,27 @@ export default class TravisAuthenticationService {
   }
 
   /**
+   * Gets the decrypted travis token for the user
+   * @param userId the user id to get the token for
+   * @returns {String} the token or null
+   */
+  async getTravisTokenForUser(userId) {
+    const user = await this.userService.getUserByIdOrUsername(userId);
+    const token = await user.getTravisToken();
+    if (token) {
+      return encryptUtil.decrypt(token[0].token);
+    }
+
+    return null;
+  }
+
+  /**
    * Gets the Travis token a user. If the token exists, it will return the token, otherwise it
    * will reutrn null.
    * @param userId the user id to get the token for
    * @returns {Object} the token or null
    */
-  async getTravisTokenForUser(userId) {
+  async getSequelizeTravisTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getTravisToken();
     if (token) {
@@ -50,7 +65,7 @@ export default class TravisAuthenticationService {
   async addTravisTokenForUser(userId, token) {
     const user = await this.userService.getUserByIdOrUsername(userId);
 
-    const isTokenExisting = await this.getTravisTokenForUser(userId);
+    const isTokenExisting = await this.getSequelizeTravisTokenForUser(userId);
     if (isTokenExisting) {
       const updatedToken = await this.updateTravisTokenForUser(userId, token);
       return updatedToken;
@@ -72,7 +87,7 @@ export default class TravisAuthenticationService {
    * @returns {Object} the updated token
    */
   async updateTravisTokenForUser(userId, newTokenValue) {
-    const token = await this.getTravisTokenForUser(userId);
+    const token = await this.getSequelizeTravisTokenForUser(userId);
     if (!token) {
       throw new TravisTokenNotFoundException(`Travis Token for user with id ${userId} does not exist.`);
     }
@@ -86,7 +101,7 @@ export default class TravisAuthenticationService {
    * @param userId the user to delete the token for
    */
   async deleteTravisTokenForUser(userId) {
-    const token = await this.getTravisTokenForUser(userId);
+    const token = await this.getSequelizeTravisTokenForUser(userId);
     await token.destroy();
   }
 }
