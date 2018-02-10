@@ -375,6 +375,127 @@ router.delete(
 );
 
 /**
+ * @api {get} /projects/:projectId/issues Get issues for project
+ * @apiVersion 1.0.0
+ * @apiName get issues for project
+ * @apiGroup Projects
+ *
+ * @apiHeader Authorization Basic Auth-Token
+ * @apiPermission Authenticated User
+ *
+ * @apiParam {String} projectId the projectId
+ * @apiParam {String} state filter by the state of issue, can be 'open', 'close', or 'all'
+ * @apiParam {String} limit set a limit of how many issues can be returned
+ *
+ * @apiSuccess {Object[]} response an array of issues, below are the fields
+ * @apiSuccess {String} url the url to the issue
+ * @apiSuccess {String} number the issue number
+ * @apiSuccess {String} user the user who opened the issue
+ * @apiSuccess {String} state the state of the issue, either opened or closed
+ * @apiSuccess {String} title the title of the issue
+ * @apiSuccess {String} description the description of the issue
+ * @apiSuccess {String} created_at_date the date the issue was created
+ * @apiSuccess {String} closed_at_date the date the issue was closed, null if it hasn't been closed
+ *
+ * @apiSuccessExample {json} Success-Response:
+ * [
+ {
+     "url": "https://api.github.com/repos/owner/repo/issues/issueNumber",
+     "number": 1,
+     "user": "username",
+     "state": "open",
+     "title": "the title goes here",
+     "description": "the description goes here",
+     "created_at_date": "2018-02-09T16:10:58Z",
+     "closed_at_date": null
+  }
+ ]
+ */
+router.get(
+  '/projects/:projectId/issues',
+  authController.isAuthenticated,
+  projectController.getIssuesForProject
+);
+
+/**
+ * @api {get} /projects/:projectId/pullrequests Get pull requests for project
+ * @apiVersion 1.0.0
+ * @apiName get pull requests for project
+ * @apiGroup Projects
+ *
+ * @apiHeader Authorization Basic Auth-Token
+ * @apiPermission Authenticated User
+ *
+ * @apiParam {String} projectId the projectId
+ * @apiParam {String} state filter by the state of pull requests, can be 'open', 'close', or 'all'
+ * @apiParam {String} limit set a limit of how many pull requests can be returned
+ *
+ * @apiSuccess {Object[]} response an array of pull requests, below are the fields
+ * @apiSuccess {String} url the url to the pull requests
+ * @apiSuccess {String} number the pull requests number
+ * @apiSuccess {String} user the user who opened the pull requests
+ * @apiSuccess {String} state the state of the pull requests, either opened or closed
+ * @apiSuccess {String} title the title of the pull requests
+ * @apiSuccess {String} description the description of the pull requests
+ * @apiSuccess {String} created_at_date the date the pull requests was created
+ * @apiSuccess {String} closed_at_date the date the pull requests was closed, null if it hasn't been
+ * closed
+ *
+ * @apiSuccessExample {json} Success-Response:
+ * [
+ {
+     "url": "https://api.github.com/repos/owner/repo/pulls/number",
+     "number": 1,
+     "user": "username",
+     "state": "open",
+     "title": "the title goes here",
+     "description": "the description goes here",
+     "created_at_date": "2018-02-09T16:10:58Z",
+     "closed_at_date": null
+  }
+ ]
+ */
+router.get(
+  '/projects/:projectId/pullrequests',
+  authController.isAuthenticated,
+  projectController.getPullRequestsForProject
+);
+
+/**
+ * @api {get} /projects/:projectId/pullrequests Get pull requests for project
+ * @apiVersion 1.0.0
+ * @apiName get pull requests for project
+ * @apiGroup Projects
+ *
+ * @apiHeader Authorization Basic Auth-Token
+ * @apiPermission Authenticated User
+ *
+ * @apiParam {String} projectId the projectId
+ * @apiParam {String} limit set a limit of how many pull requests can be returned
+ *
+ * @apiSuccess {Object[]} response an array of commits, below are the fields
+ * @apiSuccess {String} message the commit message
+ * @apiSuccess {String} user the username who made the commit
+ * @apiSuccess {String} date the date of the commit
+ * @apiSuccess {String} url the url to the commit
+ *
+ * @apiSuccessExample {json} Success-Response:
+ * [
+   {
+     "message": "the commit message",
+     "user": "username",
+     "date": "2018-02-09T03:45:28Z",
+     "url": "url to the commit"
+    }
+ ]
+ */
+router.get(
+  '/projects/:projectId/commits',
+  authController.isAuthenticated,
+  projectController.getCommitsForProject
+);
+
+/**
  * Sets the project service dependency for the controller
  * @param newProjectService the project service dependency
  */

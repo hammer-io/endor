@@ -1,4 +1,5 @@
 import ProjectNotFoundException from '../error/ProjectNotFoundException';
+import * as githubService from './github.service';
 
 export default class ProjectService {
   /**
@@ -6,11 +7,13 @@ export default class ProjectService {
    * @param projectRepository the project data source to inject (more than likely something from
    * sequalize)
    * @param userService the user service to inject
+   * @param githubAuthService the github authentication service
    * @param log the logging mechanism to inject
    */
-  constructor(projectRepository, userService, log) {
+  constructor(projectRepository, userService, githubAuthService, log) {
     this.userService = userService;
     this.projectRepository = projectRepository;
+    this.githubAuthService = githubAuthService;
     this.log = log;
   }
 
@@ -229,7 +232,7 @@ export default class ProjectService {
    * Removes a user as a contributor from a project
    * @param projectId the project to remove the contributor from
    * @param user the user to remove
-   * @returns {Object[]} the contributors of that project after deletion
+   * @returns {Array} the contributors of that project after deletion
    */
   async deleteContributorFromProject(projectId, user) {
     this.log.info(`ProjectService: delete contributor ${user} from project with id ${projectId}`);
@@ -242,10 +245,10 @@ export default class ProjectService {
   }
 
   /**
-   * Deletes the owners from a project
-   * @param projectId the project id to remove an owner from
-   * @param user the user to remove
-   * @returns {Object[]} the owners after deletion
+   * Deletes the owner from a project
+   * @param projectId the project id
+   * @param user the owner to delete
+   * @returns {Promise<Object[]>} the project owners
    */
   async deleteOwnerFromProject(projectId, user) {
     this.log.info(`ProjectService: delete contributor ${user} from project with id ${projectId}`);
@@ -254,5 +257,57 @@ export default class ProjectService {
     const userFound = await this.userService.getUserByIdOrUsername(user);
     await project.removeOwners(userFound);
     return project.getOwners();
+  }
+
+  /**
+   * Gets the issues for a project
+   * @param projectId the project id to get issues for
+   * @param state the state of the issues, should be 'open', 'closed', 'all'
+   * @param userId the user
+   * @returns {Promise<Object[]>} the issues for the project
+   */
+  async getIssuesForProject(projectId, state, userId) {
+    this.log.info(`ProjectService: getting issues for project with id ${projectId}`);
+    const project = await this.getProjectById(projectId);
+    const projectName = project.githubRepositoryName;
+    const token = await this.githubAuthService.getGithubTokenForUser(userId);
+
+    const issues = await githubService.getIssuesForRepository(projectName, state, token);
+    return issues;
+  }
+
+  /**
+   * Gets the pull requests for a project
+   * @param projectId the project id to get pull requests for
+   * @param state the state of the pull requests, should be 'open', 'closed', 'all'
+   * @param userId the user
+   * @returns {Promise<Object[]>} the pull requests for the project
+   */
+  async getPullRequestsForProject(projectId, state, userId) {
+    this.log.info(`ProjectService: getting pull requests for project with id ${projectId}`);
+    const project = await this.getProjectById(projectId);
+    const projectName = project.githubRepositoryName;
+    const token = await this.githubAuthService.getGithubTokenForUser(userId);
+
+    const pullRequests =
+      await githubService.getPullRequestsForRepository(projectName, state, token);
+    return pullRequests;
+  }
+
+  /**
+   * Gets the commits for a project
+   * @param projectId the project id
+   * @param userId the user id
+   * @returns {Object[]} an array of commits
+   */
+  async getCommitsForProject(projectId, userId) {
+    this.log.info(`ProjectService: getting commits for project with id ${projectId}`);
+    const project = await this.getProjectById(projectId);
+    const projectName = project.githubRepositoryName;
+    const token = await this.githubAuthService.getGithubTokenForUser(userId);
+
+    const commits =
+      await githubService.getCommitsForRepository(projectName, token);
+    return commits;
   }
 }
