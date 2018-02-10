@@ -148,7 +148,10 @@ function initManually(database, username, password, options) {
     description: STRING(1024),
     version: STRING,
     license: STRING,
-    authors: STRING
+    authors: STRING,
+    githubRepositoryName: STRING,
+    travisRepositoryName: STRING,
+    herokuApplicationName: STRING
   }, {
     paranoid: true
   });
