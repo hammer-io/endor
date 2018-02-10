@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-expressions,no-param-reassign */
 import ProjectNotFoundException from '../error/ProjectNotFoundException';
 import * as githubService from './github.service';
+import * as travisService from './travis.service';
 
 export default class ProjectService {
   /**
@@ -8,12 +10,14 @@ export default class ProjectService {
    * sequalize)
    * @param userService the user service to inject
    * @param githubAuthService the github authentication service
+   * @param travisAuthService the travis authentication service
    * @param log the logging mechanism to inject
    */
-  constructor(projectRepository, userService, githubAuthService, log) {
+  constructor(projectRepository, userService, githubAuthService, travisAuthService, log) {
     this.userService = userService;
     this.projectRepository = projectRepository;
     this.githubAuthService = githubAuthService;
+    this.travisAuthService = travisAuthService;
     this.log = log;
   }
 
@@ -309,5 +313,14 @@ export default class ProjectService {
     const commits =
       await githubService.getCommitsForRepository(projectName, token);
     return commits;
+  }
+
+  async getBuildStatusesForProject(projectId, userId, branchName) {
+    this.log.info(`ProjectService: getting build statuses for project with id ${projectId}`);
+    const project = await this.getProjectById(projectId);
+    const projectName = project.travisRepositoryName;
+    const token = await this.travisAuthService.getTravisTokenForUser(userId);
+    const statuses = await travisService.getBuildStatusesForProject(projectName, token, branchName);
+    return statuses;
   }
 }
