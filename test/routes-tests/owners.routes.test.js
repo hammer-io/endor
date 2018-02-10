@@ -23,20 +23,20 @@ describe('Testing Owner Routes', () => {
   describe('POST /projects/:projectId/owners/:user', () => {
     it('should return the project with the newly added user among the owners', (done) => {
       chai.request(server)
-        .post(`${apiUtil.API}/projects/2/owners/3`)
+        .post(`${apiUtil.API}/projects/b2/owners/a3`)
         .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
         .send()
         .end((err, res) => {
           res.should.have.status(201);
           const projectOwners = res.body;
-          expect(projectOwners.filter(owner => owner.id === 3).length).to.equal(1);
+          expect(projectOwners.filter(owner => owner.id === 'a3').length).to.equal(1);
           done();
         });
     });
 
     it('should not return the project if the authenticated user is not among the project owners', (done) => {
       chai.request(server)
-        .post(`${apiUtil.API}/projects/2/owners/3`)
+        .post(`${apiUtil.API}/projects/b2/owners/a3`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send()
         .end((err, res) => {
@@ -47,7 +47,7 @@ describe('Testing Owner Routes', () => {
 
     it('should return a status 401 if there is no authorization header', (done) => {
       chai.request(server)
-        .post(`${apiUtil.API}/projects/2/owners/3`)
+        .post(`${apiUtil.API}/projects/b2/owners/a3`)
         .send()
         .end((err, res) => {
           res.should.have.status(401);
@@ -59,7 +59,7 @@ describe('Testing Owner Routes', () => {
   describe('DELETE /projects/:projectId/owners/:user', () => {
     it('should return a status of 204', (done) => {
       chai.request(server)
-        .delete(`${apiUtil.API}/projects/2/owners/2`)
+        .delete(`${apiUtil.API}/projects/b2/owners/a2`)
         .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
         .send()
         .end((err, res) => {
@@ -70,7 +70,7 @@ describe('Testing Owner Routes', () => {
 
     it('should return a status of 401 if the user is not an owner', (done) => {
       chai.request(server)
-        .delete(`${apiUtil.API}/projects/2/owners/2`)
+        .delete(`${apiUtil.API}/projects/b2/owners/a2`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send()
         .end((err, res) => {
@@ -81,7 +81,7 @@ describe('Testing Owner Routes', () => {
 
     it('should return a status 401 if there is no authorization header', (done) => {
       chai.request(server)
-        .post(`${apiUtil.API}/projects/2/owners/2`)
+        .post(`${apiUtil.API}/projects/b2/owners/a2`)
         .send()
         .end((err, res) => {
           res.should.have.status(401);

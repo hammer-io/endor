@@ -48,6 +48,6 @@ describe('Testing Email Service', () => {
       expect(results.accepted[0]).to.equal(user.email);
       expect(Array.isArray(results.rejected)).to.equal(true);
       expect(results.rejected.length).to.equal(0);
-    }).timeout(10000);
+    }).timeout(20000);
   });
 });

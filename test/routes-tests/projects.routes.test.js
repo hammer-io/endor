@@ -29,7 +29,7 @@ describe('Testing Project Routes', () => {
       };
 
       chai.request(server)
-        .patch(`${apiUtil.API}/projects/2`)
+        .patch(`${apiUtil.API}/projects/b2`)
         .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
         .send(body)
         .end((err, res) => {
@@ -50,7 +50,7 @@ describe('Testing Project Routes', () => {
       };
 
       chai.request(server)
-        .patch(`${apiUtil.API}/projects/2`)
+        .patch(`${apiUtil.API}/projects/b2`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send(body)
         .end((err, res) => {
@@ -65,7 +65,7 @@ describe('Testing Project Routes', () => {
       };
 
       chai.request(server)
-        .patch(`${apiUtil.API}/projects/2`)
+        .patch(`${apiUtil.API}/projects/b2`)
         .send(body)
         .end((err, res) => {
           res.should.have.status(401);
@@ -99,7 +99,7 @@ describe('Testing Project Routes', () => {
   describe('DELETE /projects/:projectId', () => {
     it('should delete a project and return 204 if the user has owner level permissions', (done) => {
       chai.request(server)
-        .delete(`${apiUtil.API}/projects/2`)
+        .delete(`${apiUtil.API}/projects/b2`)
         .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
         .send()
         .end((err, res) => {
@@ -110,7 +110,7 @@ describe('Testing Project Routes', () => {
 
     it('should not delete a project and return 204 if the user does not have owner level permissions', (done) => {
       chai.request(server)
-        .delete(`${apiUtil.API}/projects/2`)
+        .delete(`${apiUtil.API}/projects/b2`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send()
         .end((err, res) => {
@@ -121,7 +121,7 @@ describe('Testing Project Routes', () => {
 
     it('should not delete a project and return 403 if the user is not authenticated', (done) => {
       chai.request(server)
-        .delete(`${apiUtil.API}/projects/2`)
+        .delete(`${apiUtil.API}/projects/b2`)
         .send()
         .end((err, res) => {
           res.should.have.status(401);

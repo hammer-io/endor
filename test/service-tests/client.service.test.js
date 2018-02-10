@@ -73,7 +73,7 @@ describe('Testing Client Service', () => {
 
   describe('should find one client by its id', async () => {
     it('when given an existing id, find the correct client', async () => {
-      const client = await clientService.findOneClientById(1);
+      const client = await clientService.findOneClientById('c1');
       expect(client.name).to.equal('endor_frontend1');
       expect(client.clientId).to.equal('clientId');
       expect(client.secret).to.equal('client_secret');
@@ -81,7 +81,7 @@ describe('Testing Client Service', () => {
 
     it('when given an non existing id, throw a Not Found Exception', async () => {
       try {
-        const client = await clientService.findOneClientById(1000);
+        const client = await clientService.findOneClientById('c1000');
         expect(client).to.be.an('undefined');
       } catch (err) {
         expect(err.type).equal('Not Found');

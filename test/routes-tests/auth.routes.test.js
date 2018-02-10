@@ -37,7 +37,7 @@ describe('Testing Auth Routes', () => {
           expect(res.body).to.be.an('object');
           expect(res.body.access_token.expired).to.equal(false);
           expect(res.body.access_token.value).to.not.be.an('undefined');
-          expect(res.body.access_token.userId).to.equal(3);
+          expect(res.body.access_token.userId).to.equal('a3');
           expect(res.body.token_type).to.equal('Bearer');
           done();
         });
@@ -73,7 +73,7 @@ describe('Testing Auth Routes', () => {
           expect(res.body).to.be.an('object');
           expect(res.body.access_token.expired).to.equal(false);
           expect(res.body.access_token.value).to.not.be.an('undefined');
-          expect(res.body.access_token.userId).to.equal(3);
+          expect(res.body.access_token.userId).to.equal('a3');
           expect(res.body.token_type).to.equal('Bearer');
           done();
         });
