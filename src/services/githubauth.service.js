@@ -20,15 +20,14 @@ export default class GithubAuthenticationService {
    */
   async checkIfUserIsAuthenticatedOnGithub(userId) {
     const token = await this.getGithubTokenForUser(userId);
-
-    const isUserAuthenticated =
-      await githubService.isUserAuthenticated(token);
-
-    if (token && isUserAuthenticated) {
-      return true;
-    }
-
     if (token) {
+      const isUserAuthenticated =
+        await githubService.isUserAuthenticated(token);
+
+      if (isUserAuthenticated) {
+        return true;
+      }
+
       await this.deleteGithubTokenForUser(userId);
     }
 
@@ -36,15 +35,30 @@ export default class GithubAuthenticationService {
   }
 
   /**
-   * Gets a github token for a user from the githubAuthentications token.
-   * @param userId the user id to check
-   * @returns {String} the user's github token
+   * Gets the decrypted github token for a user
+   * @param userId the user id to get the token for
+   * @returns {String} the token
    */
   async getGithubTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getGithubToken();
     if (token) {
       return encryptionUtil.decrypt(token[0].token);
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets a github token for a user from the githubAuthentications token.
+   * @param userId the user id to check
+   * @returns {Object} the user's sequelize github token
+   */
+  async getSequelizeGithubTokenForUser(userId) {
+    const user = await this.userService.getUserByIdOrUsername(userId);
+    const token = await user.getGithubToken();
+    if (token) {
+      return token[0];
     }
 
     return null;
@@ -60,7 +74,7 @@ export default class GithubAuthenticationService {
   async addGithubTokenForUser(userId, token) {
     const user = await this.userService.getUserByIdOrUsername(userId);
 
-    const isTokenExisting = await this.getGithubTokenForUser(userId);
+    const isTokenExisting = await this.getSequelizeGithubTokenForUser(userId);
     // update token if it already exists
     if (isTokenExisting) {
       const updatedToken = await this.updateTokenForUser(userId, token);
@@ -83,7 +97,7 @@ export default class GithubAuthenticationService {
    * @returns {Object} the token that was updated.
    */
   async updateTokenForUser(userId, newTokenValue) {
-    const token = await this.getGithubTokenForUser(userId);
+    const token = await this.getSequelizeGithubTokenForUser(userId);
     if (!token) {
       throw new GithubTokenNotFoundException(`GitHub Token for user with id ${userId} does not exist.`);
     }
@@ -97,7 +111,7 @@ export default class GithubAuthenticationService {
    * @param userId the userid for which we should remove the token for
    */
   async deleteGithubTokenForUser(userId) {
-    const token = await this.getGithubTokenForUser(userId);
+    const token = await this.getSequelizeGithubTokenForUser(userId);
     await token.destroy();
   }
 }
