@@ -229,7 +229,7 @@ export default class ProjectService {
    * Removes a user as a contributor from a project
    * @param projectId the project to remove the contributor from
    * @param user the user to remove
-   * @returns {Array} the contributors of that project after deletion
+   * @returns {Object[]} the contributors of that project after deletion
    */
   async deleteContributorFromProject(projectId, user) {
     this.log.info(`ProjectService: delete contributor ${user} from project with id ${projectId}`);
@@ -241,6 +241,12 @@ export default class ProjectService {
     return project.getContributors();
   }
 
+  /**
+   * Deletes the owners from a project
+   * @param projectId the project id to remove an owner from
+   * @param user the user to remove
+   * @returns {Object[]} the owners after deletion
+   */
   async deleteOwnerFromProject(projectId, user) {
     this.log.info(`ProjectService: delete contributor ${user} from project with id ${projectId}`);
     const project = await this.getProjectById(projectId);

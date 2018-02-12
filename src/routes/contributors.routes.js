@@ -113,8 +113,25 @@ router.post(
  * @apiParam {String} projectId The id of the project.
  * @apiParam {String} user User id or username of the user to remove as a contributor.
  *
+ * @apiSuccess {Object[]} contributors the contributors of the project which the user was added to
  * @apiSuccessExample {json} Success-Response
- * Status: 204 No Content
+ * [
+ {
+  "id": 1,
+  "username": "BobSagat",
+  "email": "Bob@AFV.com",
+  "firstName": "Bob",
+  "lastName": "Sagat",
+  "createdAt": "2017-11-12T20:26:47.000Z",
+  "updatedAt": "2017-11-12T20:26:47.000Z",
+  "projectContributor": {
+      "createdAt": "2017-11-12T20:26:47.000Z",
+      "updatedAt": "2017-11-12T20:26:47.000Z",
+      "projectId": 1,
+      "userId": 1
+  }
+ }
+ ]
  */
 router.delete(
   '/projects/:projectId/contributors/:user',
