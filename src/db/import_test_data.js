@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import sequelize from './sequelize';
+import { defineTables, populateTools } from './init_database';
 
 // This file fills the database with data for testing
 
@@ -227,12 +228,22 @@ export async function populateTokens() {
   ]);
 }
 
-async function populateTestData() {
+/**
+ * This should be the primary entry method to populate all test data.
+ * @param purgeOldData boolean if true will re-initialize database, overwriting old data
+ * @returns {Promise.<void>}
+ */
+export async function populateAllTestData(purgeOldData) {
+  if (purgeOldData) {
+    await defineTables();
+    await populateTools();
+  }
   await populateUsers();
   await populateProjects();
   await populateInvites();
   await populateAccessCodes();
   await populateTokens();
+  await populateClients();
 }
 
 
@@ -245,7 +256,7 @@ function main() {
   sequelize.initSequelize();
 
   // Then, continue populating the test data
-  populateTestData().then(() => {
+  populateAllTestData(true).then(() => {
     process.exit(0);
   }).catch((err) => {
     console.error(err);

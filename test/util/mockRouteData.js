@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 /**
  * This class is used to mock route information sent to the controllers.

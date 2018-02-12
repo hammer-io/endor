@@ -1,16 +1,13 @@
 import { expect } from 'chai';
-
 import { defineTables, populateTools } from '../../src/db/init_database';
 import { getMockLogger } from '../util/mockLogger';
-const sequelize = require('../../src/db/sequelize');
+import sequelize from '../../src/db/sequelize';
 import ToolsService from '../../dist/services/tools.service';
-
-sequelize.initSequelize();
 
 const toolsService = new ToolsService(sequelize.Tool, getMockLogger());
 
 describe('Test Tools Service ', () => {
-  beforeEach(async () => {
+  before(async () => {
     await defineTables();
     await populateTools();
   });

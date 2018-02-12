@@ -1,32 +1,18 @@
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-
+import chai from 'chai';
+import chaiHttp from 'chai-http';
 import server from '../../src/index';
-import sequelize from '../../src/db/sequelize';
 import * as apiUtil from '../util/api.util';
-import { defineTables, populateTools } from '../../src/db/init_database';
-import {
-  populateClients,
-  populateUsers,
-  populateAccessCodes,
-  populateTokens,
-} from '../../src/db/import_test_data';
+import { populateAllTestData } from '../../src/db/import_test_data';
 
 chai.use(chaiHttp);
 const should = chai.should();
 const expect = chai.expect;
 
-sequelize.initSequelize();
-
 describe('Tools Route Test', () => {
   beforeEach(async () => {
-    await defineTables();
-    await populateUsers();
-    await populateClients();
-    await populateAccessCodes();
-    await populateTokens();
-    await populateTools();
+    await populateAllTestData(true);
   });
+
   describe('GET /tools', async () => {
     it('should get all tools', (done) => {
       chai.request(server)
@@ -39,7 +25,6 @@ describe('Tools Route Test', () => {
         });
     });
   });
-
   describe('GET /tools/sourcecontrol', async (done) => {
     it('should get source control tools', (done) => {
       chai.request(server)

@@ -1,26 +1,19 @@
 import { expect } from 'chai';
 import nodemailer from 'nodemailer';
-
-const sequelize = require('../../src/db/sequelize');
-import { defineTables } from '../../src/db/init_database';
-import { populateUsers, populateProjects, populateInvites } from '../../src/db/import_test_data';
+import sequelize from '../../src/db/sequelize';
+import { populateAllTestData } from '../../src/db/import_test_data';
 import * as emailUtil from '../util/email';
 import EmailService from '../../src/services/email.service';
 import { getMockLogger } from '../util/mockLogger';
 
 const InviteStatus = sequelize.InviteStatus;
 
-sequelize.initSequelize();
-
 let emailService = null;
 
 describe('Testing Email Service', () => {
   before(async () => {
     try {
-      await defineTables();
-      await populateUsers();
-      await populateProjects();
-      await populateInvites();
+      await populateAllTestData(true);
       const transportOptions = await emailUtil.getTestTransportOptions();
       emailService = new EmailService('"Holmgang" <holmgang@hammer-io.github.io>', getMockLogger(), transportOptions);
     } catch (err) {

@@ -1,10 +1,8 @@
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-
+import chai from 'chai';
+import chaiHttp from 'chai-http';
 import server from '../../src/index';
 import * as apiUtil from '../util/api.util';
-import { defineTables } from '../../src/db/init_database';
-import { populateClients, populateUsers } from '../../src/db/import_test_data';
+import { populateAllTestData } from '../../src/db/import_test_data';
 
 chai.use(chaiHttp);
 const should = chai.should();
@@ -12,9 +10,7 @@ const expect = chai.expect;
 
 describe('Testing Client Routes', () => {
   beforeEach(async () => {
-    await defineTables();
-    await populateUsers();
-    await populateClients();
+    await populateAllTestData(true);
   });
 
   describe('POST /clients', () => {

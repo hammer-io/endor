@@ -1,28 +1,21 @@
 import { expect } from 'chai';
-
-// Using Expect style
-const sequelize = require('../../src/db/sequelize');
+import sequelize from '../../src/db/sequelize';
 import UserService from '../../src/services/users.service';
 import { getMockLogger } from '../util/mockLogger';
 import ProjectService from '../../src/services/projects.service';
-import { defineTables, populateTools } from '../../src/db/init_database';
-import { populateUsers, populateProjects } from '../../src/db/import_test_data';
+import { populateAllTestData } from '../../src/db/import_test_data';
 import GithubAuthenticationService from '../../src/services/githubauth.service';
 import { getActiveLogger } from '../../src/utils/winston';
 import TravisAuthenticationService from '../../src/services/travisauth.service';
-
-sequelize.initSequelize();
 
 const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
 const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getActiveLogger());
 const travisAuthService = new TravisAuthenticationService(sequelize.TravisToken, userService, getActiveLogger());
 const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, travisAuthService, getMockLogger());
+
 describe('Testing Project Service', async () => {
-  beforeEach(async () => {
-    await defineTables();
-    await populateUsers();
-    await populateTools();
-    await populateProjects();
+  before(async () => {
+    await populateAllTestData(true);
   });
 
   describe('get all projects', async () => {
@@ -130,6 +123,10 @@ describe('Testing Project Service', async () => {
   });
 
   describe('create a new project', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should create a new project and return the project created', async () => {
       const newProject = {
         projectName: 'hello world',
@@ -229,6 +226,10 @@ describe('Testing Project Service', async () => {
   });
 
   describe('add a new contributor to a project', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should add a new contributor to a project', async () => {
       await projectService.addContributorToProject('b1', 'a2');
 
@@ -293,6 +294,10 @@ describe('Testing Project Service', async () => {
   });
 
   describe('add a new owner to a project', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should add a new owner to a project', async () => {
       await projectService.addOwnerToProject('b1', 'a1');
 
@@ -354,6 +359,10 @@ describe('Testing Project Service', async () => {
   });
 
   describe('update a project', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should update the project details', async () => {
       const newProject = {
         projectName: 'updated TMNT',
@@ -393,6 +402,10 @@ describe('Testing Project Service', async () => {
   });
 
   describe('delete a project', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should delete a project from the database', async () => {
       await projectService.deleteProjectById('b1', false);
       const projects = await projectService.getAllProjects();
@@ -421,6 +434,10 @@ describe('Testing Project Service', async () => {
   });
 
   describe('delete a contributor from a project', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should delete a contributor from a project', async () => {
       await projectService.deleteContributorFromProject('b1', 'a3');
       const contributors = await projectService.getContributorsByProjectId('b1');
@@ -459,6 +476,10 @@ describe('Testing Project Service', async () => {
   });
 
   describe('delete an owner from a project', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should delete an owner from a project', async () => {
       await projectService.deleteOwnerFromProject('b1', 'a4');
       const owners = await projectService.getOwnersByProjectId('b1');

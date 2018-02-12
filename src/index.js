@@ -165,7 +165,7 @@ app.use((err, req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log('Yggdrasil has now started on port 3000!');
+  getActiveLogger().info('Endor has now started on port 3000!');
 });
 
 module.exports = app;
