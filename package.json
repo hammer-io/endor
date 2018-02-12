@@ -16,6 +16,9 @@
     "productionStart": "apidoc -i src/ -o docs/ && npm start",
     "initTestDB": "npm run createDB && npm run initDB && npm run importTestData"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/hammer-io/endor.git"
@@ -40,6 +43,7 @@
     "eslint": "4.8.0",
     "eslint-config-airbnb-base": "12.0.1",
     "eslint-plugin-import": "2.7.0",
+    "pre-commit": "^1.2.2",
     "sqlite3": "^3.1.13"
   },
   "dependencies": {
