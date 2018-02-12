@@ -1,6 +1,8 @@
 /.idea/*
 # It would be nice to share these run configurations with other devs
-!/.idea/runConfigurations/*
+!/.idea/runConfigurations/Start.xml
+!/.idea/runConfigurations/Lint.xml
+!/.idea/runConfigurations/Run_Tests.xml
 
 node_modules/
 
