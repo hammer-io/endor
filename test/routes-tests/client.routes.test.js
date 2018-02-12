@@ -3,6 +3,7 @@ import chaiHttp from 'chai-http';
 import server from '../../src/index';
 import * as apiUtil from '../util/api.util';
 import { populateAllTestData } from '../../src/db/import_test_data';
+import '../globalSetupTeardown.test';
 
 chai.use(chaiHttp);
 const should = chai.should();

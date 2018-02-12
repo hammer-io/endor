@@ -11,6 +11,7 @@ import { assertInvite } from '../util/assertions';
 import { populateAllTestData } from '../../src/db/import_test_data';
 import { getMockLogger } from '../util/mockLogger';
 import TravisAuthenticationService from '../../src/services/travisauth.service';
+import '../globalSetupTeardown.test';
 
 const InviteStatus = sequelize.InviteStatus;
 

@@ -3,6 +3,7 @@ import sequelize from '../../src/db/sequelize';
 import { populateAllTestData } from '../../src/db/import_test_data';
 import AuthService from '../../src/services/auth.service';
 import { getMockLogger } from '../util/mockLogger';
+import '../globalSetupTeardown.test';
 
 const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getMockLogger());
 

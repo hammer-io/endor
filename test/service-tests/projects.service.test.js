@@ -7,6 +7,7 @@ import { populateAllTestData } from '../../src/db/import_test_data';
 import GithubAuthenticationService from '../../src/services/githubauth.service';
 import { getActiveLogger } from '../../src/utils/winston';
 import TravisAuthenticationService from '../../src/services/travisauth.service';
+import '../globalSetupTeardown.test';
 
 const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
 const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getActiveLogger());
