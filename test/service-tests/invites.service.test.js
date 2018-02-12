@@ -1,24 +1,17 @@
 import { expect } from 'chai';
-
 import sequelize from '../../src/db/sequelize';
 import InviteService from '../../src/services/invites.service';
 import { assertInvite } from '../util/assertions';
-import { defineTables } from '../../src/db/init_database';
-import { populateUsers, populateProjects, populateInvites } from '../../src/db/import_test_data';
+import { populateAllTestData } from '../../src/db/import_test_data';
 import { getMockLogger } from '../util/mockLogger';
 
-// Initialize the data model
-sequelize.initSequelize();
 const InviteStatus = sequelize.InviteStatus;
 
 const inviteService = new InviteService(sequelize.Invite, getMockLogger());
 
 describe('Testing Invite Service', () => {
-  beforeEach(async () => {
-    await defineTables();
-    await populateUsers();
-    await populateProjects();
-    await populateInvites();
+  before(async () => {
+    await populateAllTestData(true);
   });
 
   describe('Validate invite', async () => {
@@ -286,6 +279,10 @@ describe('Testing Invite Service', () => {
   });
 
   describe('Create invite', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should create a new invite', async () => {
       const expected = {
         status: 'open',
@@ -381,6 +378,10 @@ describe('Testing Invite Service', () => {
   });
 
   describe('Update invite', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should update the invite status to accepted', async () => {
       const userJreach = await sequelize.User.findOne({
         where: { username: 'jreach' }

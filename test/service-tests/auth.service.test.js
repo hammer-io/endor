@@ -1,31 +1,15 @@
 import { expect } from 'chai';
-
-// Using Expect style
-const sequelize = require('../../src/db/sequelize');
-import { defineTables } from '../../src/db/init_database';
-import {
-  populateClients,
-  populateUsers,
-  populateAccessCodes,
-  populateTokens
-} from '../../src/db/import_test_data';
-
+import sequelize from '../../src/db/sequelize';
+import { populateAllTestData } from '../../src/db/import_test_data';
 import AuthService from '../../src/services/auth.service';
 import { getMockLogger } from '../util/mockLogger';
-
-sequelize.initSequelize();
 
 const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getMockLogger());
 
 
 describe('Testing Auth Service', () => {
   beforeEach(async () => {
-    await defineTables();
-    await populateUsers();
-    await populateClients();
-    await populateAccessCodes();
-    await populateTokens();
-
+    await populateAllTestData(true);
   });
 
   describe('should find an access code when a valid, correct value is given', async () => {

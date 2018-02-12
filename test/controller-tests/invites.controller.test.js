@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-
 import * as controller from '../../src/controllers/invites.controller';
 import sequelize from '../../src/db/sequelize';
 import GithubAuthenticationService from '../../src/services/githubauth.service';
@@ -9,23 +8,11 @@ import InviteService from '../../src/services/invites.service';
 import ProjectService from '../../src/services/projects.service';
 import UserService from '../../src/services/users.service';
 import { assertInvite } from '../util/assertions';
-import { defineTables } from '../../src/db/init_database';
-import { populateUsers, populateProjects, populateInvites } from '../../src/db/import_test_data';
+import { populateAllTestData } from '../../src/db/import_test_data';
 import { getMockLogger } from '../util/mockLogger';
 import TravisAuthenticationService from '../../src/services/travisauth.service';
 
-// Initialize the data model
-sequelize.initSequelize();
 const InviteStatus = sequelize.InviteStatus;
-
-// Initialize the various services used by the controller
-const mockEmailService = new MockEmailService('"Holmgang" <holmgang@hammer-io.github.io>', getMockLogger(), null);
-const inviteService = new InviteService(sequelize.Invite, getMockLogger());
-const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
-const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getMockLogger());
-const travisAuthService = new TravisAuthenticationService(sequelize.TravisToken, userService, getMockLogger());
-const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, travisAuthService, getMockLogger());
-
 
 class MockInviteRouteData extends MockRouteData {
   constructor(params, statusFilter = null, body = null) {
@@ -41,15 +28,20 @@ class MockInviteRouteData extends MockRouteData {
 
 describe('Testing Invite Controller', () => {
   before(async () => {
+    // Initialize the various services used by the controller
+    const mockEmailService = new MockEmailService('"Holmgang" <holmgang@hammer-io.github.io>', getMockLogger(), null);
+    const inviteService = new InviteService(sequelize.Invite, getMockLogger());
+    const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
+    const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getMockLogger());
+    const travisAuthService = new TravisAuthenticationService(sequelize.TravisToken, userService, getMockLogger());
+    const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, travisAuthService, getMockLogger());
     // Initialize the controller
     await controller.setEmailService(mockEmailService);
     await controller.setInviteService(inviteService);
     await controller.setProjectService(projectService);
     await controller.setUserService(userService);
-    await defineTables();
-    await populateUsers();
-    await populateProjects();
-    await populateInvites();
+    // Populate test data
+    await populateAllTestData(true);
   });
 
   describe('Get invites by project id', async () => {
@@ -239,138 +231,138 @@ describe('Testing Invite Controller', () => {
 
   describe('Add or update invites', async () => {
     beforeEach(async () => {
-      await defineTables();
-      await populateUsers();
-      await populateProjects();
-      await populateInvites();
+      await populateAllTestData(true);
     });
 
-    it('Add invite to project should work (happy path)', async () => {
-      const projectId = 'b1';
-      const user = 'a1';
-      const body = {
-        daysFromCreationUntilExpiration: 7
-      };
-      const mock = new MockInviteRouteData({ projectId, user }, null, body);
-      const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
-      expect(result).to.equal(undefined);
-      console.log(mock);
-      mock.assertWasSent(true);
-      mock.assertWasNexted(false);
-      mock.assertStatusCode(201);
-      expect(Array.isArray(mock.sent)).to.equal(false);
-      assertInvite(mock.sent, {
-        status: InviteStatus.OPEN,
-        days: 7,
-        userId: user,
-        projectId: projectId
+    describe('Add invite to project', async () => {
+      it('should work normally (happy path)', async () => {
+        const projectId = 'b1';
+        const user = 'a1';
+        const body = {
+          daysFromCreationUntilExpiration: 7
+        };
+        const mock = new MockInviteRouteData({ projectId, user }, null, body);
+        const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
+        expect(result).to.equal(undefined);
+        mock.assertWasSent(true);
+        mock.assertWasNexted(false);
+        mock.assertStatusCode(201);
+        expect(Array.isArray(mock.sent)).to.equal(false);
+        assertInvite(mock.sent, {
+          status: InviteStatus.OPEN,
+          days: 7,
+          userId: user,
+          projectId: projectId
+        });
+      });
+
+      it('should fail if project doesn\'t exist', async () => {
+        const projectId = 'b1234';
+        const user = 'a1';
+        const body = {
+          daysFromCreationUntilExpiration: 7
+        };
+        const mock = new MockInviteRouteData({ projectId, user }, null, body);
+        const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
+        expect(result).to.equal(undefined);
+        mock.assertWasSent(false);
+        mock.assertWasNexted(true);
+        expect(mock.nexted.message).to.equal('Project with id b1234 not found');
+      });
+
+      it('should fail if user doesn\'t exist', async () => {
+        const projectId = 'b1';
+        const user = 'a1234';
+        const body = {
+          daysFromCreationUntilExpiration: 7
+        };
+        const mock = new MockInviteRouteData({ projectId, user }, null, body);
+        const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
+        expect(result).to.equal(undefined);
+        mock.assertWasSent(false);
+        mock.assertWasNexted(true);
+        expect(mock.nexted.message).to.equal('User with a1234 could not be found.');
       });
     });
 
-    it('Add invite to project should fail if project doesn\'t exist', async () => {
-      const projectId = 'b1234';
-      const user = 'a1';
-      const body = {
-        daysFromCreationUntilExpiration: 7
-      };
-      const mock = new MockInviteRouteData({ projectId, user }, null, body);
-      const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
-      expect(result).to.equal(undefined);
-      mock.assertWasSent(false);
-      mock.assertWasNexted(true);
-      expect(mock.nexted.message).to.equal('Project with id b1234 not found');
-    });
+    describe('Accept invite', async () => {
+      it('should update the invite and add a contributor to the project', async () => {
+        // First, make sure the project doesn't have the user as a contributor
+        const drumitdown = await sequelize.Project.findOne({
+          where: { projectName: 'drumitdown' }
+        });
+        const buddy = await sequelize.User.findOne({
+          where: { username: 'buddy' }
+        });
+        let projectContributor = await sequelize.ProjectContributor.findOne({
+          where: {
+            projectId: drumitdown.id,
+            userId: buddy.id
+          }
+        });
+        expect(projectContributor).to.equal(null);
 
-    it('Add invite to project should fail if user doesn\'t exist', async () => {
-      const projectId = 'b1';
-      const user = 'a1234';
-      const body = {
-        daysFromCreationUntilExpiration: 7
-      };
-      const mock = new MockInviteRouteData({ projectId, user }, null, body);
-      const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
-      expect(result).to.equal(undefined);
-      mock.assertWasSent(false);
-      mock.assertWasNexted(true);
-      expect(mock.nexted.message).to.equal('User with a1234 could not be found.');
-    });
+        // Now, accept the invite
+        const inviteId = 'd3';
+        const mock = new MockInviteRouteData({ id: inviteId });
+        const result = await controller.acceptInvite(mock.req, mock.res, mock.next());
+        expect(result).to.equal(mock.sent);
+        mock.assertWasSent(true);
+        mock.assertWasNexted(false);
+        mock.assertStatusCode(201);
 
-    it('Accept invite should update the invite and add a contributor to the project', async () => {
-      // First, make sure the project doesn't have the user as a contributor
-      const drumitdown = await sequelize.Project.findOne({
-        where: { projectName: 'drumitdown' }
-      });
-      const buddy = await sequelize.User.findOne({
-        where: { username: 'buddy' }
-      });
-      let projectContributor = await sequelize.ProjectContributor.findOne({
-        where: {
-          projectId: drumitdown.id,
-          userId: buddy.id
-        }
-      });
-      expect(projectContributor).to.equal(null);
+        // Make sure invite was updated
+        assertInvite(mock.sent, {
+          status: InviteStatus.ACCEPTED,
+          days: 30,
+          userId: 'a5',
+          projectId: 'b3'
+        });
 
-      // Now, accept the invite
-      const inviteId = 'd3';
-      const mock = new MockInviteRouteData({ id: inviteId });
-      const result = await controller.acceptInvite(mock.req, mock.res, mock.next());
-      expect(result).to.equal(mock.sent);
-      mock.assertWasSent(true);
-      mock.assertWasNexted(false);
-      mock.assertStatusCode(201);
-
-      // Make sure invite was updated
-      assertInvite(mock.sent, {
-        status: InviteStatus.ACCEPTED,
-        days: 30,
-        userId: 'a5',
-        projectId: 'b3'
+        // Finally, make sure user was added as contributor
+        projectContributor = await sequelize.ProjectContributor.findOne({
+          where: {
+            projectId: drumitdown.id,
+            userId: buddy.id
+          }
+        });
+        expect(projectContributor.userId).to.equal(buddy.id);
       });
 
-      // Finally, make sure user was added as contributor
-      projectContributor = await sequelize.ProjectContributor.findOne({
-        where: {
-          projectId: drumitdown.id,
-          userId: buddy.id
-        }
-      });
-      expect(projectContributor.userId).to.equal(buddy.id);
-    });
+      it('should fail if the invite isn\'t open', async () => {
+        // First, make sure the project doesn't have the user as a contributor
+        const hammerio = await sequelize.Project.findOne({
+          where: { projectName: 'hammer-io' }
+        });
+        const buddy = await sequelize.User.findOne({
+          where: { username: 'buddy' }
+        });
+        let projectContributor = await sequelize.ProjectContributor.findOne({
+          where: {
+            projectId: hammerio.id,
+            userId: buddy.id
+          }
+        });
+        expect(projectContributor).to.equal(null);
 
-    it('Accept invite should fail if the invite isn\'t open', async () => {
-      // First, make sure the project doesn't have the user as a contributor
-      const hammerio = await sequelize.Project.findOne({
-        where: { projectName: 'hammer-io' }
-      });
-      const buddy = await sequelize.User.findOne({
-        where: { username: 'buddy' }
-      });
-      let projectContributor = await sequelize.ProjectContributor.findOne({
-        where: {
-          projectId: hammerio.id,
-          userId: buddy.id
-        }
-      });
-      expect(projectContributor).to.equal(null);
+        // Now, accept the invite
+        const inviteId = 'd2'; // a declined invite
+        const mock = new MockInviteRouteData({ id: inviteId });
+        const result = await controller.acceptInvite(mock.req, mock.res, mock.next());
+        expect(result).to.equal(false);
+        mock.assertWasSent(false);
+        mock.assertWasNexted(true);
+        expect(mock.nexted.errors[0].message).to.equal('Only an OPEN invite can be accepted, rescinded, or declined.');
 
-      // Now, accept the invite
-      const inviteId = 'd2'; // a declined invite
-      const mock = new MockInviteRouteData({ id: inviteId });
-      const result = await controller.acceptInvite(mock.req, mock.res, mock.next());
-      expect(result).to.equal(false);
-      mock.assertWasSent(false);
-      mock.assertWasNexted(true);
-      expect(mock.nexted.errors[0].message).to.equal('Only an OPEN invite can be accepted, rescinded, or declined.');
-
-      // Finally, make sure user was NOT added as contributor
-      projectContributor = await sequelize.ProjectContributor.findOne({
-        where: {
-          projectId: hammerio.id,
-          userId: buddy.id
-        }
+        // Finally, make sure user was NOT added as contributor
+        projectContributor = await sequelize.ProjectContributor.findOne({
+          where: {
+            projectId: hammerio.id,
+            userId: buddy.id
+          }
+        });
+        expect(projectContributor).to.equal(null);
       });
-      expect(projectContributor).to.equal(null);
     });
 
     it('Rescind invite should work (happy path)', async () => {

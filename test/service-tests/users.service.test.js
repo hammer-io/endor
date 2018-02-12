@@ -1,20 +1,14 @@
 import { expect } from 'chai';
-
-import { defineTables } from '../../src/db/init_database';
-import { populateUsers } from '../../src/db/import_test_data';
-// Using Expect style
-const sequelize = require('../../src/db/sequelize');
+import { populateAllTestData } from '../../src/db/import_test_data';
+import sequelize from '../../src/db/sequelize';
 import UserService from '../../src/services/users.service';
 import { getMockLogger } from '../util/mockLogger';
-
-sequelize.initSequelize();
 
 const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
 
 describe('Testing User Service', () => {
-  beforeEach(async () => {
-    await defineTables();
-    await populateUsers();
+  before(async () => {
+    await populateAllTestData(true);
   });
 
   describe('get user by username or id', async () => {
@@ -96,6 +90,10 @@ describe('Testing User Service', () => {
   });
 
   describe('create new user', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should create a new user', async () => {
       const newUser = {
         username: 'lebron',
@@ -396,6 +394,10 @@ describe('Testing User Service', () => {
   });
 
   describe('update a user', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should update the user by id', async () => {
       const user = {
         username: 'UpdateBobSagat',
@@ -483,6 +485,10 @@ describe('Testing User Service', () => {
   });
 
   describe('delete a user', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should delete the user by id', async () => {
       const deletedUser = await userService.deleteUserByIdOrUsername('a1');
 

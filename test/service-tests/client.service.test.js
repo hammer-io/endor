@@ -1,25 +1,21 @@
 import { expect } from 'chai';
-
-// Using Expect style
-const sequelize = require('../../src/db/sequelize');
-import { defineTables } from '../../src/db/init_database';
-import { populateClients, populateUsers } from '../../src/db/import_test_data';
-
+import sequelize from '../../src/db/sequelize';
+import { populateAllTestData } from '../../src/db/import_test_data';
 import ClientService from '../../src/services/client.service';
 import { getMockLogger } from '../util/mockLogger';
-
-sequelize.initSequelize();
 
 const clientService = new ClientService(sequelize.Client, getMockLogger());
 
 describe('Testing Client Service', () => {
-  beforeEach(async () => {
-    await defineTables();
-    await populateUsers();
-    await populateClients();
+  before(async () => {
+    await populateAllTestData(true);
   });
 
   describe('should create a client for a specific user', async () => {
+    beforeEach(async () => {
+      await populateAllTestData(true);
+    });
+
     it('should create a client given a unique clientId for a user that exists', async () => {
       const client = {
         clientId: 'clientId4',

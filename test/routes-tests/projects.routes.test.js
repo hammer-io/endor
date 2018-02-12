@@ -1,10 +1,6 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-
-import {defineTables, populateTools} from '../../src/db/init_database';
-import { populateUsers, populateProjects } from '../../src/db/import_test_data';
-// Using Expect style
-const sequelize = require('../../src/db/sequelize');
+import { populateAllTestData } from '../../src/db/import_test_data';
 import * as apiUtil from '../util/api.util';
 import server from '../../src';
 
@@ -12,14 +8,9 @@ chai.use(chaiHttp);
 const should = chai.should();
 const expect = chai.expect;
 
-sequelize.initSequelize();
-
 describe('Testing Project Routes', () => {
   beforeEach(async () => {
-    await defineTables();
-    await populateUsers();
-    await populateTools();
-    await populateProjects();
+    await populateAllTestData(true);
   });
 
   describe('PATCH /projects/:projectId', () => {
