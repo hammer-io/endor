@@ -496,6 +496,50 @@ router.get(
 );
 
 /**
+ * @api {get} /projects/:projectId/buildstatuses Get build statuses for project
+ * @apiVersion 1.0.0
+ * @apiName get build statuses for project
+ * @apiGroup Projects
+ *
+ * @apiHeader Authorization Basic Auth-Token
+ * @apiPermission Authenticated User
+ *
+ * @apiParam {String} projectId the projectId
+ * @apiParam {String} limit set a limit of how many pull requests can be returned
+ *
+ * @apiSuccess {Object[]} response an array of builds, below are the fields
+ * @apiSuccess {String} id the build id
+ * @apiSuccess {String} buildNumber the build number of the build
+ * @apiSuccess {String} state the state of the build
+ * @apiSuccess {String} duration the duration of the build
+ * @apiSuccess {String} type the type of build, push or pull request
+ * @apiSuccess {String} user the user who made the commit
+ * @apiSuccess {String} started_at when the build was started
+ * @apiSuccess {String} finished_at when the build finished
+ * @apiSuccess {String} url the url to the commit
+ *
+ * @apiSuccessExample {json} Success-Resonse:
+ *  [
+  {
+     "id": 123456,
+     "buildNumber": "1",
+     "state": "passed",
+     "previousState": "passed",
+     "duration": 228,
+     "type": "pull_request",
+     "user": "the user",
+     "started_at": "2018-02-10T21:35:58Z",
+     "finished_at": "2018-02-10T21:38:13Z"
+    }
+  ]
+ */
+router.get(
+  '/projects/:projectId/buildstatuses',
+  authController.isAuthenticated,
+  projectController.getBuildStatusesForProject
+);
+
+/**
  * Sets the project service dependency for the controller
  * @param newProjectService the project service dependency
  */

@@ -229,6 +229,33 @@ export async function getCommitsForProject(req, res, next) {
 }
 
 /**
+ * Handles the GET /projects/:projectId/buildstatuses endpoint
+ * @param req the request
+ * @param res the response
+ * @param next the next middlware
+ */
+export async function getBuildStatusesForProject(req, res, next) {
+  const projectId = req.params.projectId;
+  const user = req.user.id;
+  const limit = req.query.limit;
+  let branchName = req.query.branch;
+  if (!branchName) {
+    branchName = null;
+  }
+
+  try {
+    const statuses = await projectService.getBuildStatusesForProject(projectId, user, branchName);
+    if (limit) {
+      res.status(200).send(statuses.slice(0, limit));
+    } else {
+      res.status(200).send(statuses);
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
  * Injects the project service dependency
  * @param newProjectService the project service
  */
