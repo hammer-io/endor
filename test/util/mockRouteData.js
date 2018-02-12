@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import {expect} from 'chai';
 
 /**
  * This class is used to mock route information sent to the controllers.
@@ -16,40 +16,58 @@ import { expect } from 'chai';
  * mock.nexted    : the object passed to next() by the controller
  */
 export default class MockRouteData {
-    constructor(req) {
-        this.req = req;
-        // const that = this;
-        this.res = {
-            send: this.send(this)
-        };
-        this.wasSent = false;
-        this.sent = null;
-        this.wasNexted = false;
-        this.nexted = null;
+  constructor(req) {
+    this.req = req;
+    // const that = this;
+    this.res = {
+      send: this.send(this),
+      status: this.status(this)
+    };
+    this.wasSent = false;
+    this.sent = null;
+    this.wasNexted = false;
+    this.nexted = null;
+    this.statusCode = null;
+  }
+
+  send(that) {
+    return function (obj) {
+      that.wasSent = true;
+      that.sent = obj;
+    };
+  }
+
+  status(that) {
+    return function (code) {
+      that.statusCode = code;
+      return that.res;
     }
-    send(that) {
-        return function(obj) {
-            that.wasSent = true;
-            that.sent = obj;
-        };
-    }
-    next() {
-        const that = this;
-        return function(obj) {
-            that.wasNexted = true;
-            that.nexted = obj;
-        };
-    }
-    assertWasSent(wasSent) {
-        const msg = (wasSent)
-          ? 'Expected res.send() to be called, but it wasn\'t.'
-          : 'Expected res.send() to NOT be called, but it was.';
-        expect(this.wasSent, msg).to.equal(wasSent);
-    }
-    assertWasNexted(wasNexted) {
-      const msg = (wasNexted)
-        ? 'Expected res.next() to be called, but it wasn\'t.'
-        : 'Expected res.next() to NOT be called, but it was.';
-        expect(this.wasNexted, msg).to.equal(wasNexted);
-    }
+  }
+
+  next() {
+    const that = this;
+    return function (obj) {
+      that.wasNexted = true;
+      that.nexted = obj;
+    };
+  }
+
+  assertWasSent(wasSent) {
+    const msg = (wasSent)
+      ? 'Expected res.send() to be called, but it wasn\'t.'
+      : 'Expected res.send() to NOT be called, but it was.';
+    expect(this.wasSent, msg).to.equal(wasSent);
+  }
+
+  assertWasNexted(wasNexted) {
+    const msg = (wasNexted)
+      ? 'Expected res.next() to be called, but it wasn\'t.'
+      : 'Expected res.next() to NOT be called, but it was.';
+    expect(this.wasNexted, msg).to.equal(wasNexted);
+  }
+
+  assertStatusCode(code) {
+    const msg = 'Unexpected status code on the route result';
+    expect(this.statusCode, msg).to.equal(code);
+  }
 }

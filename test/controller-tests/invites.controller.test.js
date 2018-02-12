@@ -24,12 +24,13 @@ const projectService = new ProjectService(sequelize.Project, userService, getMoc
 
 
 class MockInviteRouteData extends MockRouteData {
-  constructor(params, statusFilter) {
+  constructor(params, statusFilter = null, body = null) {
     super({
       params,
       query: {
         status: statusFilter
-      }
+      },
+      body
     });
   }
 }
@@ -50,7 +51,7 @@ describe('Testing Invite Controller', () => {
   describe('Get invites by project id', async () => {
     it('should return an array of invites to the project', async () => {
       const projectId = 'b2';
-      const mock = new MockInviteRouteData({ projectId }, null);
+      const mock = new MockInviteRouteData({ projectId });
       const result = await controller.getInvitesByProjectId(
         mock.req,
         mock.res,
@@ -96,7 +97,7 @@ describe('Testing Invite Controller', () => {
     });
     it('should return an empty array for a non-existent project', async () => {
       const projectId = 'b22222';
-      const mock = new MockInviteRouteData({ projectId }, null);
+      const mock = new MockInviteRouteData({ projectId });
       const result = await controller.getInvitesByProjectId(
         mock.req,
         mock.res,
@@ -113,7 +114,7 @@ describe('Testing Invite Controller', () => {
   describe('Get invites by user', async () => {
     it('should return an array of invites for the user', async () => {
       const user = 'a5';
-      const mock = new MockInviteRouteData({ user }, null);
+      const mock = new MockInviteRouteData({ user });
       const result = await controller.getInvitesByUserId(
         mock.req,
         mock.res,
@@ -159,7 +160,7 @@ describe('Testing Invite Controller', () => {
     });
     it('should return an empty array if the user doesn\'t exist', async () => {
       const user = 'a5555555';
-      const mock = new MockInviteRouteData({ user }, null);
+      const mock = new MockInviteRouteData({ user });
       const result = await controller.getInvitesByUserId(
         mock.req,
         mock.res,
@@ -265,6 +266,64 @@ describe('Testing Invite Controller', () => {
     });
 
     it('Add invite to project should work (happy path)', async () => {
+      const projectId = 'b1';
+      const user = 'a1';
+      const body = {
+        daysFromCreationUntilExpiration: 7
+      };
+      const mock = new MockInviteRouteData({ projectId, user }, null, body);
+      const result = await controller.addInviteToProject(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      mock.assertStatusCode(201);
+      expect(Array.isArray(mock.sent)).to.equal(false);
+      assertInvite(mock.sent, {
+        status: InviteStatus.OPEN,
+        days: 7,
+        userId: user,
+        projectId: projectId
+      });
+    });
+
+    it('Add invite to project should fail if project doesn\'t exist', async () => {
+      const projectId = 'b1234';
+      const user = 'a1';
+      const body = {
+        daysFromCreationUntilExpiration: 7
+      };
+      const mock = new MockInviteRouteData({ projectId, user }, null, body);
+      const result = await controller.addInviteToProject(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(false);
+      mock.assertWasNexted(true);
+      expect(mock.nexted.message).to.equal('Project with id b1234 not found');
+    });
+
+    it('Add invite to project should fail if user doesn\'t exist', async () => {
+      const projectId = 'b1';
+      const user = 'a1234';
+      const body = {
+        daysFromCreationUntilExpiration: 7
+      };
+      const mock = new MockInviteRouteData({ projectId, user }, null, body);
+      const result = await controller.addInviteToProject(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(false);
+      mock.assertWasNexted(true);
+      expect(mock.nexted.message).to.equal('User with a1234 could not be found.');
     });
 
     it('Update invite should work (happy path)', async () => {
