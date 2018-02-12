@@ -2,17 +2,17 @@
 import fetch from 'node-fetch';
 
 function mapTravisBuildToEndorBuild(item) {
-  const formattedBuild = {};
-  formattedBuild.id = item.id;
-  formattedBuild.buildNumber = item.number;
-  formattedBuild.state = item.state;
-  formattedBuild.previousState = item.previous_state;
-  formattedBuild.duration = item.duration;
-  formattedBuild.type = item.event_type;
-  formattedBuild.user = item.created_by.login;
-  formattedBuild.started_at = item.started_at;
-  formattedBuild.finished_at = item.finished_at;
-  return formattedBuild;
+  return {
+    id: item.id,
+    buildNumber: item.number,
+    state: item.state,
+    previousState: item.previous_state,
+    duration: item.duration,
+    type: item.event_type,
+    user: item.created_by.login,
+    started_at: item.started_at,
+    finished_at: item.finished_at
+  };
 }
 
 /**
@@ -28,13 +28,22 @@ export async function getBuildStatusesForProject(projectName, token, branchName)
   let done = false;
   let i = 0;
   let builds = [];
+
+  // the travis api uses paging for their build statuses API. We want to get all builds for the
+  // user's project (this might change later, but would be an optimization). It's offset is 25
+  // builds. So, this loops through the code and adds an offset of the number of times
+  // it's been through the loop * the number of offsets (25 by default).
   try {
     while (!done) {
       let url = `https://api.travis-ci.org/repo/${formattedProjectName}/builds`;
+
+      // if the user passed in a branch name, set the branch name here.
+      // set the offset after the branch name.
       if (branchName) {
         url += `?branch.name=${branchName}`;
         url += `offset=${i * 25}`;
       } else {
+        // if the user did not pass a branch name, set the offset
         url += `?offset=${i * 25}`;
       }
 
@@ -46,14 +55,20 @@ export async function getBuildStatusesForProject(projectName, token, branchName)
         method: 'GET'
       });
 
+      // get the resopnse body.
       const statuses = await response.json();
+
+      // add the builds from this request to the master liset
       builds = builds.concat(statuses.builds);
+
+      // if there was no builds on the page, we are done going through the pages.
       if (statuses.builds.length === 0) {
         done = true;
       }
 
       i += 1;
     }
+
     return builds.map(mapTravisBuildToEndorBuild);
   } catch (error) {
     throw error;

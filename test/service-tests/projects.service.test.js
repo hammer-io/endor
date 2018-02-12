@@ -9,13 +9,14 @@ import { defineTables, populateTools } from '../../src/db/init_database';
 import { populateUsers, populateProjects } from '../../src/db/import_test_data';
 import GithubAuthenticationService from '../../src/services/githubauth.service';
 import { getActiveLogger } from '../../src/utils/winston';
+import TravisAuthenticationService from '../../src/services/travisauth.service';
 
 sequelize.initSequelize();
 
 const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
 const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getActiveLogger());
-const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, getMockLogger());
-
+const travisAuthService = new TravisAuthenticationService(sequelize.TravisToken, userService, getActiveLogger());
+const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, travisAuthService, getMockLogger());
 describe('Testing Project Service', async () => {
   beforeEach(async () => {
     await defineTables();

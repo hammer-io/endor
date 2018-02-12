@@ -12,6 +12,7 @@ import { assertInvite } from '../util/assertions';
 import { defineTables } from '../../src/db/init_database';
 import { populateUsers, populateProjects, populateInvites } from '../../src/db/import_test_data';
 import { getMockLogger } from '../util/mockLogger';
+import TravisAuthenticationService from '../../src/services/travisauth.service';
 
 // Initialize the data model
 sequelize.initSequelize();
@@ -22,7 +23,8 @@ const mockEmailService = new MockEmailService('"Holmgang" <holmgang@hammer-io.gi
 const inviteService = new InviteService(sequelize.Invite, getMockLogger());
 const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
 const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getMockLogger());
-const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, getMockLogger());
+const travisAuthService = new TravisAuthenticationService(sequelize.TravisToken, userService, getMockLogger());
+const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, travisAuthService, getMockLogger());
 
 
 class MockInviteRouteData extends MockRouteData {
