@@ -24,11 +24,9 @@ const projectService = new ProjectService(sequelize.Project, userService, getMoc
 
 
 class MockInviteRouteData extends MockRouteData {
-  constructor(projectId, statusFilter) {
+  constructor(params, statusFilter) {
     super({
-      params: {
-        projectId: projectId
-      },
+      params,
       query: {
         status: statusFilter
       }
@@ -37,15 +35,12 @@ class MockInviteRouteData extends MockRouteData {
 }
 
 describe('Testing Invite Controller', () => {
-  before(() => {
+  before(async () => {
     // Initialize the controller
-    controller.setEmailService(mockEmailService);
-    controller.setInviteService(inviteService);
-    controller.setProjectService(projectService);
-    controller.setUserService(userService);
-  });
-
-  beforeEach(async () => {
+    await controller.setEmailService(mockEmailService);
+    await controller.setInviteService(inviteService);
+    await controller.setProjectService(projectService);
+    await controller.setUserService(userService);
     await defineTables();
     await populateUsers();
     await populateProjects();
@@ -53,9 +48,9 @@ describe('Testing Invite Controller', () => {
   });
 
   describe('Get invites by project id', async () => {
-    it('should ', async () => {
+    it('should return an array of invites to the project', async () => {
       const projectId = 'b2';
-      const mock = new MockInviteRouteData(projectId, null);
+      const mock = new MockInviteRouteData({ projectId }, null);
       const result = await controller.getInvitesByProjectId(
         mock.req,
         mock.res,
@@ -79,25 +74,210 @@ describe('Testing Invite Controller', () => {
         projectId: projectId
       });
     });
+    it('should filter by status if a status is provided in the query string', async () => {
+      const projectId = 'b2';
+      const mock = new MockInviteRouteData({ projectId }, InviteStatus.OPEN);
+      const result = await controller.getInvitesByProjectId(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      expect(Array.isArray(mock.sent)).to.equal(true);
+      expect(mock.sent.length).to.equal(1);
+      assertInvite(mock.sent[0], {
+        status: InviteStatus.OPEN,
+        days: 30,
+        userId: 'a3',
+        projectId: projectId
+      });
+    });
+    it('should return an empty array for a non-existent project', async () => {
+      const projectId = 'b22222';
+      const mock = new MockInviteRouteData({ projectId }, null);
+      const result = await controller.getInvitesByProjectId(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      expect(Array.isArray(mock.sent)).to.equal(true);
+      expect(mock.sent.length).to.equal(0);
+    });
   });
 
-  describe('Get invites by user id', async () => {
+  describe('Get invites by user', async () => {
+    it('should return an array of invites for the user', async () => {
+      const user = 'a5';
+      const mock = new MockInviteRouteData({ user }, null);
+      const result = await controller.getInvitesByUserId(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      expect(Array.isArray(mock.sent)).to.equal(true);
+      expect(mock.sent.length).to.equal(2);
+      assertInvite(mock.sent[0], {
+        status: InviteStatus.DECLINED,
+        days: 15,
+        userId: user,
+        projectId: 'b2'
+      });
+      assertInvite(mock.sent[1], {
+        status: InviteStatus.OPEN,
+        days: 30,
+        userId: user,
+        projectId: 'b3'
+      });
+    });
+    it('should filter by status if a status is provided in the query string', async () => {
+      const user = 'a5';
+      const mock = new MockInviteRouteData({ user }, InviteStatus.OPEN);
+      const result = await controller.getInvitesByUserId(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      expect(Array.isArray(mock.sent)).to.equal(true);
+      expect(mock.sent.length).to.equal(1);
+      assertInvite(mock.sent[0], {
+        status: InviteStatus.OPEN,
+        days: 30,
+        userId: user,
+        projectId: 'b3'
+      });
+    });
+    it('should return an empty array if the user doesn\'t exist', async () => {
+      const user = 'a5555555';
+      const mock = new MockInviteRouteData({ user }, null);
+      const result = await controller.getInvitesByUserId(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      expect(Array.isArray(mock.sent)).to.equal(true);
+      expect(mock.sent.length).to.equal(0);
+    });
   });
 
   describe('Get invites by authenticated user', async () => {
+    it('should return an array of invites for the user', async () => {
+      const userId = 'a5';
+      const user = await sequelize.User.findOne({ where: { id: userId }});
+      // Auth normally sets the user, so we set it manually here in the mock
+      const mock = new MockRouteData({
+        params: {},
+        user,
+        query: {}
+      });
+      const result = await controller.getInvitesByAuthenticatedUser(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      expect(Array.isArray(mock.sent)).to.equal(true);
+      expect(mock.sent.length).to.equal(2);
+      assertInvite(mock.sent[0], {
+        status: InviteStatus.DECLINED,
+        days: 15,
+        userId: userId,
+        projectId: 'b2'
+      });
+      assertInvite(mock.sent[1], {
+        status: InviteStatus.OPEN,
+        days: 30,
+        userId: userId,
+        projectId: 'b3'
+      });
+    });
+    it('should filter by status if a status is provided in the query string', async () => {
+      const userId = 'a5';
+      const user = await sequelize.User.findOne({ where: { id: userId }});
+      // Auth normally sets the user, so we set it manually here in the mock
+      const mock = new MockRouteData({
+        params: {},
+        user,
+        query: {
+          status: InviteStatus.DECLINED
+        }
+      });
+      const result = await controller.getInvitesByAuthenticatedUser(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      expect(Array.isArray(mock.sent)).to.equal(true);
+      expect(mock.sent.length).to.equal(1);
+      assertInvite(mock.sent[0], {
+        status: InviteStatus.DECLINED,
+        days: 15,
+        userId: userId,
+        projectId: 'b2'
+      });
+    });
+    it('should return an empty array if the user has no invites', async () => {
+      const userId = 'a1';
+      const user = await sequelize.User.findOne({ where: { id: userId }});
+      // Auth normally sets the user, so we set it manually here in the mock
+      const mock = new MockRouteData({
+        params: {},
+        user,
+        query: {}
+      });
+      const result = await controller.getInvitesByAuthenticatedUser(
+        mock.req,
+        mock.res,
+        mock.next()
+      );
+      expect(result).to.equal(undefined);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      expect(Array.isArray(mock.sent)).to.equal(true);
+      expect(mock.sent.length).to.equal(0);
+    });
   });
 
-  describe('Add invites to project', async () => {
-  });
-
-  describe('Update invite', async () => {
-    describe('Accept invite', async () => {
+  describe('Add or update invites', async () => {
+    beforeEach(async () => {
+      await defineTables();
+      await populateUsers();
+      await populateProjects();
+      await populateInvites();
     });
 
-    describe('Decline Invite', async () => {
+    it('Add invite to project should work (happy path)', async () => {
     });
 
-    describe('Rescind Invite', async () => {
+    it('Update invite should work (happy path)', async () => {
     });
+
+    it('Accept invite should work (happy path)', async () => {
+    });
+
+    it('Rescind invite should work (happy path)', async () => {
+    });
+
+    it('Decline invite should work (happy path)', async () => {
+    });
+
   });
 });

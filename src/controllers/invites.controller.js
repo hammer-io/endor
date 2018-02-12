@@ -64,7 +64,7 @@ export async function getInvitesByProjectId(req, res, next) {
  */
 export async function getInvitesByUserId(req, res, next) {
   try {
-    const invites = await inviteService.getInvitesByUserId(req.params.id, req.query.status);
+    const invites = await inviteService.getInvitesByUserId(req.params.user, req.query.status);
     invites.other = req.params.other;
     res.send(invites);
   } catch (error) {
@@ -79,7 +79,7 @@ export async function getInvitesByUserId(req, res, next) {
  * @param next the next middleware
  */
 export async function getInvitesByAuthenticatedUser(req, res, next) {
-  req.params.id = req.user.id;
+  req.params.user = req.user.id;
   return getInvitesByUserId(req, res, next);
 }
 
