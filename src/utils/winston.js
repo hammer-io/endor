@@ -5,14 +5,14 @@ import {
 } from 'winston';
 
 function isLoggerType(str) {
-  return (str === 'info' || str === 'verbose' || str === 'debug');
+  return (str === 'info' || str === 'verbose' || str === 'debug' || str === 'test');
 }
 
 /**
  * The initial active logger attempts to read from environment variables.
  * Otherwise, it defaults to 'info'.
  */
-let activeLogger = process.env.TYR_LOG_LEVEL || 'verbose';
+let activeLogger = process.env.ENDOR_LOG_LEVEL;
 if (!isLoggerType(activeLogger)) {
   activeLogger = 'info';
 }
@@ -55,6 +55,23 @@ loggers.add('verbose', {
         format.colorize({ message: true }),
         customFormatting
       ),
+    })
+  ]
+});
+
+/**
+ * The test logger logs only to file
+ */
+loggers.add('test', {
+  transports: [
+    new transports.File({
+      level: 'debug',
+      filename: 'endor_test.log',
+      maxsize: 5242880, // 5MB
+      format: format.combine(
+        format.timestamp(),
+        logfileFormatting
+      )
     })
   ]
 });
@@ -104,6 +121,7 @@ export function setActiveLogger(loggerType) {
     throw new Error('Active logger must be set to either \'info\', \'verbose\', or \'debug\'');
   }
   activeLogger = loggerType;
+  getActiveLogger().info(`Now logging at level '${activeLogger}'...`);
 }
 
 /**
