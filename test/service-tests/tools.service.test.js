@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 
-import { defineTables, populateTools } from '../src/db/init_database';
-import { getMockLogger } from './mockLogger';
-const sequelize = require('../src/db/sequelize');
-import ToolsService from '../dist/services/tools.service';
+import { defineTables, populateTools } from '../../src/db/init_database';
+import { getMockLogger } from '../util/mockLogger';
+const sequelize = require('../../src/db/sequelize');
+import ToolsService from '../../dist/services/tools.service';
 
 sequelize.initSequelize();
 

@@ -1,16 +1,16 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 
-import server from './../src/index';
-import sequelize from './../src/db/sequelize';
-import * as apiUtil from './util/api.util';
-import { defineTables, populateTools } from '../src/db/init_database';
+import server from '../../src/index';
+import sequelize from '../../src/db/sequelize';
+import * as apiUtil from '../util/api.util';
+import { defineTables, populateTools } from '../../src/db/init_database';
 import {
   populateClients,
   populateUsers,
   populateAccessCodes,
   populateTokens,
-} from '../src/db/import_test_data';
+} from '../../src/db/import_test_data';
 
 chai.use(chaiHttp);
 const should = chai.should();

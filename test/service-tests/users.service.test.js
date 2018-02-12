@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 
-import { defineTables } from '../src/db/init_database';
-import { populateUsers } from '../src/db/import_test_data';
+import { defineTables } from '../../src/db/init_database';
+import { populateUsers } from '../../src/db/import_test_data';
 // Using Expect style
-const sequelize = require('../src/db/sequelize');
-import UserService from './../src/services/users.service';
-import { getMockLogger } from './mockLogger';
+const sequelize = require('../../src/db/sequelize');
+import UserService from '../../src/services/users.service';
+import { getMockLogger } from '../util/mockLogger';
 
 sequelize.initSequelize();
 
@@ -20,7 +20,7 @@ describe('Testing User Service', () => {
   describe('get user by username or id', async () => {
     it('should find a user by username', async () => {
       const userServiceFoundUser = await userService.getUserByIdOrUsername('BobSagat');
-      expect(userServiceFoundUser.id).to.equal(1);
+      expect(userServiceFoundUser.id).to.equal('a1');
       expect(userServiceFoundUser.username).to.equal('BobSagat');
       expect(userServiceFoundUser.email).to.equal('Bob@AFV.com');
       expect(userServiceFoundUser.firstName).to.equal('Bob');
@@ -28,8 +28,8 @@ describe('Testing User Service', () => {
     });
 
     it('should find a user by id', async () => {
-      const userServiceFoundUser = await userService.getUserByIdOrUsername(1);
-      expect(userServiceFoundUser.id).to.equal(1);
+      const userServiceFoundUser = await userService.getUserByIdOrUsername('a1');
+      expect(userServiceFoundUser.id).to.equal('a1');
       expect(userServiceFoundUser.username).to.equal('BobSagat');
       expect(userServiceFoundUser.email).to.equal('Bob@AFV.com');
       expect(userServiceFoundUser.firstName).to.equal('Bob');
@@ -51,12 +51,12 @@ describe('Testing User Service', () => {
 
     it('should throw a UserNotFoundException if user id is not found', async () => {
       try {
-        const user = await userService.getUserByIdOrUsername(300000);
+        const user = await userService.getUserByIdOrUsername('a300000');
         expect(user).to.be.a('undefined'); // this will fail if the error is not thrown and the
         // object actually has value. Theoretically should not be called.
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('User with 300000 could not be found.');
+        expect(error.message).to.equal('User with a300000 could not be found.');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -66,7 +66,7 @@ describe('Testing User Service', () => {
   describe('get user by email', async () => {
     it('should find a user by email', async () => {
       const userServiceFoundUser = await userService.getUserByEmail('Bob@AFV.com');
-      expect(userServiceFoundUser.id).to.equal(1);
+      expect(userServiceFoundUser.id).to.equal('a1');
       expect(userServiceFoundUser.username).to.equal('BobSagat');
       expect(userServiceFoundUser.email).to.equal('Bob@AFV.com');
       expect(userServiceFoundUser.firstName).to.equal('Bob');
@@ -138,7 +138,7 @@ describe('Testing User Service', () => {
 
     it('should not use the given id if an id is given', async () => {
       const newUser = {
-        id: '10',
+        id: 'a10',
         username: 'LeroyJenkins',
         email: 'newemail@gmail.com',
         firstName: 'Leroy',
@@ -404,8 +404,8 @@ describe('Testing User Service', () => {
         lastName: 'UpdateSagat'
       };
 
-      const updatedUser = await userService.updateUser(1, user);
-      expect(updatedUser.id).to.equal(1);
+      const updatedUser = await userService.updateUser('a1', user);
+      expect(updatedUser.id).to.equal('a1');
       expect(updatedUser.username).to.equal('UpdateBobSagat');
       expect(updatedUser.email).to.equal('UpdateBob@AFV.com');
       expect(updatedUser.firstName).to.equal('UpdateBob');
@@ -421,7 +421,7 @@ describe('Testing User Service', () => {
       };
 
       const updatedUser = await userService.updateUser('jreach', user);
-      expect(updatedUser.id).to.equal(3);
+      expect(updatedUser.id).to.equal('a3');
       expect(updatedUser.username).to.equal('Updatejreach');
       expect(updatedUser.email).to.equal('Updatejreach@gmail.com');
       expect(updatedUser.firstName).to.equal('UpdateJack');
@@ -430,7 +430,7 @@ describe('Testing User Service', () => {
 
     it('should update the user by username, but should not change the id', async () => {
       const user =  {
-        id: 11,
+        id: 'a11',
         username: 'Updatejreach',
         email: 'Updatejreach@gmail.com',
         firstName: 'UpdateJack',
@@ -438,7 +438,7 @@ describe('Testing User Service', () => {
       };
 
       const updatedUser = await userService.updateUser('jreach', user);
-      expect(updatedUser.id).to.equal(3);
+      expect(updatedUser.id).to.equal('a3');
       expect(updatedUser.username).to.equal('Updatejreach');
       expect(updatedUser.email).to.equal('Updatejreach@gmail.com');
       expect(updatedUser.firstName).to.equal('UpdateJack');
@@ -484,7 +484,7 @@ describe('Testing User Service', () => {
 
   describe('delete a user', async () => {
     it('should delete the user by id', async () => {
-      const deletedUser = await userService.deleteUserByIdOrUsername(1);
+      const deletedUser = await userService.deleteUserByIdOrUsername('a1');
 
       // check that the user was actually deleted
       const users = await userService.getAllUsers();
@@ -492,17 +492,17 @@ describe('Testing User Service', () => {
 
       // check that the user can no longer be retrieved
       try {
-        const user = await userService.getUserByIdOrUsername(1);
+        const user = await userService.getUserByIdOrUsername('a1');
         expect(user).to.be.a('undefined'); // this will fail if the error is not thrown and the
         // object actually has value. Theoretically should not be called.
       } catch (error) {
-        expect(error.message).to.equal('User with 1 could not be found.');
+        expect(error.message).to.equal('User with a1 could not be found.');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
 
       // check the deleted user information
-      expect(deletedUser.id).to.equal(1);
+      expect(deletedUser.id).to.equal('a1');
       expect(deletedUser.username).to.equal('BobSagat');
       expect(deletedUser.email).to.equal('Bob@AFV.com');
       expect(deletedUser.firstName).to.equal('Bob');
@@ -529,7 +529,7 @@ describe('Testing User Service', () => {
         }
 
         // check the deleted user information
-        expect(deletedUser.id).to.equal(1);
+        expect(deletedUser.id).to.equal('a1');
         expect(deletedUser.username).to.equal('BobSagat');
         expect(deletedUser.email).to.equal('Bob@AFV.com');
         expect(deletedUser.firstName).to.equal('Bob');
@@ -539,11 +539,11 @@ describe('Testing User Service', () => {
 
     it('should throw an error if the id does not exist', async () => {
       try {
-        const user = await userService.deleteUserByIdOrUsername(10);
+        const user = await userService.deleteUserByIdOrUsername('a10');
         expect(user).to.be.a('undefined'); // this will fail if the error is not thrown and the
         // object actually has value. Theoretically should not be called.
       } catch (error) {
-        expect(error.message).to.equal('User with 10 could not be found.');
+        expect(error.message).to.equal('User with a10 could not be found.');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }

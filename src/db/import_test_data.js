@@ -6,35 +6,35 @@ import sequelize from './sequelize';
 export async function populateUsers() {
   await sequelize.User.bulkCreate([
     {
-      id: '1',
+      id: 'a1',
       username: 'BobSagat',
       email: 'Bob@AFV.com',
       firstName: 'Bob',
       lastName: 'Sagat'
     },
     {
-      id: '2',
+      id: 'a2',
       username: 'globalwarmingguy56',
       email: 'Al@saveourplanet.com',
       firstName: 'Al',
       lastName: 'Gore'
     },
     {
-      id: '3',
+      id: 'a3',
       username: 'jreach',
       email: 'jreach@gmail.com',
       firstName: 'Jack',
       lastName: 'Reacher'
     },
     {
-      id: '4',
+      id: 'a4',
       username: 'johnnyb',
       email: 'jbravo@cartoonnetwork.com',
       firstName: 'Johnny',
       lastName: 'Bravo'
     },
     {
-      id: '5',
+      id: 'a5',
       username: 'buddy',
       email: 'buddy@carnegiehall.org',
       firstName: 'Buddy',
@@ -77,19 +77,19 @@ export async function populateUsers() {
 export async function populateClients() {
   await sequelize.Client.bulkCreate([
     {
-      id: '1',
+      id: 'c1',
       name: 'endor_frontend1',
       clientId: 'clientId',
       secret: 'client_secret'
     },
     {
-      id: '2',
+      id: 'c2',
       name: 'endor_frontend1',
       clientId: 'clientId1',
       secret: 'client_secret'
     },
     {
-      id: '3',
+      id: 'c3',
       name: 'endor_frontend1',
       clientId: 'clientId2',
       secret: 'client_secret'
@@ -99,7 +99,7 @@ export async function populateClients() {
 
 export async function populateProjects() {
   const project1 = await sequelize.Project.create({
-    id: '1',
+    id: 'b1',
     projectName: 'TMNT',
     description: 'You gotta know what a crumpet is to understand cricket!',
     version: '1.2.3',
@@ -107,7 +107,7 @@ export async function populateProjects() {
     authors: 'Casey Jones, Raphael'
   });
   const project2 = await sequelize.Project.create({
-    id: '2',
+    id: 'b2',
     projectName: 'hammer-io',
     description: 'Hit it with a hammer!',
     version: '1.2.3',
@@ -115,7 +115,7 @@ export async function populateProjects() {
     authors: 'Jack'
   });
   await sequelize.Project.create({
-    id: '3',
+    id: 'b3',
     projectName: 'drumitdown',
     description: 'Let us drum it down for you',
     version: '3.2.1',
@@ -172,7 +172,7 @@ export async function populateInvites() {
 
   // Jreach invited to hammer-io
   await sequelize.Invite.create({
-    id: '1',
+    id: 'd1',
     status: sequelize.InviteStatus.OPEN,
     userInvitedId: userJreach.id,
     projectInvitedToId: projectHammerIo.id,
@@ -180,14 +180,14 @@ export async function populateInvites() {
   });
   // Buddy invited to hammer-io and drumitdown, but he declined
   await sequelize.Invite.create({
-    id: '2',
+    id: 'd2',
     status: sequelize.InviteStatus.DECLINED,
     userInvitedId: userBuddy.id,
     projectInvitedToId: projectHammerIo.id,
     daysFromCreationUntilExpiration: 15
   });
   await sequelize.Invite.create({
-    id: '3',
+    id: 'd3',
     // status: sequelize.InviteStatus.OPEN,    -- Defaults to OPEN
     userInvitedId: userBuddy.id,
     projectInvitedToId: projectDrumItDown.id
@@ -200,12 +200,12 @@ export async function populateAccessCodes() {
     {
       value: 'randomValue',
       redirectURI: 'http://localhost:3000/api/v1/oauth2/authorize/successRedirect',
-      userId: 3
+      userId: 'a3'
     },
     {
       value: 'randomValueAgain',
       redirectURI: 'http://localhost:3000/api/v1/oauth2/authorize/successRedirect',
-      userId: 4
+      userId: 'a4'
     }
   ]);
 }
@@ -216,13 +216,13 @@ export async function populateTokens() {
       id: '1',
       value: 'longRandomTokenValue',
       expired: false,
-      userId: 3
+      userId: 'a3'
     },
     {
       id: '2',
       value: 'anotherLongRandomUnpredictableTokenValue',
       expired: false,
-      userId: 3
+      userId: 'a3'
     }
   ]);
 }

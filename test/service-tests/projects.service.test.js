@@ -1,14 +1,14 @@
 import { expect } from 'chai';
 
 // Using Expect style
-const sequelize = require('../src/db/sequelize');
-import UserService from './../src/services/users.service';
-import { getMockLogger } from './mockLogger';
-import ProjectService from '../src/services/projects.service';
-import { defineTables, populateTools } from '../src/db/init_database';
-import { populateUsers, populateProjects } from '../src/db/import_test_data';
-import GithubAuthenticationService from '../src/services/githubauth.service';
-import { getActiveLogger } from '../src/utils/winston';
+const sequelize = require('../../src/db/sequelize');
+import UserService from '../../src/services/users.service';
+import { getMockLogger } from '../util/mockLogger';
+import ProjectService from '../../src/services/projects.service';
+import { defineTables, populateTools } from '../../src/db/init_database';
+import { populateUsers, populateProjects } from '../../src/db/import_test_data';
+import GithubAuthenticationService from '../../src/services/githubauth.service';
+import { getActiveLogger } from '../../src/utils/winston';
 
 sequelize.initSequelize();
 
@@ -34,7 +34,7 @@ describe('Testing Project Service', async () => {
 
   describe('get a project by id', async () => {
     it('should get the project by id', async () => {
-      const project = await projectService.getProjectById(1);
+      const project = await projectService.getProjectById('b1');
       expect(project.projectName).to.equal('TMNT');
       expect(project.description).to.equal('You gotta know what a crumpet is to understand cricket!');
       expect(project.version).to.equal('1.2.3');
@@ -44,10 +44,10 @@ describe('Testing Project Service', async () => {
 
     it('should throw a ProjectNotFoundException if the project does not exist', async () => {
       try {
-        const project = await projectService.getProjectById(10000);
+        const project = await projectService.getProjectById('b10000');
         expect(project).to.equal('undefined');
       } catch (error) {
-        expect(error.message).to.equal('Project with id 10000 not found');
+        expect(error.message).to.equal('Project with id b10000 not found');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -56,22 +56,22 @@ describe('Testing Project Service', async () => {
 
   describe('get contributors for a project', async () => {
     it('should get the contributors for a project', async () => {
-      const contributors = await projectService.getContributorsByProjectId(1);
+      const contributors = await projectService.getContributorsByProjectId('b1');
       expect(contributors.length).to.equal(3);
 
-      expect(contributors[0].id).to.equal(1);
-      expect(contributors[1].id).to.equal(2);
-      expect(contributors[2].id).to.equal(3);
+      expect(contributors[0].id).to.equal('a1');
+      expect(contributors[1].id).to.equal('a2');
+      expect(contributors[2].id).to.equal('a3');
     });
   });
 
   describe('get owners for a project', async () => {
     it('should get the owners for a project', async () => {
-      const owners = await projectService.getOwnersByProjectId(1);
+      const owners = await projectService.getOwnersByProjectId('b1');
 
       expect(owners.length).to.equal(1);
 
-      expect(owners[0].id).to.equal(4);
+      expect(owners[0].id).to.equal('a4');
       expect(owners[0].username).to.equal('johnnyb');
       expect(owners[0].email).to.equal('jbravo@cartoonnetwork.com');
       expect(owners[0].firstName).to.equal('Johnny');
@@ -81,7 +81,7 @@ describe('Testing Project Service', async () => {
 
   describe('get projects for a user', async () => {
     it('should get all projects for a user (contributed and owned)', async () => {
-      const userProjects = await projectService.getProjectsByUser(2);
+      const userProjects = await projectService.getProjectsByUser('a2');
       expect(Array.isArray(userProjects.owned)).to.equal(true);
       expect(userProjects.owned.length).to.equal(1);
       expect(userProjects.owned[0].projectName).to.equal('hammer-io');
@@ -93,11 +93,11 @@ describe('Testing Project Service', async () => {
 
     it('should throw a UserNotFoundException if the user does not exist', async () => {
       try {
-        const projects = await projectService.getProjectsByUser(10000);
+        const projects = await projectService.getProjectsByUser('a10000');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('User with 10000 could not be found.');
+        expect(error.message).to.equal('User with a10000 could not be found.');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -106,24 +106,24 @@ describe('Testing Project Service', async () => {
 
   describe('check if user is an owner on a project', async () =>  {
     it('should return true if a user is an owner on a project', async () => {
-      const isContributor = await projectService.checkIfUserIsOwnerOnProject(1, 4);
+      const isContributor = await projectService.checkIfUserIsOwnerOnProject('b1', 'a4');
       expect(isContributor).to.equal(true);
     });
 
     it('should return false if a user is not a contributor on a project', async () => {
-      const isContributor = await projectService.checkIfUserIsOwnerOnProject(1, 2);
+      const isContributor = await projectService.checkIfUserIsOwnerOnProject('b1', 'a2');
       expect(isContributor).to.equal(false);
     });
   });
 
   describe('check if user is a contributor on a project', async () => {
     it('should return true if a user is a contributor on a project', async () => {
-      const isContributor = await projectService.checkIfUserIsContributorOnProject(1, 3);
+      const isContributor = await projectService.checkIfUserIsContributorOnProject('b1', 'a3');
       expect(isContributor).to.equal(true);
     });
 
     it('should return false if a user is not a contributor on a project', async () => {
-      const isContributor = await projectService.checkIfUserIsContributorOnProject(1, 4);
+      const isContributor = await projectService.checkIfUserIsContributorOnProject('b1', 'a4');
       expect(isContributor).to.equal(false);
     });
   });
@@ -138,7 +138,7 @@ describe('Testing Project Service', async () => {
         authors: 'Creator'
       };
 
-      const project = await projectService.createProject(newProject, 1);
+      const project = await projectService.createProject(newProject, 'a1');
       expect(project.projectName).to.equal('hello world');
       expect(project.description).to.equal('good bye world');
       expect(project.version).to.equal('1.2.3');
@@ -157,7 +157,7 @@ describe('Testing Project Service', async () => {
       };
 
       // // double check to make sure that the project was created
-      const project = await projectService.createProject(newProject, 1);
+      const project = await projectService.createProject(newProject, 'a1');
       expect(project.projectName).to.equal(newProject.projectName);
       expect(project.description).to.equal(newProject.description);
       expect(project.version).to.equal(newProject.version);
@@ -184,7 +184,7 @@ describe('Testing Project Service', async () => {
       };
 
       // double check to make sure that the project was created
-      const project = await projectService.createProject(newProject, 1);
+      const project = await projectService.createProject(newProject, 'a1');
       expect(project.projectName).to.equal(newProject.projectName);
       expect(project.description).to.equal(newProject.description);
       expect(project.version).to.equal(newProject.version);
@@ -194,10 +194,10 @@ describe('Testing Project Service', async () => {
 
       const owners = await project.getOwners();
       expect(owners.length).to.equal(1);
-      expect(owners[0].id).to.equal(1);
+      expect(owners[0].id).to.equal('a1');
       expect(owners[0].username).to.equal('BobSagat');
 
-      const owned = await projectService.getProjectsByUser(1);
+      const owned = await projectService.getProjectsByUser('a1');
 
       const filteredOwned = owned.owned.filter((p) => {
         return p.id === newId;
@@ -216,11 +216,11 @@ describe('Testing Project Service', async () => {
       };
 
       try {
-        const projects = await projectService.createProject(project, 10000);
+        const projects = await projectService.createProject(project, 'a10000');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('User with 10000 could not be found.');
+        expect(error.message).to.equal('User with a10000 could not be found.');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -229,16 +229,16 @@ describe('Testing Project Service', async () => {
 
   describe('add a new contributor to a project', async () => {
     it('should add a new contributor to a project', async () => {
-      await projectService.addContributorToProject(1, 2);
+      await projectService.addContributorToProject('b1', 'a2');
 
-      const contributors = await projectService.getContributorsByProjectId(1);
+      const contributors = await projectService.getContributorsByProjectId('b1');
       const filteredContributors = contributors.filter((user) => {
-        return user.id === 1;
+        return user.id === 'a1';
       });
 
-      const contributed = await projectService.getProjectsByUser(1);
+      const contributed = await projectService.getProjectsByUser('a1');
       const filteredContributed = contributed.contributed.filter((project) => {
-        return project.id === 1;
+        return project.id === 'b1';
       });
 
       expect(filteredContributors.length).to.equal(1);
@@ -246,13 +246,13 @@ describe('Testing Project Service', async () => {
     });
 
     it('should return the contributors after the project addition', async () => {
-      const contributors = await projectService.addContributorToProject(1, 2);
+      const contributors = await projectService.addContributorToProject('b1', 'a2');
       expect(Array.isArray(contributors)).to.equal(true);
       expect(contributors.length).to.equal(3);
     });
 
     it('should not duplicate the contributor if they have already been added', async () => {
-      const contributors = await projectService.addContributorToProject(1, 1);
+      const contributors = await projectService.addContributorToProject('b1', 'a1');
 
       // check to make sure the project still has the same number of contributors as before
       expect(Array.isArray(contributors)).to.equal(true);
@@ -260,7 +260,7 @@ describe('Testing Project Service', async () => {
 
       // check to make sure they were not added more than once
       const filteredContributors = contributors.filter((user) => {
-        return user.id === 1;
+        return user.id === 'a1';
       });
 
       expect(filteredContributors.length).to.equal(1);
@@ -268,11 +268,11 @@ describe('Testing Project Service', async () => {
 
     it('should throw a UserNotFoundException if the user does not exist', async () => {
       try {
-        const projects = await projectService.addContributorToProject(1, 10000);
+        const projects = await projectService.addContributorToProject('b1', 'a10000');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('User with 10000 could not be found.');
+        expect(error.message).to.equal('User with a10000 could not be found.');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -280,11 +280,11 @@ describe('Testing Project Service', async () => {
 
     it('should throw a ProjectNotFoundException if the project does not exist', async () => {
       try {
-        const projects = await projectService.addContributorToProject(10000, 1);
+        const projects = await projectService.addContributorToProject('b10000', 'a1');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('Project with id 10000 not found');
+        expect(error.message).to.equal('Project with id b10000 not found');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -293,16 +293,16 @@ describe('Testing Project Service', async () => {
 
   describe('add a new owner to a project', async () => {
     it('should add a new owner to a project', async () => {
-      await projectService.addOwnerToProject(1, 1);
+      await projectService.addOwnerToProject('b1', 'a1');
 
-      const owners = await projectService.getOwnersByProjectId(1);
+      const owners = await projectService.getOwnersByProjectId('b1');
       const filteredOwners = owners.filter((user) => {
-        return user.id === 1;
+        return user.id === 'a1';
       });
 
-      const owned = await projectService.getProjectsByUser(1);
+      const owned = await projectService.getProjectsByUser('a1');
       const filteredOwned = owned.owned.filter((project) => {
-        return project.id === 1;
+        return project.id === 'b1';
       });
 
       expect(filteredOwners.length).to.equal(1);
@@ -310,18 +310,18 @@ describe('Testing Project Service', async () => {
     });
 
     it('should return the contributors after the new addition', async () => {
-      const owners = await projectService.addOwnerToProject(1, 1);
+      const owners = await projectService.addOwnerToProject('b1', 'a1');
       expect(Array.isArray(owners)).to.equal(true);
       expect(owners.length).to.equal(2);
     });
 
     it('should not duplicate the owner if they have already been added', async () => {
-      const owners = await projectService.addOwnerToProject(1, 4);
+      const owners = await projectService.addOwnerToProject('b1', 'a4');
       expect(Array.isArray(owners)).to.equal(true);
       expect(owners.length).to.equal(1);
 
       const filteredOwners = owners.filter((user) => {
-        return user.id === 4;
+        return user.id === 'a4';
       });
 
       expect(filteredOwners.length).to.equal(1);
@@ -329,11 +329,11 @@ describe('Testing Project Service', async () => {
 
     it('should throw a UserNotFoundException if the user does not exist', async () => {
       try {
-        const projects = await projectService.addOwnerToProject(1, 10000);
+        const projects = await projectService.addOwnerToProject('b1', 'a10000');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('User with 10000 could not be found.');
+        expect(error.message).to.equal('User with a10000 could not be found.');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -341,11 +341,11 @@ describe('Testing Project Service', async () => {
 
     it('should throw a ProjectNotFoundException if the project does not exist', async () => {
       try {
-        const projects = await projectService.addOwnerToProject(10000, 1);
+        const projects = await projectService.addOwnerToProject('b10000', 'a1');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('Project with id 10000 not found');
+        expect(error.message).to.equal('Project with id b10000 not found');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -362,7 +362,7 @@ describe('Testing Project Service', async () => {
         authors: 'Creator'
       };
 
-      const project = await projectService.updateProject(newProject, 1);
+      const project = await projectService.updateProject(newProject, 'b1');
       expect(project.projectName).to.equal('updated TMNT');
       expect(project.description).to.equal('updated You gotta know what a crumpet is to understand cricket!');
       expect(project.version).to.equal('1.2.3');
@@ -380,11 +380,11 @@ describe('Testing Project Service', async () => {
       };
 
       try {
-        const projects = await projectService.updateProject(newProject, 10000);
+        const projects = await projectService.updateProject(newProject, 'b10000');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('Project with id 10000 not found');
+        expect(error.message).to.equal('Project with id b10000 not found');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -393,13 +393,13 @@ describe('Testing Project Service', async () => {
 
   describe('delete a project', async () => {
     it('should delete a project from the database', async () => {
-      await projectService.deleteProjectById(1, false);
+      await projectService.deleteProjectById('b1', false);
       const projects = await projectService.getAllProjects();
       expect(projects.length).to.equal(2);
     });
 
     it('should return the deleted project', async () => {
-      const project = await projectService.deleteProjectById(1, false);
+      const project = await projectService.deleteProjectById('b1', false);
       expect(project.projectName).to.equal('TMNT');
       expect(project.description).to.equal('You gotta know what a crumpet is to understand cricket!');
       expect(project.version).to.equal('1.2.3');
@@ -408,11 +408,11 @@ describe('Testing Project Service', async () => {
 
     it('should throw a ProjectNotFoundException if the project does not exist', async () => {
       try {
-        const projects = await projectService.deleteProjectById(10000);
+        const projects = await projectService.deleteProjectById('b10000');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('Project with id 10000 not found');
+        expect(error.message).to.equal('Project with id b10000 not found');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -421,24 +421,24 @@ describe('Testing Project Service', async () => {
 
   describe('delete a contributor from a project', async () => {
     it('should delete a contributor from a project', async () => {
-      await projectService.deleteContributorFromProject(1, 3);
-      const contributors = await projectService.getContributorsByProjectId(1);
+      await projectService.deleteContributorFromProject('b1', 'a3');
+      const contributors = await projectService.getContributorsByProjectId('b1');
       expect(contributors.length).to.equal(2);
     });
 
     it('should return the contributors after deletion', async () => {
-      const contributors = await projectService.deleteContributorFromProject(1, 3);
+      const contributors = await projectService.deleteContributorFromProject('b1', 'a3');
       expect(Array.isArray(contributors)).to.equal(true);
       expect(contributors.length).to.equal(2);
     });
 
     it('should throw a ProjectNotFoundException if the project does not exist', async () => {
       try {
-        const projects = await projectService.deleteContributorFromProject(10000, 1);
+        const projects = await projectService.deleteContributorFromProject('b10000', 'a1');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('Project with id 10000 not found');
+        expect(error.message).to.equal('Project with id b10000 not found');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -446,11 +446,11 @@ describe('Testing Project Service', async () => {
 
     it('should throw a UserNotFoundException if the user does not exist', async () => {
       try {
-        const projects = await projectService.deleteContributorFromProject(1, 10000);
+        const projects = await projectService.deleteContributorFromProject('b1', 'a10000');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('User with 10000 could not be found.');
+        expect(error.message).to.equal('User with a10000 could not be found.');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -459,24 +459,24 @@ describe('Testing Project Service', async () => {
 
   describe('delete an owner from a project', async () => {
     it('should delete an owner from a project', async () => {
-      await projectService.deleteOwnerFromProject(1, 4);
-      const owners = await projectService.getOwnersByProjectId(1);
+      await projectService.deleteOwnerFromProject('b1', 'a4');
+      const owners = await projectService.getOwnersByProjectId('b1');
       expect(owners.length).to.equal(0);
     });
 
     it('should return the owners after deletion', async () => {
-      const owners = await projectService.deleteOwnerFromProject(1, 4);
+      const owners = await projectService.deleteOwnerFromProject('b1', 'a4');
       expect(Array.isArray(owners)).to.equal(true);
       expect(owners.length).to.equal(0);
     });
 
     it('should throw a ProjectNotFoundException if the project does not exist', async () => {
       try {
-        const projects = await projectService.deleteOwnerFromProject(10000, 1);
+        const projects = await projectService.deleteOwnerFromProject('b10000', 'a1');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('Project with id 10000 not found');
+        expect(error.message).to.equal('Project with id b10000 not found');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }
@@ -484,11 +484,11 @@ describe('Testing Project Service', async () => {
 
     it('should throw a UserNotFoundException if the user does not exist', async () => {
       try {
-        const projects = await projectService.deleteOwnerFromProject(1, 10000);
+        const projects = await projectService.deleteOwnerFromProject('b1', 'a10000');
         expect(projects).to.equal('undefined');
       } catch (error) {
         expect(error).to.be.a('object');
-        expect(error.message).to.equal('User with 10000 could not be found.');
+        expect(error.message).to.equal('User with a10000 could not be found.');
         expect(error.type).to.equal('Not Found');
         expect(error.status).to.equal(404);
       }

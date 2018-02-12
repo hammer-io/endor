@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import nodemailer from 'nodemailer';
 
-const sequelize = require('../src/db/sequelize');
-import { defineTables } from '../src/db/init_database';
-import { populateUsers, populateProjects, populateInvites } from '../src/db/import_test_data';
-import * as emailUtil from './util/email';
-import EmailService from '../src/services/email.service';
-import { getMockLogger } from './mockLogger';
+const sequelize = require('../../src/db/sequelize');
+import { defineTables } from '../../src/db/init_database';
+import { populateUsers, populateProjects, populateInvites } from '../../src/db/import_test_data';
+import * as emailUtil from '../util/email';
+import EmailService from '../../src/services/email.service';
+import { getMockLogger } from '../util/mockLogger';
 
 const InviteStatus = sequelize.InviteStatus;
 
@@ -48,6 +48,6 @@ describe('Testing Email Service', () => {
       expect(results.accepted[0]).to.equal(user.email);
       expect(Array.isArray(results.rejected)).to.equal(true);
       expect(results.rejected.length).to.equal(0);
-    }).timeout(10000);
+    }).timeout(20000);
   });
 });

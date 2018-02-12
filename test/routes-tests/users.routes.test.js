@@ -3,10 +3,10 @@ let chaiHttp = require('chai-http');
 
 // Using Expect style
 
-import server from './../src/index';
-import * as apiUtil from './util/api.util';
-import { defineTables } from '../src/db/init_database';
-import {  populateClients, populateUsers, populateAccessCodes, populateTokens } from '../src/db/import_test_data';
+import server from '../../src/index';
+import * as apiUtil from '../util/api.util';
+import { defineTables } from '../../src/db/init_database';
+import {  populateClients, populateUsers, populateAccessCodes, populateTokens } from '../../src/db/import_test_data';
 
 chai.use(chaiHttp);
 const should = chai.should();
@@ -45,28 +45,28 @@ describe('Testing User Routes', () => {
           res.should.have.status(200);
           const user = res.body;
           expect(user.username).to.equal('jreach');
-          expect(user.id).to.equal(3);
+          expect(user.id).to.equal('a3');
           done();
         });
     });
 
     it('should return the specified user\'s information', (done) => {
       chai.request(server)
-        .get(`${apiUtil.API}/users/3`)
+        .get(`${apiUtil.API}/users/a3`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send()
         .end((err, res) => {
           res.should.have.status(200);
           const user = res.body;
           expect(user.username).to.equal('jreach');
-          expect(user.id).to.equal(3);
+          expect(user.id).to.equal('a3');
           done();
         });
     });
 
     it('should not return the specified user if the authentication is incorrect', (done) => {
       chai.request(server)
-        .get(`${apiUtil.API}/users/3`)
+        .get(`${apiUtil.API}/users/a3`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext'))
         .send()
         .end((err, res) => {
@@ -82,14 +82,14 @@ describe('Testing User Routes', () => {
         lastName: 'Dorsey'
       };
       chai.request(server)
-        .patch(`${apiUtil.API}/users/3`)
+        .patch(`${apiUtil.API}/users/a3`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send(body)
         .end((err, res) => {
           res.should.have.status(200);
           const user = res.body;
           expect(user.username).to.equal('jreach');
-          expect(user.id).to.equal(3);
+          expect(user.id).to.equal('a3');
           expect(user.firstName).to.equal('Jack');
           expect(user.lastName).to.equal('Dorsey');
           expect(user.email).to.equal('jreach@gmail.com');
@@ -102,7 +102,7 @@ describe('Testing User Routes', () => {
         lastName: 'Dorsey'
       };
       chai.request(server)
-        .patch(`${apiUtil.API}/users/2`)
+        .patch(`${apiUtil.API}/users/a2`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send(body)
         .end((err, res) => {
@@ -115,7 +115,7 @@ describe('Testing User Routes', () => {
   describe('DELETE /users/:user', () => {
     it('should update the specified user', (done) => {
       chai.request(server)
-        .delete(`${apiUtil.API}/users/3`)
+        .delete(`${apiUtil.API}/users/a3`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send()
         .end((err, res) => {
@@ -126,7 +126,7 @@ describe('Testing User Routes', () => {
 
     it('should not update the specified user if the authorization does not match', (done) => {
       chai.request(server)
-        .delete(`${apiUtil.API}/users/2`)
+        .delete(`${apiUtil.API}/users/a2`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send()
         .end((err, res) => {
