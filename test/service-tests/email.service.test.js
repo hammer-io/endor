@@ -25,7 +25,7 @@ describe('Testing Email Service', () => {
   });
 
   describe('Send email', async () => {
-    it('should send an email', async () => {
+    it('should send an email', async function() {
       this.retries(2);
       const invite = await sequelize.Invite.findOne(  {where: { status: InviteStatus.OPEN         }});
       const user = await sequelize.User.findOne(      {where: {     id: invite.userInvitedId      }});
