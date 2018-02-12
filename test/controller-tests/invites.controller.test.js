@@ -52,11 +52,7 @@ describe('Testing Invite Controller', () => {
     it('should return an array of invites to the project', async () => {
       const projectId = 'b2';
       const mock = new MockInviteRouteData({ projectId });
-      const result = await controller.getInvitesByProjectId(
-        mock.req,
-        mock.res,
-        mock.next()
-      );
+      const result = await controller.getInvitesByProjectId(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
       mock.assertWasSent(true);
       mock.assertWasNexted(false);
@@ -78,11 +74,7 @@ describe('Testing Invite Controller', () => {
     it('should filter by status if a status is provided in the query string', async () => {
       const projectId = 'b2';
       const mock = new MockInviteRouteData({ projectId }, InviteStatus.OPEN);
-      const result = await controller.getInvitesByProjectId(
-        mock.req,
-        mock.res,
-        mock.next()
-      );
+      const result = await controller.getInvitesByProjectId(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
       mock.assertWasSent(true);
       mock.assertWasNexted(false);
@@ -98,11 +90,7 @@ describe('Testing Invite Controller', () => {
     it('should return an empty array for a non-existent project', async () => {
       const projectId = 'b22222';
       const mock = new MockInviteRouteData({ projectId });
-      const result = await controller.getInvitesByProjectId(
-        mock.req,
-        mock.res,
-        mock.next()
-      );
+      const result = await controller.getInvitesByProjectId(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
       mock.assertWasSent(true);
       mock.assertWasNexted(false);
@@ -115,11 +103,7 @@ describe('Testing Invite Controller', () => {
     it('should return an array of invites for the user', async () => {
       const user = 'a5';
       const mock = new MockInviteRouteData({ user });
-      const result = await controller.getInvitesByUserId(
-        mock.req,
-        mock.res,
-        mock.next()
-      );
+      const result = await controller.getInvitesByUserId(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
       mock.assertWasSent(true);
       mock.assertWasNexted(false);
@@ -141,11 +125,7 @@ describe('Testing Invite Controller', () => {
     it('should filter by status if a status is provided in the query string', async () => {
       const user = 'a5';
       const mock = new MockInviteRouteData({ user }, InviteStatus.OPEN);
-      const result = await controller.getInvitesByUserId(
-        mock.req,
-        mock.res,
-        mock.next()
-      );
+      const result = await controller.getInvitesByUserId(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
       mock.assertWasSent(true);
       mock.assertWasNexted(false);
@@ -161,11 +141,7 @@ describe('Testing Invite Controller', () => {
     it('should return an empty array if the user doesn\'t exist', async () => {
       const user = 'a5555555';
       const mock = new MockInviteRouteData({ user });
-      const result = await controller.getInvitesByUserId(
-        mock.req,
-        mock.res,
-        mock.next()
-      );
+      const result = await controller.getInvitesByUserId(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
       mock.assertWasSent(true);
       mock.assertWasNexted(false);
@@ -272,11 +248,7 @@ describe('Testing Invite Controller', () => {
         daysFromCreationUntilExpiration: 7
       };
       const mock = new MockInviteRouteData({ projectId, user }, null, body);
-      const result = await controller.addInviteToProject(
-        mock.req,
-        mock.res,
-        mock.next()
-      );
+      const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
       mock.assertWasSent(true);
       mock.assertWasNexted(false);
@@ -297,11 +269,7 @@ describe('Testing Invite Controller', () => {
         daysFromCreationUntilExpiration: 7
       };
       const mock = new MockInviteRouteData({ projectId, user }, null, body);
-      const result = await controller.addInviteToProject(
-        mock.req,
-        mock.res,
-        mock.next()
-      );
+      const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
       mock.assertWasSent(false);
       mock.assertWasNexted(true);
@@ -315,28 +283,131 @@ describe('Testing Invite Controller', () => {
         daysFromCreationUntilExpiration: 7
       };
       const mock = new MockInviteRouteData({ projectId, user }, null, body);
-      const result = await controller.addInviteToProject(
-        mock.req,
-        mock.res,
-        mock.next()
-      );
+      const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
       mock.assertWasSent(false);
       mock.assertWasNexted(true);
       expect(mock.nexted.message).to.equal('User with a1234 could not be found.');
     });
 
-    it('Update invite should work (happy path)', async () => {
+    it('Accept invite should update the invite and add a contributor to the project', async () => {
+      // First, make sure the project doesn't have the user as a contributor
+      const drumitdown = await sequelize.Project.findOne({
+        where: { projectName: 'drumitdown' }
+      });
+      const buddy = await sequelize.User.findOne({
+        where: { username: 'buddy' }
+      });
+      let projectContributor = await sequelize.ProjectContributor.findOne({
+        where: {
+          projectId: drumitdown.id,
+          userId: buddy.id
+        }
+      });
+      expect(projectContributor).to.equal(null);
+
+      // Now, accept the invite
+      const inviteId = 'd3';
+      const mock = new MockInviteRouteData({ id: inviteId });
+      const result = await controller.acceptInvite(mock.req, mock.res, mock.next());
+      expect(result).to.equal(mock.sent);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      mock.assertStatusCode(201);
+
+      // Make sure invite was updated
+      assertInvite(mock.sent, {
+        status: InviteStatus.ACCEPTED,
+        days: 30,
+        userId: 'a5',
+        projectId: 'b3'
+      });
+
+      // Finally, make sure user was added as contributor
+      projectContributor = await sequelize.ProjectContributor.findOne({
+        where: {
+          projectId: drumitdown.id,
+          userId: buddy.id
+        }
+      });
+      expect(projectContributor.userId).to.equal(buddy.id);
     });
 
-    it('Accept invite should work (happy path)', async () => {
+    it('Accept invite should fail if the invite isn\'t open', async () => {
+      // First, make sure the project doesn't have the user as a contributor
+      const hammerio = await sequelize.Project.findOne({
+        where: { projectName: 'hammer-io' }
+      });
+      const buddy = await sequelize.User.findOne({
+        where: { username: 'buddy' }
+      });
+      let projectContributor = await sequelize.ProjectContributor.findOne({
+        where: {
+          projectId: hammerio.id,
+          userId: buddy.id
+        }
+      });
+      expect(projectContributor).to.equal(null);
+
+      // Now, accept the invite
+      const inviteId = 'd2'; // a declined invite
+      const mock = new MockInviteRouteData({ id: inviteId });
+      const result = await controller.acceptInvite(mock.req, mock.res, mock.next());
+      expect(result).to.equal(false);
+      mock.assertWasSent(false);
+      mock.assertWasNexted(true);
+      expect(mock.nexted.errors[0].message).to.equal('Only an OPEN invite can be accepted, rescinded, or declined.');
+
+      // Finally, make sure user was NOT added as contributor
+      projectContributor = await sequelize.ProjectContributor.findOne({
+        where: {
+          projectId: hammerio.id,
+          userId: buddy.id
+        }
+      });
+      expect(projectContributor).to.equal(null);
     });
 
     it('Rescind invite should work (happy path)', async () => {
+      const inviteId = 'd1';
+      const mock = new MockInviteRouteData({ id: inviteId });
+      const result = await controller.rescindInvite(mock.req, mock.res, mock.next());
+      expect(result).to.equal(mock.sent);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      mock.assertStatusCode(201);
+      assertInvite(mock.sent, {
+        status: InviteStatus.RESCINDED,
+        days: 30,
+        userId: 'a3',
+        projectId: 'b2'
+      });
     });
 
     it('Decline invite should work (happy path)', async () => {
+      const inviteId = 'd1';
+      const mock = new MockInviteRouteData({ id: inviteId });
+      const result = await controller.declineInvite(mock.req, mock.res, mock.next());
+      expect(result).to.equal(mock.sent);
+      mock.assertWasSent(true);
+      mock.assertWasNexted(false);
+      mock.assertStatusCode(201);
+      assertInvite(mock.sent, {
+        status: InviteStatus.DECLINED,
+        days: 30,
+        userId: 'a3',
+        projectId: 'b2'
+      });
     });
 
+    it('Update invite should fail if the invite doesn\'t exist', async () => {
+      const inviteId = 'd1234';
+      const mock = new MockInviteRouteData({ id: inviteId });
+      const result = await controller.declineInvite(mock.req, mock.res, mock.next());
+      expect(result).to.equal(false);
+      mock.assertWasSent(false);
+      mock.assertWasNexted(true);
+      expect(mock.nexted.message).to.equal('Invite with id d1234 could not be found.');
+    });
   });
 });
