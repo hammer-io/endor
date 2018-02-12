@@ -7,11 +7,14 @@ import { getMockLogger } from '../util/mockLogger';
 import ProjectService from '../../src/services/projects.service';
 import { defineTables, populateTools } from '../../src/db/init_database';
 import { populateUsers, populateProjects } from '../../src/db/import_test_data';
+import GithubAuthenticationService from '../../src/services/githubauth.service';
+import { getActiveLogger } from '../../src/utils/winston';
 
 sequelize.initSequelize();
 
 const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
-const projectService = new ProjectService(sequelize.Project, userService, getMockLogger());
+const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getActiveLogger());
+const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, getMockLogger());
 
 describe('Testing Project Service', async () => {
   beforeEach(async () => {

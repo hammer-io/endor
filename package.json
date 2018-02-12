@@ -13,7 +13,8 @@
     "createDB": "echo \"DROP SCHEMA IF EXISTS \\`hammer_endor\\`; CREATE SCHEMA IF NOT EXISTS \\`hammer_endor\\` DEFAULT CHARACTER SET utf8 ;\" | mysql -u root -p",
     "initDB": "npm run build && node dist/db/init_database.js",
     "importTestData": "npm run build && node dist/db/import_test_data.js",
-    "productionStart": "apidoc -i src/ -o docs/ && npm start"
+    "productionStart": "apidoc -i src/ -o docs/ && npm start",
+    "initTestDB": "npm run createDB && npm run initDB && npm run importTestData"
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,7 @@
     "sqlite3": "^3.1.13"
   },
   "dependencies": {
+    "@octokit/rest": "^14.0.8",
     "apidoc": "^0.17.6",
     "bcrypt": "^1.0.3",
     "body-parser": "1.18.2",
@@ -59,6 +61,7 @@
     "mocha": "3.5.3",
     "morgan": "1.9.0",
     "mysql2": "^1.5.1",
+    "node-fetch": "^2.0.0",
     "nodemailer": "^4.4.2",
     "oauth2orize": "^1.11.0",
     "passport": "0.4.0",

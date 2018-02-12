@@ -9,6 +9,9 @@ import sequelizeStore from 'connect-session-sequelize';
 import config from 'config';
 
 import * as auth from './routes/auth.routes';
+import * as githubauth from './routes/githubauth.routes';
+import * as travisauth from './routes/travisauth.routes';
+import * as herokuauth from './routes/herokuauth.routes';
 import * as client from './routes/client.routes';
 import index from './routes/index.routes';
 import * as projects from './routes/projects.routes';
@@ -26,6 +29,9 @@ import AuthService from './services/auth.service';
 import ClientService from './services/client.service';
 import EmailService from './services/email.service';
 import ToolsService from './services/tools.service';
+import GithubAuthenticationService from './services/githubauth.service';
+import TravisAuthenticationService from './services/travisauth.service';
+import HerokuAuthService from './services/herokuauth.service';
 
 // Get various configuration details
 const emailFromAddress = config.get('email.from');
@@ -57,12 +63,34 @@ app.use(session({
 
 // dependency injections //
 const userService = new UserService(sequelize.User, sequelize.Credentials, getActiveLogger());
-const projectService = new ProjectService(sequelize.Project, userService, getActiveLogger());
+const githubAuthenticationService = new GithubAuthenticationService(
+  sequelize.GithubToken,
+  userService,
+  getActiveLogger()
+);
+const projectService = new ProjectService(
+  sequelize.Project,
+  userService,
+  githubAuthenticationService,
+  getActiveLogger()
+);
 const inviteService = new InviteService(sequelize.Invite, getActiveLogger());
 const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getActiveLogger());
 const clientService = new ClientService(sequelize.Client, getActiveLogger());
 const emailService = new EmailService(emailFromAddress, getActiveLogger(), emailTransportOptions);
 const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
+
+const travisAuthenticationService = new TravisAuthenticationService(
+  sequelize.TravisToken,
+  userService,
+  getActiveLogger()
+);
+const herokuAuthenticationService = new HerokuAuthService(
+  sequelize.HerokuToken,
+  userService,
+  getActiveLogger()
+);
+
 auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);
 projects.setProjectService(projectService);
@@ -71,12 +99,27 @@ contributors.setDependencies(projectService);
 owners.setDependencies(projectService);
 invites.setDependencies(inviteService, userService, projectService, emailService);
 tools.setDependencies(toolsService);
+githubauth.setDependencies(githubAuthenticationService);
+travisauth.setDependencies(travisAuthenticationService);
+herokuauth.setDependencies(herokuAuthenticationService);
 // end dependency injections //
 
 // API ENDPOINTS //
 app.use('/', express.static('docs'));
 app.use('/api', [index]);
-app.use('/api/v1', [auth.router, client.router, projects.router, users.router, contributors.router, owners.router, invites.router, tools.router]);
+app.use('/api/v1', [
+  auth.router,
+  client.router,
+  projects.router,
+  users.router,
+  contributors.router,
+  owners.router,
+  invites.router,
+  tools.router,
+  githubauth.router,
+  travisauth.router,
+  herokuauth.router
+]);
 // END API ENDPOINTS //
 
 // default 404 handler

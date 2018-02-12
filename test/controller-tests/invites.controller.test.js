@@ -2,6 +2,7 @@ import { expect } from 'chai';
 
 import * as controller from '../../src/controllers/invites.controller';
 import sequelize from '../../src/db/sequelize';
+import GithubAuthenticationService from '../../src/services/githubauth.service';
 import MockEmailService from '../util/mockEmailService';
 import MockRouteData from '../util/mockRouteData';
 import InviteService from '../../src/services/invites.service';
@@ -20,7 +21,8 @@ const InviteStatus = sequelize.InviteStatus;
 const mockEmailService = new MockEmailService('"Holmgang" <holmgang@hammer-io.github.io>', getMockLogger(), null);
 const inviteService = new InviteService(sequelize.Invite, getMockLogger());
 const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
-const projectService = new ProjectService(sequelize.Project, userService, getMockLogger());
+const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getMockLogger());
+const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, getMockLogger());
 
 
 class MockInviteRouteData extends MockRouteData {
@@ -250,6 +252,7 @@ describe('Testing Invite Controller', () => {
       const mock = new MockInviteRouteData({ projectId, user }, null, body);
       const result = await controller.addInviteToProject(mock.req, mock.res, mock.next());
       expect(result).to.equal(undefined);
+      console.log(mock);
       mock.assertWasSent(true);
       mock.assertWasNexted(false);
       mock.assertStatusCode(201);

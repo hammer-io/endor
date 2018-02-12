@@ -158,6 +158,77 @@ export async function deleteProjectById(req, res, next) {
 }
 
 /**
+ * Handles the GET /projects/:projectId/issues route
+ * @param req the request
+ * @param res the response
+ * @param next the next middleware
+ */
+export async function getIssuesForProject(req, res, next) {
+  const projectId = req.params.projectId;
+  const state = req.query.state;
+  const limit = req.query.limit;
+  const user = req.user.id;
+
+  try {
+    const issues = await projectService.getIssuesForProject(projectId, state, user);
+    if (limit) {
+      res.status(200).send(issues.slice(0, limit));
+    } else {
+      res.status(200).send(issues);
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Handles the GET /projects/:projectId/pullrequests route
+ * @param req the request
+ * @param res the response
+ * @param next the next middleware
+ */
+export async function getPullRequestsForProject(req, res, next) {
+  const projectId = req.params.projectId;
+  const state = req.query.state;
+  const limit = req.query.limit;
+  const user = req.user.id;
+
+  try {
+    const pullRequests = await projectService.getPullRequestsForProject(projectId, state, user);
+    if (limit) {
+      res.status(200).send(pullRequests.slice(0, limit));
+    } else {
+      res.status(200).send(pullRequests);
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Handles the GET /projects/:projectId/commits route
+ * @param req the request
+ * @param res the response
+ * @param next the next middleware
+ */
+export async function getCommitsForProject(req, res, next) {
+  const projectId = req.params.projectId;
+  const user = req.user.id;
+  const limit = req.query.limit;
+
+  try {
+    const commits = await projectService.getCommitsForProject(projectId, user);
+    if (limit) {
+      res.status(200).send(commits.slice(0, limit));
+    } else {
+      res.status(200).send(commits);
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
  * Injects the project service dependency
  * @param newProjectService the project service
  */

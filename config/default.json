@@ -50,5 +50,8 @@
   },
   "session": {
     "secret": "<get this value from one of the other contributors or make your own for local development>"
+  },
+  "encrypt": {
+    "key": "some key here it should probably be really really long"
   }
 }

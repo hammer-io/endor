@@ -70,8 +70,8 @@ export async function deleteContributorFromProject(req, res, next) {
   try {
     const projectId = req.params.projectId;
     const user = req.params.user;
-    await projectService.deleteContributorFromProject(projectId, user);
-    responseHelper.noContent(res);
+    const contributors = await projectService.deleteContributorFromProject(projectId, user);
+    res.status(200).send(contributors);
   } catch (error) {
     next(error);
   }

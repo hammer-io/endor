@@ -148,7 +148,10 @@ function initManually(database, username, password, options) {
     description: STRING(1024),
     version: STRING,
     license: STRING,
-    authors: STRING
+    authors: STRING,
+    githubRepositoryName: STRING,
+    travisRepositoryName: STRING,
+    herokuApplicationName: STRING
   }, {
     paranoid: true
   });
@@ -211,6 +214,62 @@ function initManually(database, username, password, options) {
   Invite.belongsTo(User, { as: 'userInvited' });
   Invite.belongsTo(Project, { as: 'projectInvitedTo' });
 
+  const GithubToken = model.define('githubToken', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4,
+    },
+    token: STRING(2000)
+  });
+
+  const GithubTokenOwner = model.define('githubTokenOwner', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4,
+    }
+  });
+  GithubToken.belongsToMany(User, { as: 'owner', through: 'githubTokenOwner' });
+  User.belongsToMany(GithubToken, { as: 'githubToken', through: 'githubTokenOwner' });
+
+  const TravisToken = model.define('travisToken', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4
+    },
+    token: STRING(2000)
+  });
+
+  const TravisTokenOwner = model.define('travisTokenOwner', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4
+    }
+  });
+  TravisToken.belongsToMany(User, { as: 'owner', through: 'travisTokenOwner' });
+  User.belongsToMany(TravisToken, { as: 'travisToken', through: 'travisTokenOwner' });
+
+  const HerokuToken = model.define('herokuToken', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4
+    },
+    token: STRING(2000)
+  });
+
+  const HerokuTokenOwner = model.define('herokuTokenOwner', {
+    id: {
+      primaryKey: true,
+      type: UUID,
+      defaultValue: UUIDV4
+    }
+  });
+  HerokuToken.belongsToMany(User, { as: 'owner', through: 'herokuTokenOwner' });
+  User.belongsToMany(HerokuToken, { as: 'herokuToken', through: 'herokuTokenOwner' });
   // --------------------------- MODEL DEFINITION END ---------------------------
 
   // Model Instance
@@ -227,6 +286,12 @@ function initManually(database, username, password, options) {
   module.exports.Project = Project;
   module.exports.ProjectOwner = ProjectOwner;
   module.exports.ProjectContributor = ProjectContributor;
+  module.exports.GithubToken = GithubToken;
+  module.exports.GithubTokenOwner = GithubTokenOwner;
+  module.exports.TravisToken = TravisToken;
+  module.exports.TravisTokenOwner = TravisTokenOwner;
+  module.exports.HerokuToken = HerokuToken;
+  module.exports.HerokuTokenOwner = HerokuTokenOwner;
 }
 
 function initWithConfigs() {

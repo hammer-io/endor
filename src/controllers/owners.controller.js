@@ -70,8 +70,8 @@ export async function deleteOwnerFromProject(req, res, next) {
   try {
     const projectId = req.params.projectId;
     const user = req.params.user;
-    await projectService.deleteOwnerFromProject(projectId, user);
-    responseHelper.noContent(res);
+    const owners = await projectService.deleteOwnerFromProject(projectId, user);
+    res.status(200).send(owners);
   } catch (error) {
     next(error);
   }

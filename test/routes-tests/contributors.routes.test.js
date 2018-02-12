@@ -58,13 +58,13 @@ describe('Testing Contributor Routes', () => {
   });
 
   describe('DELETE /projects/:projectId/contributors/:user', () => {
-    it('should return a status of 204', (done) => {
+    it('should return a status of 200', (done) => {
       chai.request(server)
         .delete(`${apiUtil.API}/projects/b2/contributors/a3`)
         .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
         .send()
         .end((err, res) => {
-          res.should.have.status(204);
+          res.should.have.status(200);
           done();
         });
     });
