@@ -5,6 +5,7 @@ import { populateAllTestData } from '../../src/db/import_test_data';
 import * as emailUtil from '../util/email';
 import EmailService from '../../src/services/email.service';
 import { getMockLogger } from '../util/mockLogger';
+import '../globalSetupTeardown.test';
 
 const InviteStatus = sequelize.InviteStatus;
 

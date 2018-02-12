@@ -1,4 +1,7 @@
-.idea/
+/.idea/*
+# It would be nice to share these run configurations with other devs
+!/.idea/runConfigurations/*
+
 node_modules/
 
 logs

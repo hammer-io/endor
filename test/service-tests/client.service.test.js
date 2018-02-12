@@ -3,6 +3,7 @@ import sequelize from '../../src/db/sequelize';
 import { populateAllTestData } from '../../src/db/import_test_data';
 import ClientService from '../../src/services/client.service';
 import { getMockLogger } from '../util/mockLogger';
+import '../globalSetupTeardown.test';
 
 const clientService = new ClientService(sequelize.Client, getMockLogger());
 

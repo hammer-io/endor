@@ -3,6 +3,7 @@ import { defineTables, populateTools } from '../../src/db/init_database';
 import { getMockLogger } from '../util/mockLogger';
 import sequelize from '../../src/db/sequelize';
 import ToolsService from '../../dist/services/tools.service';
+import '../globalSetupTeardown.test';
 
 const toolsService = new ToolsService(sequelize.Tool, getMockLogger());
 
