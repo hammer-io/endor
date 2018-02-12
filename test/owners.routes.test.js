@@ -57,13 +57,13 @@ describe('Testing Owner Routes', () => {
   });
 
   describe('DELETE /projects/:projectId/owners/:user', () => {
-    it('should return a status of 204', (done) => {
+    it('should return a status of 200', (done) => {
       chai.request(server)
         .delete(`${apiUtil.API}/projects/2/owners/2`)
         .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
         .send()
         .end((err, res) => {
-          res.should.have.status(204);
+          res.should.have.status(200);
           done();
         });
     });
