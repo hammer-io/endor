@@ -256,7 +256,7 @@ function main() {
   sequelize.initSequelize();
 
   // Then, continue populating the test data
-  populateAllTestData(true).then(() => {
+  populateAllTestData(false).then(() => {
     process.exit(0);
   }).catch((err) => {
     console.error(err);
