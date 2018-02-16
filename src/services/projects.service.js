@@ -2,6 +2,7 @@
 import ProjectNotFoundException from '../error/ProjectNotFoundException';
 import * as githubService from './github.service';
 import * as travisService from './travis.service';
+import DuplicateException from '../error/DuplicateException';
 
 export default class ProjectService {
   /**
@@ -171,6 +172,14 @@ export default class ProjectService {
     this.log.info(`ProjectService: adding user ${user} as an contributor to project with id ${projectId}`);
     const userFound = await this.userService.getUserByIdOrUsername(user);
 
+    const isUserAlreadyContributorOrOwner =
+      await this.checkIfUserIsContributorOnProject(projectId, user) ||
+      await this.checkIfUserIsOwnerOnProject(projectId, user);
+
+    if (isUserAlreadyContributorOrOwner) {
+      throw new DuplicateException(`${userFound.username} is already a contributor or owner on this project.`);
+    }
+
     const project = await this.getProjectById(projectId);
     await project.addContributors(userFound);
     const contributors = project.getContributors();
@@ -186,6 +195,14 @@ export default class ProjectService {
   async addOwnerToProject(projectId, user) {
     this.log.info(`ProjectService: adding user ${user} as an owner to project with id ${projectId}`);
     const userFound = await this.userService.getUserByIdOrUsername(user);
+
+    const isUserAlreadyContributorOrOwner =
+      await this.checkIfUserIsContributorOnProject(projectId, user) ||
+      await this.checkIfUserIsOwnerOnProject(projectId, user);
+
+    if (isUserAlreadyContributorOrOwner) {
+      throw new DuplicateException(`${userFound.username} is already a contributor or owner on this project.`);
+    }
 
     const project = await this.getProjectById(projectId);
     await project.addOwners(userFound);
