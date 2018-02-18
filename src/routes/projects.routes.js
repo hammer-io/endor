@@ -540,6 +540,33 @@ router.get(
 );
 
 /**
+ * @api {get} /projects/:projectId/heroku Get heroku app info for project
+ * @apiVersion 1.0.0
+ * @apiName get heroku app info for project
+ * @apiGroup Projects
+ *
+ * @apiHeader Authorization Basic Auth-Token
+ * @apiPermission Authenticated User
+ *
+ * @apiParam {String} projectId the projectId
+ *
+ * @apiSuccess {String} url the heroku app url to the deployed application
+ * @apiSuccess {String} updated_at the last time the app was updated on heroku
+ *
+ * @apiSuccessExample {json} Success-Resonse:
+ *
+  {
+    "url": "https://jack-bkuiket.herokuapp.com/",
+    "updated_at": "2018-01-26T18:57:51Z"
+  }
+ */
+router.get(
+  '/projects/:projectId/heroku',
+  authController.isAuthenticated,
+  projectController.getHerokuAppInfoForProject
+);
+
+/**
  * Sets the project service dependency for the controller
  * @param newProjectService the project service dependency
  */

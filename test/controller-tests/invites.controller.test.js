@@ -12,6 +12,7 @@ import { populateAllTestData } from '../../src/db/import_test_data';
 import { getMockLogger } from '../util/mockLogger';
 import TravisAuthenticationService from '../../src/services/travisauth.service';
 import '../globalSetupTeardown.test';
+import HerokuAuthService from '../../src/services/herokuauth.service';
 
 const InviteStatus = sequelize.InviteStatus;
 
@@ -35,7 +36,8 @@ describe('Testing Invite Controller', () => {
     const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
     const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getMockLogger());
     const travisAuthService = new TravisAuthenticationService(sequelize.TravisToken, userService, getMockLogger());
-    const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, travisAuthService, getMockLogger());
+    const herokuAuthService = new HerokuAuthService(sequelize.HerokuToken, userService, getMockLogger());
+    const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, travisAuthService, herokuAuthService, getMockLogger());
     // Initialize the controller
     await controller.setEmailService(mockEmailService);
     await controller.setInviteService(inviteService);
