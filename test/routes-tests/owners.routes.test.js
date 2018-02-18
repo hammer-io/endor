@@ -17,13 +17,24 @@ describe('Testing Owner Routes', () => {
   describe('POST /projects/:projectId/owners/:user', () => {
     it('should return the project with the newly added user among the owners', (done) => {
       chai.request(server)
-        .post(`${apiUtil.API}/projects/b2/owners/a3`)
+        .post(`${apiUtil.API}/projects/b3/owners/a2`)
         .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
         .send()
         .end((err, res) => {
           res.should.have.status(201);
           const projectOwners = res.body;
-          expect(projectOwners.filter(owner => owner.id === 'a3').length).to.equal(1);
+          expect(projectOwners.filter(owner => owner.id === 'a2').length).to.equal(1);
+          done();
+        });
+    });
+
+    it('should return a 422 if the user is already a contributor or owner', (done) => {
+      chai.request(server)
+        .post(`${apiUtil.API}/projects/b2/owners/a3`)
+        .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
+        .send()
+        .end((err, res) => {
+          res.should.have.status(422);
           done();
         });
     });

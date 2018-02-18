@@ -18,13 +18,24 @@ describe('Testing Contributor Routes', () => {
   describe('POST /projects/:projectId/contributors/:user', () => {
     it('should return the project with the newly added user among the contributors', (done) => {
       chai.request(server)
-        .post(`${apiUtil.API}/projects/b2/owners/a5`)
+        .post(`${apiUtil.API}/projects/b3/contributors/a2`)
         .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
         .send()
         .end((err, res) => {
           res.should.have.status(201);
           const projectContributors = res.body;
-          expect(projectContributors.filter(contributor => contributor.id === 'a5').length).to.equal(1);
+          expect(projectContributors.filter(contributor => contributor.id === 'a2').length).to.equal(1);
+          done();
+        });
+    });
+
+    it('should have a status of 422 if the user being added is already a contributor or owner', (done) => {
+      chai.request(server)
+        .post(`${apiUtil.API}/projects/b1/contributors/a2`)
+        .set('Authorization', apiUtil.basicAuthorization('johnnyb', 'plaintext1'))
+        .send()
+        .end((err, res) => {
+          res.should.have.status(422);
           done();
         });
     });
