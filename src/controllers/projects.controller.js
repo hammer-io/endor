@@ -256,6 +256,23 @@ export async function getBuildStatusesForProject(req, res, next) {
 }
 
 /**
+ * Handles the GET /projects/:projectId/heroku endpoint
+ * @param req the request
+ * @param res the response
+ * @param next the next middlware
+ */
+export async function getHerokuAppInfoForProject(req, res, next) {
+  const projectId = req.params.projectId;
+  const user = req.user.id;
+
+  try {
+    const appInfo = await projectService.getHerokuAppInfoForProject(projectId, user);
+    res.status(200).send(appInfo);
+  } catch (error) {
+    next(error);
+  }
+}
+/**
  * Injects the project service dependency
  * @param newProjectService the project service
  */
