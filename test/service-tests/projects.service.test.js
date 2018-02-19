@@ -8,11 +8,13 @@ import GithubAuthenticationService from '../../src/services/githubauth.service';
 import { getActiveLogger } from '../../src/utils/winston';
 import TravisAuthenticationService from '../../src/services/travisauth.service';
 import '../globalSetupTeardown.test';
+import HerokuAuthService from '../../src/services/herokuauth.service';
 
 const userService = new UserService(sequelize.User, sequelize.Credentials, getMockLogger());
 const githubAuthService = new GithubAuthenticationService(sequelize.GithubToken, userService, getActiveLogger());
 const travisAuthService = new TravisAuthenticationService(sequelize.TravisToken, userService, getActiveLogger());
-const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, travisAuthService, getMockLogger());
+const herokuAuthService = new HerokuAuthService(sequelize.HerokuToken, userService, getActiveLogger());
+const projectService = new ProjectService(sequelize.Project, userService, githubAuthService, travisAuthService, herokuAuthService, getMockLogger());
 
 describe('Testing Project Service', async () => {
   before(async () => {

@@ -73,11 +73,19 @@ const travisAuthenticationService = new TravisAuthenticationService(
   userService,
   getActiveLogger()
 );
+
+const herokuAuthenticationService = new HerokuAuthService(
+  sequelize.HerokuToken,
+  userService,
+  getActiveLogger()
+);
+
 const projectService = new ProjectService(
   sequelize.Project,
   userService,
   githubAuthenticationService,
   travisAuthenticationService,
+  herokuAuthenticationService,
   getActiveLogger()
 );
 const inviteService = new InviteService(sequelize.Invite, getActiveLogger());
@@ -85,13 +93,6 @@ const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getAc
 const clientService = new ClientService(sequelize.Client, getActiveLogger());
 const emailService = new EmailService(emailFromAddress, getActiveLogger(), emailTransportOptions);
 const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
-
-
-const herokuAuthenticationService = new HerokuAuthService(
-  sequelize.HerokuToken,
-  userService,
-  getActiveLogger()
-);
 
 auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);

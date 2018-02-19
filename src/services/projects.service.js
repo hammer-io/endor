@@ -2,6 +2,7 @@
 import ProjectNotFoundException from '../error/ProjectNotFoundException';
 import * as githubService from './github.service';
 import * as travisService from './travis.service';
+import * as herokuService from './heroku.service';
 import DuplicateException from '../error/DuplicateException';
 
 export default class ProjectService {
@@ -12,13 +13,22 @@ export default class ProjectService {
    * @param userService the user service to inject
    * @param githubAuthService the github authentication service
    * @param travisAuthService the travis authentication service
+   * @param herokuAuthService the heroku authentication service
    * @param log the logging mechanism to inject
    */
-  constructor(projectRepository, userService, githubAuthService, travisAuthService, log) {
+  constructor(
+    projectRepository,
+    userService,
+    githubAuthService,
+    travisAuthService,
+    herokuAuthService,
+    log
+  ) {
     this.userService = userService;
     this.projectRepository = projectRepository;
     this.githubAuthService = githubAuthService;
     this.travisAuthService = travisAuthService;
+    this.herokuAuthService = herokuAuthService;
     this.log = log;
   }
 
@@ -332,6 +342,13 @@ export default class ProjectService {
     return commits;
   }
 
+  /**
+   * Gets the build statuses for a project
+   * @param projectId the project id to get the build statuses for
+   * @param userId the user id
+   * @param branchName the name of the branch to get build statuses for, for example `master`
+   * @returns {Promise<*>} the build statuses
+   */
   async getBuildStatusesForProject(projectId, userId, branchName) {
     this.log.info(`ProjectService: getting build statuses for project with id ${projectId}`);
     const project = await this.getProjectById(projectId);
@@ -339,5 +356,20 @@ export default class ProjectService {
     const token = await this.travisAuthService.getTravisTokenForUser(userId);
     const statuses = await travisService.getBuildStatusesForProject(projectName, token, branchName);
     return statuses;
+  }
+
+  /**
+   * Gets the heroku app name for a project
+   * @param projectId the project id to get the heroku app info for
+   * @param userId the user id
+   * @returns {Promise<*>}
+   */
+  async getHerokuAppInfoForProject(projectId, userId) {
+    this.log.info(`ProjectService: getting heroku app info for project with id ${projectId}`);
+    const project = await this.getProjectById(projectId);
+    const appName = project.herokuApplicationName;
+    const token = await this.herokuAuthService.getHerokuTokenForUser(userId);
+    const appInfo = await herokuService.getAppByProjectName(appName, token);
+    return appInfo;
   }
 }
