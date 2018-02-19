@@ -359,6 +359,18 @@ export default class ProjectService {
   }
 
   /**
+   * Gets the logs for a specific build
+   * @param buildNumber the build number to find logs for
+   * @param userId the user id
+   * @returns {Promise<void>}
+   */
+  async getLogsForBuildForProject(buildNumber, userId) {
+    const token = await this.travisAuthService.getTravisTokenForUser(userId);
+    const logs = await travisService.getLogsForBuild(buildNumber, token);
+    return logs;
+  }
+
+  /**
    * Gets the heroku app name for a project
    * @param projectId the project id to get the heroku app info for
    * @param userId the user id

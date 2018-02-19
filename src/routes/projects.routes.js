@@ -539,6 +539,12 @@ router.get(
   projectController.getBuildStatusesForProject
 );
 
+router.get(
+  '/projects/:projectId/logs/:buildNumber',
+  authController.isAuthenticated,
+  projectController.getLogsForBuilldForProject
+);
+
 /**
  * @api {get} /projects/:projectId/heroku Get heroku app info for project
  * @apiVersion 1.0.0

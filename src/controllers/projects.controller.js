@@ -256,6 +256,24 @@ export async function getBuildStatusesForProject(req, res, next) {
 }
 
 /**
+ * Handles the GET /projects/:projectId/logs/:buildNumber endpoint
+ * @param req the request
+ * @param res the response
+ * @param next the next middlware
+ */
+export async function getLogsForBuilldForProject(req, res, next) {
+  const user = req.user.id;
+  const buildNumber = req.params.buildNumber;
+
+  try {
+    const logs = await projectService.getLogsForBuildForProject(buildNumber, user);
+    res.status(200).send(logs);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
  * Handles the GET /projects/:projectId/heroku endpoint
  * @param req the request
  * @param res the response
