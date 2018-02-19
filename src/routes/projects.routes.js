@@ -539,6 +539,27 @@ router.get(
   projectController.getBuildStatusesForProject
 );
 
+/**
+ * @api {get} /projects/:projectId/logs/:buildNumber
+ * @apiVersion 1.0.0
+ * @apiName get logs for build
+ * @apiGroup projects
+ *
+ * @apiPermission Authenticated User
+ *
+ * @apiParam {String} projectId the projectId
+ * @apiParam {String} buildNumber the the build number on TravisCI
+ *
+ * @apiSuccess {String} jobId the job id the logs are for
+ * @apiSuccess {String} log the contents of the log
+ *
+ * * @apiSuccessExample {json} Success-Response:
+ *
+ {
+   "jobId": "1234",
+   "log": "log content here"
+ }
+ */
 router.get(
   '/projects/:projectId/logs/:buildNumber',
   authController.isAuthenticated,
@@ -559,7 +580,7 @@ router.get(
  * @apiSuccess {String} url the heroku app url to the deployed application
  * @apiSuccess {String} updated_at the last time the app was updated on heroku
  *
- * @apiSuccessExample {json} Success-Resonse:
+ * @apiSuccessExample {json} Success-Response:
  *
   {
     "url": "https://jack-bkuiket.herokuapp.com/",
