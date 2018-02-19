@@ -115,7 +115,7 @@ export async function populateProjects() {
     license: 'MIT',
     authors: 'Jack'
   });
-  await sequelize.Project.create({
+  const project3 = await sequelize.Project.create({
     id: 'b3',
     projectName: 'drumitdown',
     description: 'Let us drum it down for you',
@@ -145,6 +145,8 @@ export async function populateProjects() {
   // Add project contributors
   await project1.addContributors([user2, user3, user4]);
   await project2.addContributors([user3]);
+
+  await project3.addOwners([user1]);
 
   // Add tooling
   const depTools = await sequelize.Tool.findAll({

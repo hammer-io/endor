@@ -234,7 +234,7 @@ describe('Testing Project Service', async () => {
     });
 
     it('should add a new contributor to a project', async () => {
-      await projectService.addContributorToProject('b1', 'a2');
+      await projectService.addContributorToProject('b3', 'a2');
 
       const contributors = await projectService.getContributorsByProjectId('b1');
       const filteredContributors = contributors.filter((user) => {
@@ -251,24 +251,20 @@ describe('Testing Project Service', async () => {
     });
 
     it('should return the contributors after the project addition', async () => {
-      const contributors = await projectService.addContributorToProject('b1', 'a2');
+      const contributors = await projectService.addContributorToProject('b3', 'a2');
       expect(Array.isArray(contributors)).to.equal(true);
-      expect(contributors.length).to.equal(3);
+      expect(contributors.length).to.equal(1);
     });
 
     it('should not duplicate the contributor if they have already been added', async () => {
-      const contributors = await projectService.addContributorToProject('b1', 'a1');
-
-      // check to make sure the project still has the same number of contributors as before
-      expect(Array.isArray(contributors)).to.equal(true);
-      expect(contributors.length).to.equal(3);
-
-      // check to make sure they were not added more than once
-      const filteredContributors = contributors.filter((user) => {
-        return user.id === 'a1';
-      });
-
-      expect(filteredContributors.length).to.equal(1);
+      try {
+        const contributors = await projectService.addContributorToProject('b1', 'a1');
+      } catch (error) {
+        expect(error.message).to.equal('BobSagat is already a contributor or owner on this' +
+          ' project.');
+        expect(error.type).to.equal('Duplicate');
+        expect(error.status).to.equal(422);
+      }
     });
 
     it('should throw a UserNotFoundException if the user does not exist', async () => {
@@ -302,16 +298,16 @@ describe('Testing Project Service', async () => {
     });
 
     it('should add a new owner to a project', async () => {
-      await projectService.addOwnerToProject('b1', 'a1');
+      await projectService.addOwnerToProject('b3', 'a1');
 
-      const owners = await projectService.getOwnersByProjectId('b1');
+      const owners = await projectService.getOwnersByProjectId('b3');
       const filteredOwners = owners.filter((user) => {
         return user.id === 'a1';
       });
 
       const owned = await projectService.getProjectsByUser('a1');
       const filteredOwned = owned.owned.filter((project) => {
-        return project.id === 'b1';
+        return project.id === 'b3';
       });
 
       expect(filteredOwners.length).to.equal(1);
@@ -319,21 +315,22 @@ describe('Testing Project Service', async () => {
     });
 
     it('should return the contributors after the new addition', async () => {
-      const owners = await projectService.addOwnerToProject('b1', 'a1');
+      const owners = await projectService.addOwnerToProject('b3', 'a1');
       expect(Array.isArray(owners)).to.equal(true);
       expect(owners.length).to.equal(2);
     });
 
     it('should not duplicate the owner if they have already been added', async () => {
-      const owners = await projectService.addOwnerToProject('b1', 'a4');
-      expect(Array.isArray(owners)).to.equal(true);
-      expect(owners.length).to.equal(1);
+      let owners = [];
+      try {
+         owners = await projectService.addOwnerToProject('b1', 'a1');
+      } catch (error) {
+        expect(error.message).to.equal('BobSagat is already a contributor or owner on this' +
+          ' project.');
+        expect(error.type).to.equal('Duplicate');
+        expect(error.status).to.equal(422);
+      }
 
-      const filteredOwners = owners.filter((user) => {
-        return user.id === 'a4';
-      });
-
-      expect(filteredOwners.length).to.equal(1);
     });
 
     it('should throw a UserNotFoundException if the user does not exist', async () => {
