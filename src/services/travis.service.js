@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export,no-await-in-loop */
 import fetch from 'node-fetch';
+import TravisApiError from '../error/TravisApiError';
 
 function mapTravisBuildToEndorBuild(item) {
   return {
@@ -73,4 +74,48 @@ export async function getBuildStatusesForProject(projectName, token, branchName)
   } catch (error) {
     throw error;
   }
+}
+
+export async function getLogsForBuild(buildNumber, token) {
+  // first we need to get the jobs that are part of this build
+  const url = `https://api.travis-ci.org/build/${buildNumber}/jobs`;
+  let response = {};
+  try {
+    response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Travis-API-Version': 3,
+        Authorization: `token ${token}`
+      }
+    });
+  } catch (error) {
+    throw new TravisApiError(error.message);
+  }
+
+  const jobs = await response.json();
+
+  // then for every job, we need to get the log.
+  const logs = [];
+  for (let i = 0; i < jobs.jobs.length; i += 1) {
+    // eslint-disable-next-line prefer-destructuring
+    const id = jobs.jobs[i].id;
+    const logUrl = `https://api-travis-ci.org/job/${id}/log`;
+    let logResponse = {};
+    try {
+      logResponse = await fetch(logUrl, {
+        method: 'GET',
+        headers: {
+          'Travis-API-Version': 3,
+          Authorization: `token ${token}`
+        }
+      });
+    } catch (error) {
+      throw new TravisApiError(error.message);
+    }
+
+    const log = await logResponse.json();
+    logs.push({ jobId: id, log: log.content });
+  }
+
+  return logs;
 }
