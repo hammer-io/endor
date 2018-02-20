@@ -4,11 +4,15 @@
  * The project controller. This controller is for any routes dealing with projects. It is
  * dependent on the projectService which should be set in the project-routes.js file.
  */
+import * as tyr from 'tyr-cli/dist/tyr';
+const del = require('del');
+import zip from 'adm-zip';
 
 import { validationResult } from 'express-validator/check';
 import * as responseHelper from './../utils/response-helper';
 
 let projectService = {};
+const zipper = zip();
 
 /**
  * Handles the GET /project endpoint
@@ -93,11 +97,31 @@ async function createProject(user, project, req, res, next) {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
+  const configs = project;
+
+  configs.credentials =
+  {
+    github: { username: 'clarkerican', token: '8cc99cd5a3c293c5baf5c50e9dccdab724e10b83' },
+    heroku:
+    {
+      email: 'clarkerican@gmail.com',
+      apiKey: '252775ce-5886-41f0-980c-2371a9309d77'
+    },
+    sequelize: { username: 'root', password: 'root' }
+  };
+
+
+
   try {
-    const projectCreated = await projectService.createProject(project, user);
-    res.send(projectCreated);
+    // Only do this if there is success upon creating the project
+    await projectService.createProject(configs.projectConfigurations, user);
+
+    zipper.addLocalFolder(`${process.cwd()}/${project.projectName}`, `${project.projectName}`, undefined);
+    res.set('Content-Type', 'application/zip');
+    res.send(await zipper.toBuffer());
+    await tyr.generateProject(configs);
   } catch (error) {
-    next(error);
+    // do nothing, we already sent the res
   }
 }
 

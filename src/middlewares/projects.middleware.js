@@ -6,9 +6,9 @@ import { check } from 'express-validator/check';
  */
 export function checkCreateProject() {
   return [
-    check('projectName').exists().withMessage('Project name is required.'),
-    check('description').exists().withMessage('Project description is required.'),
-    check('version').exists().withMessage('Project version is required.').matches(/^(\d+\.)?(\d+\.)?(\*|\d+)/),
+    check('projectConfigurations.projectName').exists().withMessage('Project name is required.'),
+    check('projectConfigurations.description').exists().withMessage('Project description is required.'),
+    check('projectConfigurations.version').exists().withMessage('Project version is required.').matches(/^(\d+\.)?(\d+\.)?(\*|\d+)/),
   ];
 }
 
