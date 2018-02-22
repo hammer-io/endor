@@ -16,5 +16,11 @@ templates in the `index.html` file.
 Before using the html in an email, you need to run it through Zurb's
 [Email Inliner](https://foundation.zurb.com/emails/inliner-v2.html), which
 will convert html and styles files into one html file with inline styles
-that can be put into an email. Finally, copy/paste the results back into
-our application into its appropriate place.
+that can be put into an email. (Don't compress the html in the inliner.)
+Finally, copy/paste the results back into our application into its
+appropriate place. Depending on your IDE, when it's copy/pasted back in,
+it may incorrectly handle the ampersands, trying to html-escape them.
+(You'll notice when you see non-breaking spaces shown as "&nbsp;" in the
+rendered html.) If this is the case, make sure to search and replace those
+with the correct `&nbsp;` values. Verify that everything looks correct by
+running the Email Service Test and viewing the email preview in the browser.

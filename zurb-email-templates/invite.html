@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="css/app.css">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>Invitation to Contribute to Project PROJECTNAME</title>
+    <title>Invitation to Contribute to Project ${projectName}</title>
     <!-- <style> -->
   </head>
   <body>
@@ -20,8 +20,7 @@
             <table align="center" class="container header float-center"><tbody><tr><td>
               <table class="row collapse"><tbody><tr>
                 <th class="small-12 large-12 columns first last"><table><tr><th>
-                    <!--TODO: Replace with absolute URL to Yggdrasil Logo-->
-                  <img src="http://placehold.it/150x30/663399" alt="Yggdrasil Logo">
+                  <img src="https://hammer-io.github.io/i/hammer-logo-wide-dark-small.png" height="30" alt="Hammer-IO Logo">
                 </th>
 <th class="expander"></th></tr></table></th>
               </tr></tbody></table>
@@ -35,14 +34,14 @@
             
               <center data-parsed="">
                   <!--TODO: Replace with absolute URL to project invite image-->
-                <img src="http://placehold.it/120/663399" alt="" align="center" class="float-center">
+                <img src="https://hammer-io.github.io/i/icon_ship_lg.png" height="120" width="120" alt="" align="center" class="float-center">
               </center>
             
               <table class="spacer"><tbody><tr><td height="16px" style="font-size:16px;line-height:16px;">&#xA0;</td></tr></tbody></table> 
             
               <table class="row"><tbody><tr>
                 <th class="small-12 large-12 columns first last"><table><tr><th>
-                  <h4 class="text-center">PROJECTNAME</h4>
+                  <h4 class="text-center">${projectName}</h4>
                   <p class="text-center">Invitation to Collaborate</p>
                 </th>
 <th class="expander"></th></tr></table></th>
@@ -52,9 +51,9 @@
             
               <table class="row"><tbody><tr>
                 <th class="small-12 large-12 columns first last"><table><tr><th>
-                  <p class="text-center">Hello USERFIRSTNAME! You've been invited to collaborate on project PROJECTNAME. This invitation was extended to you by a project owner and will expire on EXPIRATIONDATE. Please click the link below to accept or decline this invitation. Go forth and do great things!</p>
+                  <p class="text-center">Hello ${userFirstName}! You've been invited to collaborate on project ${projectName}. This invitation was extended to you by a project owner and will expire on ${expirationDate}. Please click the link below to accept or decline this invitation. Go forth and do great things!</p>
                   <center data-parsed="">
-                    <table class="button success float-center"><tr><td><table><tr><td><a href="#">Manage Project Invitations &rarrtl;</a></td></tr></table></td></tr></table>
+                    <table class="button success float-center"><tr><td><table><tr><td><a href="${manageInvitesUrl}">Manage Project Invitations &rarrtl;</a></td></tr></table></td></tr></table>
                   </center>
                 </th>
 <th class="expander"></th></tr></table></th>
@@ -64,8 +63,7 @@
                 <th class="small-12 large-12 columns first last"><table><tr><th>
                   <table class="spacer"><tbody><tr><td height="16px" style="font-size:16px;line-height:16px;">&#xA0;</td></tr></tbody></table> 
                   <p class="text-center">@2018 Hammer-IO<br>
-                      <!--TODO: Update the following links to actually go somewhere-->
-                  <a href="#">hello@hammer-io.github.io</a> | <a href="#">Manage Email Notifications</a> | <a href="#">Unsubscribe</a></p>
+                  <a href="mailto:${contactEmail}">${contactEmail}</a> | <a href="${notificationsUrl}">Manage Email Notifications</a></p>
                     <!--TODO: Update the following links and logos for GitHub, website, social media, etc-->
                   <!--<center data-parsed="">-->
                     <!--<table align="center" class="menu float-center"><tr><td><table><tr>-->
