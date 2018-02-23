@@ -6,10 +6,11 @@
   "main": "src/index.js",
   "scripts": {
     "start": "npm run build && node dist/index.js",
-    "test": "npm run build && mocha",
+    "test": "npm run build && nyc mocha",
     "lint": "eslint src/. --ext .js",
     "build": "babel src --out-dir dist",
     "prepublishOnly": "npm run build",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "createDB": "echo \"DROP SCHEMA IF EXISTS \\`hammer_endor\\`; CREATE SCHEMA IF NOT EXISTS \\`hammer_endor\\` DEFAULT CHARACTER SET utf8 ;\" | mysql -u root -p",
     "initDB": "npm run build && node dist/db/init_database.js",
     "importTestData": "npm run build && node dist/db/import_test_data.js",
@@ -40,10 +41,12 @@
     "babel-plugin-transform-async-to-generator": "6.24.1",
     "babel-preset-env": "1.6.0",
     "chai": "^4.1.2",
+    "codecov": "^3.0.0",
     "eslint": "4.8.0",
     "eslint-config-airbnb-base": "12.0.1",
     "eslint-plugin-import": "2.7.0",
     "pre-commit": "^1.2.2",
+    "nyc": "^11.2.1",
     "sqlite3": "^3.1.13"
   },
   "dependencies": {

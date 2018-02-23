@@ -54,6 +54,11 @@
       "combined": "\"Hammer-IO\" <hammer.io.team@gmail.com>"
     }
   },
+  "koma": {
+    "url": "localhost:3001",
+    "secret": "supersecret"
+
+  },
   "session": {
     "secret": "<get this value from one of the other contributors or make your own for local development>"
   },
