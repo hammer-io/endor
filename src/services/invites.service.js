@@ -54,6 +54,10 @@ export default class InviteService {
       if (!invite.projectInvitedToId) {
         errors.push(new RequestParamError('projectInvitedToId', 'Project is required.'));
       }
+
+      if (!invite.projectName) {
+        errors.push(new RequestParamError('projectName', 'Project name is required.'));
+      }
     } else if (!invite.status) {
       errors.push(new RequestParamError('status', 'Status is required for invite updates.'));
     }
@@ -137,9 +141,10 @@ export default class InviteService {
    * @param userId the id of the user being invited
    * @param daysFromCreationUntilExpiration the number of days the invite will
    *   remain open before expiring
+   * @param projectName the name of the project the user is invited to
    * @returns {Object} the created invite
    */
-  async createInvite(projectId, userId, daysFromCreationUntilExpiration) {
+  async createInvite(projectId, userId, daysFromCreationUntilExpiration, projectName) {
     this.log.info(`InviteService: creating invite for user ${userId} to project ${projectId}`);
 
     const status = (daysFromCreationUntilExpiration === 0)
@@ -147,6 +152,7 @@ export default class InviteService {
     const invite = {
       userInvitedId: userId,
       projectInvitedToId: projectId,
+      projectName,
       status,
       daysFromCreationUntilExpiration
     };

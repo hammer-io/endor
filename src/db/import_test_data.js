@@ -179,6 +179,7 @@ export async function populateInvites() {
     status: sequelize.InviteStatus.OPEN,
     userInvitedId: userJreach.id,
     projectInvitedToId: projectHammerIo.id,
+    projectName: projectHammerIo.projectName,
     daysFromCreationUntilExpiration: 30
   });
   // Buddy invited to hammer-io and drumitdown, but he declined
@@ -187,13 +188,15 @@ export async function populateInvites() {
     status: sequelize.InviteStatus.DECLINED,
     userInvitedId: userBuddy.id,
     projectInvitedToId: projectHammerIo.id,
+    projectName: projectHammerIo.projectName,
     daysFromCreationUntilExpiration: 15
   });
   await sequelize.Invite.create({
     id: 'd3',
     // status: sequelize.InviteStatus.OPEN,    -- Defaults to OPEN
     userInvitedId: userBuddy.id,
-    projectInvitedToId: projectDrumItDown.id
+    projectInvitedToId: projectDrumItDown.id,
+    projectName: projectDrumItDown.projectName
     // daysFromCreationUntilExpiration: 30     -- Default to 30
   });
 }
