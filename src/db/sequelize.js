@@ -195,6 +195,7 @@ function initManually(database, username, password, options) {
       type: UUID,
       defaultValue: UUIDV4,
     },
+    projectName: STRING,
     status: {
       type: Sequelize.DataTypes.ENUM,
       values: [
