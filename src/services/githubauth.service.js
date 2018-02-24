@@ -71,7 +71,7 @@ export default class GithubAuthenticationService {
    * @param token the token to add to the table
    * @returns {Object} the token that was created
    */
-  async addGithubTokenForUser(userId, token) {
+  async addGithubTokenForUser(userId, token, username) {
     const user = await this.userService.getUserByIdOrUsername(userId);
 
     const isTokenExisting = await this.getSequelizeGithubTokenForUser(userId);
@@ -82,7 +82,8 @@ export default class GithubAuthenticationService {
     }
 
     const githubTokenToBeCreated = {
-      token: encryptionUtil.encrypt(token.toString())
+      token: encryptionUtil.encrypt(token.toString()),
+      username
     };
 
     const tokenCreated = await this.githubTokenRepository.create(githubTokenToBeCreated);

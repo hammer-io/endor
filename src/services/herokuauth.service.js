@@ -50,6 +50,21 @@ export default class HerokuAuthService {
   }
 
   /**
+   * Gets the decrypted heroku token for a user
+   * @param userId the user id to get the token for
+   * @returns {String} the token or null
+   */
+  async getHerokuTokenAndEmailForUser(userId) {
+    const user = await this.userService.getUserByIdOrUsername(userId);
+    const token = await user.getHerokuToken();
+    if (token) {
+      return encryptUtil.decrypt(token[0].token);
+    }
+
+    return null;
+  }
+
+  /**
    * Gets the Heroku token a user. If the token exists, it will return the token, otherwise it
    * will return null.
    * @param userId the user id to get the token for
@@ -70,9 +85,10 @@ export default class HerokuAuthService {
    * existing one. If the user does not have a token, it will create a new token.
    * @param userId the user id to create a token for
    * @param token the token to create
+   * @param email the email tied to the heroku account
    * @returns {Object} the token that was created or updated.
    */
-  async addHerokuTokenForUser(userId, token) {
+  async addHerokuTokenForUser(userId, token, email) {
     const user = await this.userService.getUserByIdOrUsername(userId);
 
     const isTokenExisting = await this.getSequelizeHerokuTokenForUser(userId);
@@ -82,6 +98,7 @@ export default class HerokuAuthService {
     }
 
     const tokenToBeCreated = {
+      email,
       token: encryptUtil.encrypt(token.toString())
     };
 

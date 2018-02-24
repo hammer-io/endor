@@ -220,6 +220,7 @@ function initManually(database, username, password, options) {
       type: UUID,
       defaultValue: UUIDV4,
     },
+    username: STRING,
     token: STRING(2000)
   });
 
@@ -258,6 +259,7 @@ function initManually(database, username, password, options) {
       type: UUID,
       defaultValue: UUIDV4
     },
+    email: STRING,
     token: STRING(2000)
   });
 

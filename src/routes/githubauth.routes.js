@@ -39,7 +39,8 @@ router.get('/auth/github', authController.isAuthenticated, githubAuthController.
  * @apiParam {String} githubToken the user's github token
  * @apiParamExample {json} Request-Example:
  * {
- *  "githubToken": "123abc456"
+ *  "githubToken": "123abc456",
+ *  "githubUsername": "githubUsername"
  * }
  */
 router.post(

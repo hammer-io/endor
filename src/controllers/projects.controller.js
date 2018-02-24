@@ -1,15 +1,16 @@
 /* eslint-disable prefer-destructuring,no-unused-vars */
+import zip from 'adm-zip';
+import * as tyr from 'tyr-cli/dist/tyr';
+import { validationResult } from 'express-validator/check';
+
+import * as responseHelper from './../utils/response-helper';
+
+const del = require('del');
 
 /**
  * The project controller. This controller is for any routes dealing with projects. It is
  * dependent on the projectService which should be set in the project-routes.js file.
  */
-import * as tyr from 'tyr-cli/dist/tyr';
-const del = require('del');
-import zip from 'adm-zip';
-
-import { validationResult } from 'express-validator/check';
-import * as responseHelper from './../utils/response-helper';
 
 let projectService = {};
 const zipper = zip();
@@ -98,19 +99,6 @@ async function createProject(user, project, req, res, next) {
   }
 
   const configs = project;
-
-  configs.credentials =
-  {
-    github: { username: 'clarkerican', token: '8cc99cd5a3c293c5baf5c50e9dccdab724e10b83' },
-    heroku:
-    {
-      email: 'clarkerican@gmail.com',
-      apiKey: '252775ce-5886-41f0-980c-2371a9309d77'
-    },
-    sequelize: { username: 'root', password: 'root' }
-  };
-
-
 
   try {
     // Only do this if there is success upon creating the project
