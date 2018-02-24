@@ -1,4 +1,6 @@
+
 [![Build Status](https://travis-ci.org/hammer-io/endor.svg?branch=master)](https://travis-ci.org/hammer-io/endor)
+[![codecov](https://codecov.io/gh/hammer-io/endor/branch/master/graph/badge.svg)](https://codecov.io/gh/hammer-io/endor)
 
 # endor
 

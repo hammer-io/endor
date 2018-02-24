@@ -17,7 +17,7 @@ coverage
 .lock-wscript
 build/Release
 npm-debug.lo
-
+.nyc_output/
 config/*
 !config/default.json
 !config/test.json

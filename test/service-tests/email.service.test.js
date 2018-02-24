@@ -15,8 +15,7 @@ describe('Testing Email Service', () => {
   before(async () => {
     try {
       await populateAllTestData(true);
-      const transportOptions = await emailUtil.getTestTransportOptions();
-      emailService = new EmailService('"Holmgang" <holmgang@hammer-io.github.io>', getMockLogger(), transportOptions);
+      emailService = new EmailService(getMockLogger());
     } catch (err) {
       console.log('ERROR: Something went wrong setting up the email service!');
       console.log(err);

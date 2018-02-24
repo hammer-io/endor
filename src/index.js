@@ -34,8 +34,6 @@ import TravisAuthenticationService from './services/travisauth.service';
 import HerokuAuthService from './services/herokuauth.service';
 
 // Get various configuration details
-const emailFromAddress = config.get('email.from');
-const emailTransportOptions = config.get('email.transport');
 getActiveLogger().info(`NODE_ENV = ${process.env.NODE_ENV}`);
 
 // Initialize sequelize
@@ -91,7 +89,7 @@ const projectService = new ProjectService(
 const inviteService = new InviteService(sequelize.Invite, getActiveLogger());
 const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getActiveLogger());
 const clientService = new ClientService(sequelize.Client, getActiveLogger());
-const emailService = new EmailService(emailFromAddress, getActiveLogger(), emailTransportOptions);
+const emailService = new EmailService(getActiveLogger());
 const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
 
 auth.setDependencies(userService, clientService, authService);

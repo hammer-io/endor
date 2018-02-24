@@ -1,4 +1,8 @@
 {
+  "frontend": {
+    "host": "http://localhost",
+    "port": "8080"
+  },
   "db": {
     "database": "hammer_endor",
     "username": "root",
@@ -45,8 +49,15 @@
       }
     },
     "from": {
-      "address": "\"Hammer-IO\" <hammer.io.team@gmail.com>"
+      "name": "Hammer-IO",
+      "address": "hammer.io.team@gmail.com",
+      "combined": "\"Hammer-IO\" <hammer.io.team@gmail.com>"
     }
+  },
+  "koma": {
+    "url": "localhost:3001",
+    "secret": "supersecret"
+
   },
   "session": {
     "secret": "<get this value from one of the other contributors or make your own for local development>"
