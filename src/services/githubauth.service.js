@@ -49,6 +49,38 @@ export default class GithubAuthenticationService {
     return null;
   }
 
+
+  /**
+   * Gets the decrypted github token for a user
+   * @param userId the user id to get the token for
+   * @returns {String} the token
+   */
+  async getGithubTokenAndUsernameForUser(userId) {
+    const user = await this.userService.getUserByIdOrUsername(userId);
+    const token = await user.getGithubToken();
+    if (token) {
+      return { token: encryptionUtil.decrypt(token[0].token), username: token[0].username };
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets the decrypted github token for a user
+   * @param userId the user id to get the token for
+   * @returns {String} the token
+   */
+  async getGithubUsernameForUser(userId) {
+    const user = await this.userService.getUserByIdOrUsername(userId);
+    const token = await user.getGithubToken();
+    if (token) {
+      return token[0].username;
+    }
+
+    return null;
+  }
+
+
   /**
    * Gets a github token for a user from the githubAuthentications token.
    * @param userId the user id to check
@@ -69,6 +101,7 @@ export default class GithubAuthenticationService {
    * exists for the user, it will automatically update the old one.
    * @param userId the user id to add the token for
    * @param token the token to add to the table
+   * @param username the github username of the user
    * @returns {Object} the token that was created
    */
   async addGithubTokenForUser(userId, token, username) {

@@ -45,8 +45,8 @@
     "eslint": "4.8.0",
     "eslint-config-airbnb-base": "12.0.1",
     "eslint-plugin-import": "2.7.0",
+    "nyc": "^11.5.0",
     "pre-commit": "^1.2.2",
-    "nyc": "^11.2.1",
     "sqlite3": "^3.1.13"
   },
   "dependencies": {
@@ -69,15 +69,15 @@
     "joi": "13.0.1",
     "mocha": "3.5.3",
     "morgan": "1.9.0",
-    "node-fetch": "^2.0.0",
     "mysql2": "^1.5.2",
-    "nodemailer": "^4.4.2",
+    "node-fetch": "^2.0.0",
+    "nodemailer": "^4.6.0",
     "oauth2orize": "^1.11.0",
     "passport": "0.4.0",
     "passport-http": "^0.3.0",
     "passport-http-bearer": "^1.0.1",
     "sequelize": "^4.33.4",
-    "tyr-cli": "^0.3.3",
+    "tyr-cli": "^0.4.0",
     "uid-safe": "^2.1.5",
     "validator": "^9.4.1",
     "winston": "^3.0.0-rc1"

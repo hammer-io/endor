@@ -597,8 +597,8 @@ router.get(
  * Sets the project service dependency for the controller
  * @param newProjectService the project service dependency
  */
-export function setProjectService(newProjectService) {
+export function setProjectService(newProjectService, newGithubAuthService, newHerokuAuthService) {
   projectService = newProjectService;
-  projectController.setProjectService(projectService);
+  projectController.setProjectService(projectService, newGithubAuthService, newHerokuAuthService);
   projectAuthorization.setDependencies(projectService);
 }

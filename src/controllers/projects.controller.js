@@ -2,6 +2,7 @@
 import zip from 'adm-zip';
 import * as tyr from 'tyr-cli/dist/tyr';
 import { validationResult } from 'express-validator/check';
+import fs from 'fs';
 
 import * as responseHelper from './../utils/response-helper';
 
@@ -13,7 +14,8 @@ const del = require('del');
  */
 
 let projectService = {};
-const zipper = zip();
+let herokuAuthService = {};
+let githubAuthService = {};
 
 /**
  * Handles the GET /project endpoint
@@ -98,18 +100,41 @@ async function createProject(user, project, req, res, next) {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
+  const zipper = zip();
   const configs = project;
 
   try {
+    configs.credentials = {};
+    configs.credentials.github = await githubAuthService.getGithubTokenAndUsernameForUser(user);
+    configs.credentials.heroku = await herokuAuthService.getHerokuTokenAndEmailForUser(user);
+    configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
+
+    const filePath = `${process.cwd()}/generated-projects/${user}`;
+    if (!fs.existsSync(filePath)) {
+      fs.mkdirSync(filePath);
+    }
+
+    await tyr.generateBasicNodeProject(configs, filePath);
+    await tyr.generateStaticFiles(configs, filePath);
+
     // Only do this if there is success upon creating the project
     await projectService.createProject(configs.projectConfigurations, user);
 
-    zipper.addLocalFolder(`${process.cwd()}/${project.projectName}`, `${project.projectName}`, undefined);
+    const projectName = project.projectConfigurations.projectName;
+
+    zipper.addLocalFolder(`${filePath}/${projectName}`, `${projectName}`, undefined);
     res.set('Content-Type', 'application/zip');
     res.send(await zipper.toBuffer());
-    await tyr.generateProject(configs);
+
+    try {
+      await tyr.setUpThirdPartyTools(configs);
+      await tyr.commitToGithub(configs, filePath);
+    } catch (error) {
+      // do nothing, we already sent the res
+      console.log(error);
+    }
   } catch (error) {
-    // do nothing, we already sent the res
+    next(error);
   }
 }
 
@@ -305,7 +330,11 @@ export async function getHerokuAppInfoForProject(req, res, next) {
 /**
  * Injects the project service dependency
  * @param newProjectService the project service
+ * @param newGithubAuthService the githubAuth service
+ * @param newHerokuAuthService the githubAuth service
  */
-export function setProjectService(newProjectService) {
+export function setProjectService(newProjectService, newGithubAuthService, newHerokuAuthService) {
   projectService = newProjectService;
+  githubAuthService = newGithubAuthService;
+  herokuAuthService = newHerokuAuthService;
 }

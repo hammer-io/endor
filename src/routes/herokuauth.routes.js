@@ -43,7 +43,8 @@ router.get(
  * @apiParam {String} heroku the user's heroku token
  * @apiParamExample {json} Request-Example:
  * {
- *  "herokuToken": "123abc456"
+ *  "herokuToken": "123abc456",
+ *  "email": "usersHerokuEmail@gmail.com"
  * }
  */
 router.post(

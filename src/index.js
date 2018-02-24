@@ -94,7 +94,11 @@ const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
 
 auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);
-projects.setProjectService(projectService);
+projects.setProjectService(
+  projectService,
+  githubAuthenticationService,
+  herokuAuthenticationService
+);
 users.setDependencies(userService);
 contributors.setDependencies(projectService);
 owners.setDependencies(projectService);
