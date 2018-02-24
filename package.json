@@ -65,6 +65,7 @@
     "express": "4.15.5",
     "express-session": "^1.15.6",
     "express-validator": "4.3.0",
+    "fs-extra": "^5.0.0",
     "helmet": "3.9.0",
     "joi": "13.0.1",
     "mocha": "3.5.3",

@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 import UnauthorizedException from '../error/UnauthorizedException';
 
 let projectService = {};

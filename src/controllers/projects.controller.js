@@ -1,8 +1,8 @@
-/* eslint-disable prefer-destructuring,no-unused-vars */
+/* eslint-disable no-unused-vars */
 import zip from 'adm-zip';
 import * as tyr from 'tyr-cli/dist/tyr';
 import { validationResult } from 'express-validator/check';
-import fs from 'fs';
+import fs from 'fs-extra';
 
 import * as responseHelper from './../utils/response-helper';
 
@@ -105,15 +105,18 @@ async function createProject(user, project, req, res, next) {
 
   try {
     configs.credentials = {};
-    configs.credentials.github = await githubAuthService.getGithubTokenAndUsernameForUser(user);
-    configs.credentials.heroku = await herokuAuthService.getHerokuTokenAndEmailForUser(user);
-    configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
+    if (configs.toolingConfigurations.sourceControl === 'github') {
+      configs.credentials.github = await githubAuthService.getGithubTokenAndUsernameForUser(user);
+    }
+    if (configs.toolingConfigurations.deployment === 'heroku') {
+      configs.credentials.heroku = await herokuAuthService.getHerokuTokenAndEmailForUser(user);
+      configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
+    }
 
     const filePath = `${process.cwd()}/generated-projects/${user}`;
     if (!fs.existsSync(filePath)) {
       fs.mkdirSync(filePath);
     }
-
     await tyr.generateBasicNodeProject(configs, filePath);
     await tyr.generateStaticFiles(configs, filePath);
 

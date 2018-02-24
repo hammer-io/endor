@@ -97,7 +97,6 @@ export async function getLogsForBuild(buildNumber, token) {
   // then for every job, we need to get the log.
   const logs = [];
   for (let i = 0; i < jobs.jobs.length; i += 1) {
-    // eslint-disable-next-line prefer-destructuring
     const id = jobs.jobs[i].id;
     const logUrl = `https://api-travis-ci.org/job/${id}/log`;
     let logResponse = {};

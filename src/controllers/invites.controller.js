@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 import { InviteStatus } from '../db/sequelize';
 
 let inviteService = {};
@@ -103,7 +102,8 @@ export async function addInviteToProject(req, res, next) {
     const invite = await inviteService.createInvite(
       projectId,
       userIdOrUsername,
-      daysFromCreationUntilExpiration
+      daysFromCreationUntilExpiration,
+      project.projectName
     );
 
     await emailService.emailInvite(user, project, invite);

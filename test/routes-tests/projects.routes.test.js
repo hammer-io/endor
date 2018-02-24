@@ -4,6 +4,7 @@ import { populateAllTestData } from '../../src/db/import_test_data';
 import * as apiUtil from '../util/api.util';
 import server from '../../src';
 import '../globalSetupTeardown.test';
+import fs from 'fs-extra';
 
 chai.use(chaiHttp);
 const should = chai.should();
@@ -69,11 +70,14 @@ describe('Testing Project Routes', () => {
   describe('POST /user/projects', () => {
     it('should create a new project for the authenticated user', (done) => {
       const body = {
-        projectName: 'Rock Opera',
-        description: 'A new Rock Opera',
-        version: '0.0.0',
-        license: 'MIT',
-        authors: 'None'
+        projectConfigurations: {
+          projectName: 'Rock Opera',
+          description: 'A new Rock Opera',
+          version: '0.0.0',
+          license: 'MIT',
+          author: 'None'
+        },
+        toolingConfigurations:{}
       };
       chai.request(server)
         .post(`${apiUtil.API}/user/projects`)
@@ -81,9 +85,12 @@ describe('Testing Project Routes', () => {
         .send(body)
         .end((err, res) => {
           res.should.have.status(200);
-          const project = res.body;
-          expect(project.projectName).to.equal('Rock Opera');
-          done();
+          fs.remove(`${process.cwd()}/generated-projects/a3/`)
+            .then(() => { done() })
+            .catch((err) => {
+              expect(err).to.be.an('undefined');
+              done();
+            });
         })
     });
   });

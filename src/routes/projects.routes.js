@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 
 /**
  * The project routes. Maps any endpoint dealing with projects to their respective middleware
