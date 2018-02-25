@@ -16,6 +16,7 @@ const del = require('del');
 let projectService = {};
 let herokuAuthService = {};
 let githubAuthService = {};
+const projectLocation = `${process.cwd()}/generated-projects`;
 
 /**
  * Handles the GET /project endpoint
@@ -105,18 +106,24 @@ async function createProject(user, project, req, res, next) {
 
   try {
     configs.credentials = {};
-    if (configs.toolingConfigurations.sourceControl === 'github') {
+    if (configs.toolingConfigurations.sourceControl &&
+        configs.toolingConfigurations.sourceControl.toLowerCase() === 'github') {
       configs.credentials.github = await githubAuthService.getGithubTokenAndUsernameForUser(user);
     }
-    if (configs.toolingConfigurations.deployment === 'heroku') {
+    if (configs.toolingConfigurations.deployment &&
+        configs.toolingConfigurations.deployment.toLowerCase() === 'heroku') {
       configs.credentials.heroku = await herokuAuthService.getHerokuTokenAndEmailForUser(user);
       configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
     }
 
-    const filePath = `${process.cwd()}/generated-projects/${user}`;
+    if (!fs.existsSync(`${projectLocation}`)) {
+      fs.mkdirSync(`${projectLocation}`);
+    }
+    const filePath = `${projectLocation}/${user}`;
     if (!fs.existsSync(filePath)) {
       fs.mkdirSync(filePath);
     }
+
     await tyr.generateBasicNodeProject(configs, filePath);
     await tyr.generateStaticFiles(configs, filePath);
 
@@ -134,7 +141,6 @@ async function createProject(user, project, req, res, next) {
       await tyr.commitToGithub(configs, filePath);
     } catch (error) {
       // do nothing, we already sent the res
-      console.log(error);
     }
   } catch (error) {
     next(error);

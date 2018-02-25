@@ -4,8 +4,8 @@ import * as encryptionUtil from '../utils/encryption';
 
 
 export default class GithubAuthenticationService {
-  constructor(githubTokenRepository, userService, logger) {
-    this.githubTokenRepository = githubTokenRepository;
+  constructor(githubCredentialsRepository, userService, logger) {
+    this.githubCredentialsRepository = githubCredentialsRepository;
     this.userService = userService;
     this.log = logger;
   }
@@ -41,7 +41,7 @@ export default class GithubAuthenticationService {
    */
   async getGithubTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getGithubToken();
+    const token = await user.getGithubCredentials();
     if (token) {
       return encryptionUtil.decrypt(token[0].token);
     }
@@ -57,7 +57,7 @@ export default class GithubAuthenticationService {
    */
   async getGithubTokenAndUsernameForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getGithubToken();
+    const token = await user.getGithubCredentials();
     if (token) {
       return { token: encryptionUtil.decrypt(token[0].token), username: token[0].username };
     }
@@ -72,7 +72,7 @@ export default class GithubAuthenticationService {
    */
   async getGithubUsernameForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getGithubToken();
+    const token = await user.getGithubCredentials();
     if (token) {
       return token[0].username;
     }
@@ -88,7 +88,7 @@ export default class GithubAuthenticationService {
    */
   async getSequelizeGithubTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getGithubToken();
+    const token = await user.getGithubCredentials();
     if (token) {
       return token[0];
     }
@@ -119,8 +119,8 @@ export default class GithubAuthenticationService {
       username
     };
 
-    const tokenCreated = await this.githubTokenRepository.create(githubTokenToBeCreated);
-    await user.addGithubToken(tokenCreated);
+    const tokenCreated = await this.githubCredentialsRepository.create(githubTokenToBeCreated);
+    await user.addGithubCredentials(tokenCreated);
     return tokenCreated;
   }
 

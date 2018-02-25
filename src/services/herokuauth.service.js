@@ -3,8 +3,8 @@ import * as herokuService from '../services/heroku.service';
 import HerokuTokenNotFoundException from '../error/HerokuTokenNotFoundException';
 
 export default class HerokuAuthService {
-  constructor(herokuTokenRepository, userService, logger) {
-    this.herokuTokenRepository = herokuTokenRepository;
+  constructor(herokuCredentialsRepository, userService, logger) {
+    this.herokuCredentialsRepository = herokuCredentialsRepository;
     this.userService = userService;
     this.log = logger;
   }
@@ -41,7 +41,7 @@ export default class HerokuAuthService {
    */
   async getHerokuTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getHerokuToken();
+    const token = await user.getHerokuCredentials();
     if (token) {
       return encryptUtil.decrypt(token[0].token);
     }
@@ -56,7 +56,7 @@ export default class HerokuAuthService {
    */
   async getHerokuTokenAndEmailForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getHerokuToken();
+    const token = await user.getHerokuCredentials();
     if (token) {
       // TODO: apiKey should later be changed to token when tyr is changed to look for token
       return { apiKey: encryptUtil.decrypt(token[0].token), email: token[0].email };
@@ -72,7 +72,7 @@ export default class HerokuAuthService {
    */
   async getHerokuEmailForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getHerokuToken();
+    const token = await user.getHerokuCredentials();
     if (token) {
       return token[0].email;
     }
@@ -88,7 +88,7 @@ export default class HerokuAuthService {
    */
   async getSequelizeHerokuTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getHerokuToken();
+    const token = await user.getHerokuCredentials();
     if (token) {
       return token[0];
     }
@@ -118,8 +118,8 @@ export default class HerokuAuthService {
       token: encryptUtil.encrypt(token.toString())
     };
 
-    const tokenCreated = await this.herokuTokenRepository.create(tokenToBeCreated);
-    await user.addHerokuToken(tokenCreated);
+    const tokenCreated = await this.herokuCredentialsRepository.create(tokenToBeCreated);
+    await user.addHerokuCredentials(tokenCreated);
     return tokenCreated;
   }
 

@@ -215,7 +215,7 @@ function initManually(database, username, password, options) {
   Invite.belongsTo(User, { as: 'userInvited' });
   Invite.belongsTo(Project, { as: 'projectInvitedTo' });
 
-  const GithubToken = model.define('githubToken', {
+  const GithubCredentials = model.define('githubCredentials', {
     id: {
       primaryKey: true,
       type: UUID,
@@ -225,15 +225,15 @@ function initManually(database, username, password, options) {
     token: STRING(2000)
   });
 
-  const GithubTokenOwner = model.define('githubTokenOwner', {
+  const GithubCredentialsOwner = model.define('githubCredentialsOwner', {
     id: {
       primaryKey: true,
       type: UUID,
       defaultValue: UUIDV4,
     }
   });
-  GithubToken.belongsToMany(User, { as: 'owner', through: 'githubTokenOwner' });
-  User.belongsToMany(GithubToken, { as: 'githubToken', through: 'githubTokenOwner' });
+  GithubCredentials.belongsToMany(User, { as: 'owner', through: 'githubCredentialsOwner' });
+  User.belongsToMany(GithubCredentials, { as: 'githubCredentials', through: 'githubCredentialsOwner' });
 
   const TravisToken = model.define('travisToken', {
     id: {
@@ -254,7 +254,7 @@ function initManually(database, username, password, options) {
   TravisToken.belongsToMany(User, { as: 'owner', through: 'travisTokenOwner' });
   User.belongsToMany(TravisToken, { as: 'travisToken', through: 'travisTokenOwner' });
 
-  const HerokuToken = model.define('herokuToken', {
+  const HerokuCredentials = model.define('herokuCredentials', {
     id: {
       primaryKey: true,
       type: UUID,
@@ -264,15 +264,15 @@ function initManually(database, username, password, options) {
     token: STRING(2000)
   });
 
-  const HerokuTokenOwner = model.define('herokuTokenOwner', {
+  const HerokuCredentialsOwner = model.define('herokuCredentialsOwner', {
     id: {
       primaryKey: true,
       type: UUID,
       defaultValue: UUIDV4
     }
   });
-  HerokuToken.belongsToMany(User, { as: 'owner', through: 'herokuTokenOwner' });
-  User.belongsToMany(HerokuToken, { as: 'herokuToken', through: 'herokuTokenOwner' });
+  HerokuCredentials.belongsToMany(User, { as: 'owner', through: 'herokuCredentialsOwner' });
+  User.belongsToMany(HerokuCredentials, { as: 'herokuCredentials', through: 'herokuCredentialsOwner' });
   // --------------------------- MODEL DEFINITION END ---------------------------
 
   // Model Instance
@@ -289,12 +289,12 @@ function initManually(database, username, password, options) {
   module.exports.Project = Project;
   module.exports.ProjectOwner = ProjectOwner;
   module.exports.ProjectContributor = ProjectContributor;
-  module.exports.GithubToken = GithubToken;
-  module.exports.GithubTokenOwner = GithubTokenOwner;
+  module.exports.GithubCredentials = GithubCredentials;
+  module.exports.GithubCredentialsOwner = GithubCredentialsOwner;
   module.exports.TravisToken = TravisToken;
   module.exports.TravisTokenOwner = TravisTokenOwner;
-  module.exports.HerokuToken = HerokuToken;
-  module.exports.HerokuTokenOwner = HerokuTokenOwner;
+  module.exports.HerokuCredentials = HerokuCredentials;
+  module.exports.HerokuCredentialsOwner = HerokuCredentialsOwner;
 }
 
 function initWithConfigs() {
