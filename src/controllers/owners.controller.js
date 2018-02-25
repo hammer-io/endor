@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 
 import * as responseHelper from '../utils/response-helper';
 import OwnerNotFoundException from '../error/OwnerNotFoundException';

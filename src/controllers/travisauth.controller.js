@@ -37,7 +37,7 @@ export async function addTravisTokenForUser(req, res, next) {
   const token = req.body.travisToken;
   try {
     await travisAuthService.addTravisTokenForUser(userId, token);
-    res.status(200).send();
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
@@ -59,7 +59,7 @@ export async function updateTravisTokenForUser(req, res, next) {
   const token = req.body.travisToken;
   try {
     await travisAuthService.updateTravisTokenForUser(userId, token);
-    res.status(200).send();
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
@@ -75,7 +75,7 @@ export async function deleteTravisTokenForUser(req, res, next) {
   const userId = req.user.id;
   try {
     await travisAuthService.deleteTravisTokenForUser(userId);
-    res.status(200).send();
+    res.status(204).send();
   } catch (error) {
     next(error);
   }

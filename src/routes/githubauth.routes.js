@@ -34,12 +34,14 @@ router.get('/auth/github', authController.isAuthenticated, githubAuthController.
  *
  * @apiPermission Authenticated User
  * @apiDescription Adds a github authentication token for the user to the database. If a token
- * already exists for the user, this function will overwrite the existing token.
+ * already exists for the user, this function will overwrite the existing token. If it is
+ * created/updated successfully, it will return a status code of 204.
  *
  * @apiParam {String} githubToken the user's github token
  * @apiParamExample {json} Request-Example:
  * {
- *  "githubToken": "123abc456"
+ *  "githubToken": "123abc456",
+ *  "githubUsername": "githubUsername"
  * }
  */
 router.post(
@@ -56,7 +58,8 @@ router.post(
  * @apiGroup Github
  *
  * @apiPermission Authenticated User
- * @apiDescription Updates a github authentication token for the user. Will return a 404 if a
+ * @apiDescription Updates a github authentication token for the user. If it is updated
+ * successfully, it will return a status code of 204. Will return a 404 if a
  * token did not exist previously.
  *
  * @apiParam {String} githubToken the user's github token
@@ -79,7 +82,8 @@ router.put(
  * @apiGroup Github
  *
  * @apiPermission Authenticated User
- * @apiDescription Deletes a github authentication token for the user.
+ * @apiDescription Deletes a github authentication token for the user. If it is deleted
+ * successfully, it will return a status code of 204.
  */
 router.delete('/auth/github', authController.isAuthenticated, githubAuthController.deleteGithubTokenForUser);
 

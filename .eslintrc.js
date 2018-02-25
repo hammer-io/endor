@@ -7,7 +7,8 @@ module.exports = {
     "linebreak-style": "off",
     "comma-dangle": "off",
     "no-console": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "prefer-destructuring": "off"
   },
   "env": {
     "node": true

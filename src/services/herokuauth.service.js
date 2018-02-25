@@ -3,8 +3,8 @@ import * as herokuService from '../services/heroku.service';
 import HerokuTokenNotFoundException from '../error/HerokuTokenNotFoundException';
 
 export default class HerokuAuthService {
-  constructor(herokuTokenRepository, userService, logger) {
-    this.herokuTokenRepository = herokuTokenRepository;
+  constructor(herokuCredentialsRepository, userService, logger) {
+    this.herokuCredentialsRepository = herokuCredentialsRepository;
     this.userService = userService;
     this.log = logger;
   }
@@ -41,9 +41,40 @@ export default class HerokuAuthService {
    */
   async getHerokuTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getHerokuToken();
+    const token = await user.getHerokuCredentials();
     if (token) {
       return encryptUtil.decrypt(token[0].token);
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets the decrypted heroku token for a user
+   * @param userId the user id to get the token for
+   * @returns {String} the token or null
+   */
+  async getHerokuTokenAndEmailForUser(userId) {
+    const user = await this.userService.getUserByIdOrUsername(userId);
+    const token = await user.getHerokuCredentials();
+    if (token) {
+      // TODO: apiKey should later be changed to token when tyr is changed to look for token
+      return { apiKey: encryptUtil.decrypt(token[0].token), email: token[0].email };
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets the email tied to the user
+   * @param userId the user id to get the token for
+   * @returns {String} the token or null
+   */
+  async getHerokuEmailForUser(userId) {
+    const user = await this.userService.getUserByIdOrUsername(userId);
+    const token = await user.getHerokuCredentials();
+    if (token) {
+      return token[0].email;
     }
 
     return null;
@@ -57,7 +88,7 @@ export default class HerokuAuthService {
    */
   async getSequelizeHerokuTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getHerokuToken();
+    const token = await user.getHerokuCredentials();
     if (token) {
       return token[0];
     }
@@ -70,9 +101,10 @@ export default class HerokuAuthService {
    * existing one. If the user does not have a token, it will create a new token.
    * @param userId the user id to create a token for
    * @param token the token to create
+   * @param email the email tied to the heroku account
    * @returns {Object} the token that was created or updated.
    */
-  async addHerokuTokenForUser(userId, token) {
+  async addHerokuTokenForUser(userId, token, email) {
     const user = await this.userService.getUserByIdOrUsername(userId);
 
     const isTokenExisting = await this.getSequelizeHerokuTokenForUser(userId);
@@ -82,11 +114,12 @@ export default class HerokuAuthService {
     }
 
     const tokenToBeCreated = {
+      email,
       token: encryptUtil.encrypt(token.toString())
     };
 
-    const tokenCreated = await this.herokuTokenRepository.create(tokenToBeCreated);
-    await user.addHerokuToken(tokenCreated);
+    const tokenCreated = await this.herokuCredentialsRepository.create(tokenToBeCreated);
+    await user.addHerokuCredentials(tokenCreated);
     return tokenCreated;
   }
 

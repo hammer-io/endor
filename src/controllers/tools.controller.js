@@ -1,7 +1,6 @@
 let toolsService = {};
 
 export async function getTools(req, res) {
-  console.log('get tools');
   const tools = await toolsService.getTools();
   res.send(tools);
 }

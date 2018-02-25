@@ -4,8 +4,8 @@ import * as encryptionUtil from '../utils/encryption';
 
 
 export default class GithubAuthenticationService {
-  constructor(githubTokenRepository, userService, logger) {
-    this.githubTokenRepository = githubTokenRepository;
+  constructor(githubCredentialsRepository, userService, logger) {
+    this.githubCredentialsRepository = githubCredentialsRepository;
     this.userService = userService;
     this.log = logger;
   }
@@ -41,13 +41,45 @@ export default class GithubAuthenticationService {
    */
   async getGithubTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getGithubToken();
+    const token = await user.getGithubCredentials();
     if (token) {
       return encryptionUtil.decrypt(token[0].token);
     }
 
     return null;
   }
+
+
+  /**
+   * Gets the decrypted github token for a user
+   * @param userId the user id to get the token for
+   * @returns {String} the token
+   */
+  async getGithubTokenAndUsernameForUser(userId) {
+    const user = await this.userService.getUserByIdOrUsername(userId);
+    const token = await user.getGithubCredentials();
+    if (token) {
+      return { token: encryptionUtil.decrypt(token[0].token), username: token[0].username };
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets the decrypted github token for a user
+   * @param userId the user id to get the token for
+   * @returns {String} the token
+   */
+  async getGithubUsernameForUser(userId) {
+    const user = await this.userService.getUserByIdOrUsername(userId);
+    const token = await user.getGithubCredentials();
+    if (token) {
+      return token[0].username;
+    }
+
+    return null;
+  }
+
 
   /**
    * Gets a github token for a user from the githubAuthentications token.
@@ -56,7 +88,7 @@ export default class GithubAuthenticationService {
    */
   async getSequelizeGithubTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-    const token = await user.getGithubToken();
+    const token = await user.getGithubCredentials();
     if (token) {
       return token[0];
     }
@@ -69,9 +101,10 @@ export default class GithubAuthenticationService {
    * exists for the user, it will automatically update the old one.
    * @param userId the user id to add the token for
    * @param token the token to add to the table
+   * @param username the github username of the user
    * @returns {Object} the token that was created
    */
-  async addGithubTokenForUser(userId, token) {
+  async addGithubTokenForUser(userId, token, username) {
     const user = await this.userService.getUserByIdOrUsername(userId);
 
     const isTokenExisting = await this.getSequelizeGithubTokenForUser(userId);
@@ -82,11 +115,12 @@ export default class GithubAuthenticationService {
     }
 
     const githubTokenToBeCreated = {
-      token: encryptionUtil.encrypt(token.toString())
+      token: encryptionUtil.encrypt(token.toString()),
+      username
     };
 
-    const tokenCreated = await this.githubTokenRepository.create(githubTokenToBeCreated);
-    await user.addGithubToken(tokenCreated);
+    const tokenCreated = await this.githubCredentialsRepository.create(githubTokenToBeCreated);
+    await user.addGithubCredentials(tokenCreated);
     return tokenCreated;
   }
 

@@ -35,10 +35,11 @@ export async function createNewGithubToken(req, res, next) {
 
   const userId = req.user.id;
   const token = req.body.githubToken;
+  const username = req.body.githubUsername;
 
   try {
-    await githubAuthenticationService.addGithubTokenForUser(userId, token);
-    res.status(200).send();
+    await githubAuthenticationService.addGithubTokenForUser(userId, token, username);
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
@@ -61,7 +62,7 @@ export async function updateTokenForUser(req, res, next) {
 
   try {
     await githubAuthenticationService.updateTokenForUser(userId, token);
-    res.status(200).send();
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
@@ -77,7 +78,7 @@ export async function deleteGithubTokenForUser(req, res, next) {
   const userId = req.user.id;
   try {
     await githubAuthenticationService.deleteGithubTokenForUser(userId);
-    res.status(200).send();
+    res.status(204).send();
   } catch (error) {
     next(error);
   }

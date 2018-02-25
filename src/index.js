@@ -62,7 +62,7 @@ app.use(session({
 // dependency injections //
 const userService = new UserService(sequelize.User, sequelize.Credentials, getActiveLogger());
 const githubAuthenticationService = new GithubAuthenticationService(
-  sequelize.GithubToken,
+  sequelize.GithubCredentials,
   userService,
   getActiveLogger()
 );
@@ -73,7 +73,7 @@ const travisAuthenticationService = new TravisAuthenticationService(
 );
 
 const herokuAuthenticationService = new HerokuAuthService(
-  sequelize.HerokuToken,
+  sequelize.HerokuCredentials,
   userService,
   getActiveLogger()
 );
@@ -94,7 +94,11 @@ const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
 
 auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);
-projects.setProjectService(projectService);
+projects.setProjectService(
+  projectService,
+  githubAuthenticationService,
+  herokuAuthenticationService
+);
 users.setDependencies(userService);
 contributors.setDependencies(projectService);
 owners.setDependencies(projectService);

@@ -32,18 +32,20 @@ router.get(
 
 /**
  * @api {POST} /auth/heroku Add Heroku Authentication Token
- * @apiVersion 1.0.0
+ * @apiVersion 1.0.0F
  * @apiName Add Heroku Authentication Token
  * @apiGroup Heroku
  *
  * @apiPermission Authenticated User
- * @apiDescription Adds a heroku authentication token for the user to the database. If a token
- * already exists for the user, this function will overwrite the existing token.
+ * @apiDescription Adds a heroku authentication token for the user to the database. If it is
+ * created/updated successfully, it will return a status code of 204. If a token already exists
+ * for the user, this function will overwrite the existing token.
  *
  * @apiParam {String} heroku the user's heroku token
  * @apiParamExample {json} Request-Example:
  * {
- *  "herokuToken": "123abc456"
+ *  "herokuToken": "123abc456",
+ *  "email": "usersHerokuEmail@gmail.com"
  * }
  */
 router.post(
@@ -60,7 +62,8 @@ router.post(
  * @apiGroup Heroku
  *
  * @apiPermission Authenticated User
- * @apiDescription Updates a heroku authentication token for the user. Will return a 404 if a
+ * @apiDescription Updates a heroku authentication token for the user. If it is updated
+ * successfully, it will return a status code of 204. Will return a 404 if a
  * token did not exist previously.
  *
  * @apiParam {String} heroku the user's heroku token
@@ -83,7 +86,8 @@ router.put(
  * @apiGroup Heroku
  *
  * @apiPermission Authenticated User
- * @apiDescription Deletes a heroku authentication token for the user.
+ * @apiDescription Deletes a heroku authentication token for the user. If it is deleted
+ * successfully, it will return a status code of 204.
  */
 router.delete(
   '/auth/heroku',

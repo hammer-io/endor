@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 import { InviteStatus } from '../db/sequelize';
 
 let inviteService = {};

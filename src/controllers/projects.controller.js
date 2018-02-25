@@ -1,14 +1,22 @@
-/* eslint-disable prefer-destructuring,no-unused-vars */
+/* eslint-disable no-unused-vars */
+import zip from 'adm-zip';
+import * as tyr from 'tyr-cli/dist/tyr';
+import { validationResult } from 'express-validator/check';
+import fs from 'fs-extra';
+
+import * as responseHelper from './../utils/response-helper';
+
+const del = require('del');
 
 /**
  * The project controller. This controller is for any routes dealing with projects. It is
  * dependent on the projectService which should be set in the project-routes.js file.
  */
 
-import { validationResult } from 'express-validator/check';
-import * as responseHelper from './../utils/response-helper';
-
 let projectService = {};
+let herokuAuthService = {};
+let githubAuthService = {};
+const projectLocation = `${process.cwd()}/generated-projects`;
 
 /**
  * Handles the GET /project endpoint
@@ -93,9 +101,47 @@ async function createProject(user, project, req, res, next) {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
+  const zipper = zip();
+  const configs = project;
+
   try {
-    const projectCreated = await projectService.createProject(project, user);
-    res.send(projectCreated);
+    configs.credentials = {};
+    if (configs.toolingConfigurations.sourceControl &&
+        configs.toolingConfigurations.sourceControl.toLowerCase() === 'github') {
+      configs.credentials.github = await githubAuthService.getGithubTokenAndUsernameForUser(user);
+    }
+    if (configs.toolingConfigurations.deployment &&
+        configs.toolingConfigurations.deployment.toLowerCase() === 'heroku') {
+      configs.credentials.heroku = await herokuAuthService.getHerokuTokenAndEmailForUser(user);
+      configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
+    }
+
+    if (!fs.existsSync(`${projectLocation}`)) {
+      fs.mkdirSync(`${projectLocation}`);
+    }
+    const filePath = `${projectLocation}/${user}`;
+    if (!fs.existsSync(filePath)) {
+      fs.mkdirSync(filePath);
+    }
+
+    await tyr.generateBasicNodeProject(configs, filePath);
+    await tyr.generateStaticFiles(configs, filePath);
+
+    // Only do this if there is success upon creating the project
+    await projectService.createProject(configs.projectConfigurations, user);
+
+    const projectName = project.projectConfigurations.projectName;
+
+    zipper.addLocalFolder(`${filePath}/${projectName}`, `${projectName}`, undefined);
+    res.set('Content-Type', 'application/zip');
+    res.send(await zipper.toBuffer());
+
+    try {
+      await tyr.setUpThirdPartyTools(configs);
+      await tyr.commitToGithub(configs, filePath);
+    } catch (error) {
+      // do nothing, we already sent the res
+    }
   } catch (error) {
     next(error);
   }
@@ -293,7 +339,11 @@ export async function getHerokuAppInfoForProject(req, res, next) {
 /**
  * Injects the project service dependency
  * @param newProjectService the project service
+ * @param newGithubAuthService the githubAuth service
+ * @param newHerokuAuthService the githubAuth service
  */
-export function setProjectService(newProjectService) {
+export function setProjectService(newProjectService, newGithubAuthService, newHerokuAuthService) {
   projectService = newProjectService;
+  githubAuthService = newGithubAuthService;
+  herokuAuthService = newHerokuAuthService;
 }

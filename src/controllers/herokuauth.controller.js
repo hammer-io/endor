@@ -35,9 +35,10 @@ export async function addHerokuTokenForUser(req, res, next) {
 
   const userId = req.user.id;
   const token = req.body.herokuToken;
+  const email = req.body.email;
   try {
-    await herokuAuthService.addHerokuTokenForUser(userId, token);
-    res.status(200).send();
+    await herokuAuthService.addHerokuTokenForUser(userId, token, email);
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
@@ -59,7 +60,7 @@ export async function updateHerokuTokenForUser(req, res, next) {
   const token = req.body.herokuToken;
   try {
     await herokuAuthService.updateHerokuTokenForUser(userId, token);
-    res.status(200).send();
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
@@ -75,7 +76,7 @@ export async function deleteHerokuTokenForUser(req, res, next) {
   const userId = req.user.id;
   try {
     await herokuAuthService.deleteHerokuTokenForUser(userId);
-    res.status(200).send();
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
