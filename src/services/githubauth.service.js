@@ -42,7 +42,7 @@ export default class GithubAuthenticationService {
   async getGithubTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getGithubCredentials();
-    if (token) {
+    if (token[0]) {
       return encryptionUtil.decrypt(token[0].token);
     }
 

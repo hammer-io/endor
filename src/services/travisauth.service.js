@@ -32,7 +32,7 @@ export default class TravisAuthenticationService {
   async getTravisTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getTravisToken();
-    if (token) {
+    if (token[0]) {
       return encryptUtil.decrypt(token[0].token);
     }
 

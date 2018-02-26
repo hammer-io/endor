@@ -42,7 +42,7 @@ export default class HerokuAuthService {
   async getHerokuTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getHerokuCredentials();
-    if (token) {
+    if (token[0]) {
       return encryptUtil.decrypt(token[0].token);
     }
 
