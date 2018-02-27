@@ -51,6 +51,8 @@ router.get('/users', authController.isAuthenticated, usersController.getAllUsers
     "email": "Bob@AFV.com",
     "firstName": "Bob",
     "lastName": "Sagat",
+    "githubUsername": "BobSagat",
+    "herokuEmail": "Bob@AFV.com",
     "createdAt": "2017-11-12T20:26:47.000Z",
     "updatedAt": "2017-11-12T20:26:47.000Z"
   }
@@ -75,6 +77,8 @@ router.get('/users/:user', authController.isAuthenticated, usersController.getUs
       "email": "Bob@AFV.com",
       "firstName": "Bob",
       "lastName": "Sagat",
+      "githubUsername": "BobSagat",
+      "herokuEmail": "Bob@AFV.com",
       "createdAt": "2017-11-12T20:26:47.000Z",
       "updatedAt": "2017-11-12T20:26:47.000Z"
     }
@@ -140,7 +144,7 @@ router.post('/users', usersController.createUser);
  *  "username": "BobSagat",
  *  "email": "Bob@AFV.net",
  *  "firstName": "Bob",
- *  "lastName": "Sagat"
+ *  "lastName": "Sagat",
  * }
  *
  * @apiSuccess {Object} user The updated user
@@ -187,9 +191,20 @@ router.delete(
 /**
  * Sets dependencies for the routes
  * @param newUserService the user service dependency
+ * @param newGithubCredentialsService the github credentials service dependency
+ * @param newHerokuCredentialsService the heroku credentials service dependency
  */
-export function setDependencies(newUserService) {
+export function setDependencies(
+  newUserService,
+  newGithubCredentialsService,
+  newHerokuCredentialsService
+) {
   userService = newUserService;
-  usersController.setDependencies(userService);
+  usersController.setDependencies(
+    userService,
+    newGithubCredentialsService,
+    newHerokuCredentialsService
+  );
+
   userAuthorization.setDependencies(userService);
 }

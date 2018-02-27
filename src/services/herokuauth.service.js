@@ -57,7 +57,7 @@ export default class HerokuAuthService {
   async getHerokuTokenAndEmailForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getHerokuCredentials();
-    if (token) {
+    if (token[0]) {
       // TODO: apiKey should later be changed to token when tyr is changed to look for token
       return { apiKey: encryptUtil.decrypt(token[0].token), email: token[0].email };
     }
@@ -73,7 +73,7 @@ export default class HerokuAuthService {
   async getHerokuEmailForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getHerokuCredentials();
-    if (token) {
+    if (token[0]) {
       return token[0].email;
     }
 

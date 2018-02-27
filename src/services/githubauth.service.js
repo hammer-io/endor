@@ -58,7 +58,7 @@ export default class GithubAuthenticationService {
   async getGithubTokenAndUsernameForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getGithubCredentials();
-    if (token) {
+    if (token[0]) {
       return { token: encryptionUtil.decrypt(token[0].token), username: token[0].username };
     }
 
@@ -71,9 +71,10 @@ export default class GithubAuthenticationService {
    * @returns {String} the token
    */
   async getGithubUsernameForUser(userId) {
+    this.log.info(`Getting github username for user with id: ${userId}`);
     const user = await this.userService.getUserByIdOrUsername(userId);
     const token = await user.getGithubCredentials();
-    if (token) {
+    if (token[0]) {
       return token[0].username;
     }
 
