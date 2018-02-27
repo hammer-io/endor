@@ -99,7 +99,7 @@ projects.setProjectService(
   githubAuthenticationService,
   herokuAuthenticationService
 );
-users.setDependencies(userService);
+users.setDependencies(userService, githubAuthenticationService, herokuAuthenticationService);
 contributors.setDependencies(projectService);
 owners.setDependencies(projectService);
 invites.setDependencies(inviteService, userService, projectService, emailService);

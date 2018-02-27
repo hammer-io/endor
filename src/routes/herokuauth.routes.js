@@ -32,7 +32,7 @@ router.get(
 
 /**
  * @api {POST} /auth/heroku Add Heroku Authentication Token
- * @apiVersion 1.0.0F
+ * @apiVersion 1.0.0
  * @apiName Add Heroku Authentication Token
  * @apiGroup Heroku
  *
