@@ -52,6 +52,33 @@ router.post(
 );
 
 /**
+ * @api {POST} /auth/github2 Exchange Github code for Github token
+ * @apiVersion 1.0.0
+ * @apiName Exchange for Github Authentication Token
+ * @apiGroup Github
+ *
+ * @apiPermission Authenticated User
+ * @apiDescription Exchanges a code for a github auth token and stores the github
+ * authentication token for the user to the database. If a token
+ * already exists for the user, this function will overwrite the existing token. If it is
+ * created/updated successfully, it will return a status code of 204.
+ *
+ * @apiParam {String} code the user's github code
+ * @apiParam {String} state the state generated for this exchange
+ * @apiParamExample {json} Request-Example:
+ * {
+ *  "code": "7e8d7f7f-d8ab-44c6-af9e-7b7971413708",
+ *  "state": "8jhmm5avo0zduepbvh3bh791xi"
+ * }
+ */
+router.post(
+  '/auth/github/code',
+  authController.isAuthenticated,
+  githubAuthValidator.checkIsValidExchangeRequest(),
+  githubAuthController.exchangeForNewGithubToken
+);
+
+/**
  * @api {PUT} /auth/github Update Github Authentication Token
  * @apiVersion 1.0.0
  * @apiName Update Github Authentication Token

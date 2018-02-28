@@ -46,6 +46,31 @@ export async function createNewGithubToken(req, res, next) {
 }
 
 /**
+ * Controller for POST /auth/github/code
+ * @param req the request
+ * @param res the response
+ * @param next the next middleware
+ */
+export async function exchangeForNewGithubToken(req, res, next) {
+  const errors = validationResult(req).formatWith(errorFormatter.formatError);
+  if (!errors.isEmpty()) {
+    return res.status(422).send({ errors: errors.array() });
+  }
+
+  const userId = req.user.id;
+  const code = req.body.code;
+  const state = req.body.state;
+  const username = req.body.githubUsername;
+
+  try {
+    await githubAuthenticationService.getAndSetGithubTokenForUser(userId, code, state, username);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
  * Controller for PUT /auth/github
  * @param req the request
  * @param res the response

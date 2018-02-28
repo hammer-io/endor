@@ -56,6 +56,31 @@ router.post(
 );
 
 /**
+ * @api {POST} /auth/heroku2 Exchange Heroku code for Heroku token
+ * @apiVersion 1.0.0
+ * @apiName Exchange for Heroku Authentication Token
+ * @apiGroup Heroku
+ *
+ * @apiPermission Authenticated User
+ * @apiDescription Exchanges a code for a Heroku auth token and stores the Heroku
+ * authentication token for the user to the database. If a token
+ * already exists for the user, this function will overwrite the existing token. If it is
+ * created/updated successfully, it will return a status code of 204.
+ *
+ * @apiParam {String} code the user's heroku code
+ * @apiParamExample {json} Request-Example:
+ * {
+ *  "code": "7e8d7f7f-d8ab-44c6-af9e-7b7971413708"
+ * }
+ */
+router.post(
+  '/auth/heroku/code',
+  authController.isAuthenticated,
+  herokuAuthValidator.checkIsValidExchangeRequest(),
+  herokuAuthAuthController.exchangeForNewHerokuToken
+);
+
+/**
  * @api {PUT} /auth/heroku Update heroku Authentication Token
  * @apiVersion 1.0.0
  * @apiName Update Heroku Authentication Token

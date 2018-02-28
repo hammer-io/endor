@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+import config from 'config';
 import GithubTokenNotFoundException from '../error/GithubTokenNotFoundException';
 import * as githubService from './github.service';
 import * as encryptionUtil from '../utils/encryption';
@@ -107,7 +109,6 @@ export default class GithubAuthenticationService {
    */
   async addGithubTokenForUser(userId, token, username) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-
     const isTokenExisting = await this.getSequelizeGithubTokenForUser(userId);
     // update token if it already exists
     if (isTokenExisting) {
@@ -123,6 +124,44 @@ export default class GithubAuthenticationService {
     const tokenCreated = await this.githubCredentialsRepository.create(githubTokenToBeCreated);
     await user.addGithubCredentials(tokenCreated);
     return tokenCreated;
+  }
+
+  /**
+   * First exchanges code and state for a github token.
+   * Then adds a github token for the given user into the githubTokens table. If a token already
+   * exists for the user, it will automatically update the old one.
+   * @param userId the user id to add the token for
+   * @param code the code to exchange for token
+   * @param state the state to verify identity
+   * @param username the github username of the user
+   * @returns {Object} the token that was created
+   */
+  async getAndSetGithubTokenForUser(userId, code, state, username) {
+    try {
+      const clientData = config.get('oauth_apps').github;
+      const res = await fetch('https://cors-anywhere.herokuapp.com/https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        body: JSON.stringify({
+          client_id: clientData.client_id,
+          client_secret: clientData.client_secret,
+          code,
+          state
+        }),
+        headers: new fetch.Headers({
+          'Content-Type': 'application/json',
+          origin: 'http://localhost:8080/', // included to satisfy cors-anywhere
+          Accept: 'application/json'
+        }),
+      });
+      if (res.status < 400) {
+        const data = await res.text().then(text => (text ? JSON.parse(text) : null));
+        await this.addGithubTokenForUser(userId, data.access_token, username);
+        return data.access_token;
+      }
+      return res.json();
+    } catch (error) {
+      return error;
+    }
   }
 
   /**

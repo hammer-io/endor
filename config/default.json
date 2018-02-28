@@ -64,5 +64,15 @@
   },
   "encrypt": {
     "key": "some key here it should probably be really really long"
+  },
+  "oauth_apps": {
+    "github": {
+      "client_secret": "<Contact oauth app holder for this secret>",
+      "client_id": "6b57706945fa18ee0397"
+    },
+    "heroku": {
+      "client_secret": "<Contact oauth app holder for this secret>",
+      "client_id": "9a65de7d-f3d0-4457-9197-556e85d56bca"
+    }
   }
 }
