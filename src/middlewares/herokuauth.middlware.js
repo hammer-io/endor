@@ -2,7 +2,7 @@
 import { check } from 'express-validator/check';
 
 /**
- * A valid request to the heroku Authentication POST, PUT routes must have a travisToken as a
+ * A valid request to the heroku Authentication POST, PUT routes must have a herokuToken as a
  * field of the request body.
  * @returns {*[]}
  */

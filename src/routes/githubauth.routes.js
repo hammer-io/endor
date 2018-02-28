@@ -64,7 +64,7 @@ router.post(
  * created/updated successfully, it will return a status code of 204.
  *
  * @apiParam {String} code the user's github code
- * @apiParam {String} state the user's github code
+ * @apiParam {String} state the state generated for this exchange
  * @apiParamExample {json} Request-Example:
  * {
  *  "code": "7e8d7f7f-d8ab-44c6-af9e-7b7971413708",
