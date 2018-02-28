@@ -109,13 +109,10 @@ export default class GithubAuthenticationService {
    */
   async addGithubTokenForUser(userId, token, username) {
     const user = await this.userService.getUserByIdOrUsername(userId);
-
-    console.log('nathan2');
     const isTokenExisting = await this.getSequelizeGithubTokenForUser(userId);
     // update token if it already exists
     if (isTokenExisting) {
       const updatedToken = await this.updateTokenForUser(userId, token);
-      console.log(updatedToken);
       return updatedToken;
     }
 
