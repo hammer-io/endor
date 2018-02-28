@@ -4,6 +4,7 @@ import express from 'express';
 import * as authController from '../controllers/auth.controller';
 import * as herokuAuthAuthController from '../controllers/herokuauth.controller';
 import * as herokuAuthValidator from '../middlewares/herokuauth.middlware';
+import * as herokuAuth2Validator from '../middlewares/herokuauth2.middleware';
 
 export const router = express.Router();
 
@@ -53,6 +54,31 @@ router.post(
   authController.isAuthenticated,
   herokuAuthValidator.checkIsValidRequest(),
   herokuAuthAuthController.addHerokuTokenForUser
+);
+
+/**
+ * @api {POST} /auth/heroku2 Exchange Heroku code for Heroku token
+ * @apiVersion 1.0.0
+ * @apiName Exchange for Heroku Authentication Token
+ * @apiGroup Heroku
+ *
+ * @apiPermission Authenticated User
+ * @apiDescription Exchanges a code for a Heroku auth token and stores the Heroku
+ * authentication token for the user to the database. If a token
+ * already exists for the user, this function will overwrite the existing token. If it is
+ * created/updated successfully, it will return a status code of 204.
+ *
+ * @apiParam {String} code the user's heroku code
+ * @apiParamExample {json} Request-Example:
+ * {
+ *  "code": "7e8d7f7f-d8ab-44c6-af9e-7b7971413708"
+ * }
+ */
+router.post(
+  '/auth/heroku2',
+  authController.isAuthenticated,
+  herokuAuth2Validator.checkIsValidRequest(),
+  herokuAuthAuthController.exchangeForNewHerokuToken
 );
 
 /**

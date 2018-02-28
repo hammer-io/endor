@@ -45,6 +45,29 @@ export async function addHerokuTokenForUser(req, res, next) {
 }
 
 /**
+ * Controller for POST /auth/heroku2
+ * @param req the request
+ * @param res the response
+ * @param next the next middleware
+ */
+export async function exchangeForNewHerokuToken(req, res, next) {
+  const errors = validationResult(req).formatWith(errorFormatter.formatError);
+  if (!errors.isEmpty()) {
+    return res.status(422).send({ errors: errors.array() });
+  }
+
+  const userId = req.user.id;
+  const code = req.body.code;
+  const email = req.body.email;
+  try {
+    await herokuAuthService.getAndSetHerokuTokenForUser(userId, code, email);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
  * Controller for PUT /auth/heroku
  * @param req the request
  * @param res the response

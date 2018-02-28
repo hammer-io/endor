@@ -64,5 +64,9 @@
   },
   "encrypt": {
     "key": "some key here it should probably be really really long"
+  },
+  "oauth_secrets": {
+    "github": "<Contact oauth app holder for this secret>",
+    "heroku": "<Contact oauth app holder for this secret>"
   }
 }

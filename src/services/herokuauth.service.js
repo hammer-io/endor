@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+import config from 'config';
 import * as encryptUtil from '../utils/encryption';
 import * as herokuService from '../services/heroku.service';
 import HerokuTokenNotFoundException from '../error/HerokuTokenNotFoundException';
@@ -121,6 +123,64 @@ export default class HerokuAuthService {
     const tokenCreated = await this.herokuCredentialsRepository.create(tokenToBeCreated);
     await user.addHerokuCredentials(tokenCreated);
     return tokenCreated;
+  }
+
+  /**
+   * First trades codes for a Heroku token.
+   * Then adds the Heroku token for a user. If the user already has a token, it will update the
+   * existing one.
+   * @param userId the user id to create a token for
+   * @param code the code sent by Heroku to create a token
+   * @param email the email tied to the heroku account
+   * @returns {Object} the token that was created or updated.
+   */
+  async getAndSetHerokuTokenForUser(userId, code, email) {
+    let res;
+    const secrets = config.get('oauth_secrets');
+    try {
+      res = await fetch(`${'https://cors-anywhere.herokuapp.com/' +
+        'https://id.heroku.com/oauth/token' +
+        '?client_secret='}${secrets.heroku}&grant_type=authorization_code&code=${code}`, {
+        method: 'POST',
+        body: JSON.stringify({}),
+        headers: new fetch.Headers({
+          'Content-Type': 'application/json',
+          origin: 'http://localhost:8080/',
+          Accept: 'application/json'
+        }),
+      });
+      if (res.status >= 400) {
+        return res.json();
+      }
+    } catch (error) {
+      return error;
+    }
+    const data = await res.text().then(text => (text ? JSON.parse(text) : null));
+    if (data.refresh_token) {
+      const token = data.refresh_token;
+
+      try {
+        res = await fetch(`${'https://cors-anywhere.herokuapp.com/' +
+        'https://id.heroku.com/oauth/token' +
+        '?grant_type=refresh_token&refresh_token='}${token}&client_secret=57903c7d-ddb1-4631-a208-b39d939a1965`, {
+          method: 'POST',
+          body: JSON.stringify({}),
+          headers: new fetch.Headers({
+            'Content-Type': 'application/json',
+            origin: 'http://localhost:8080/',
+            Accept: 'application/json'
+          }),
+        });
+        if (res.status >= 400) {
+          return res.json();
+        }
+      } catch (error) {
+        return error;
+      }
+      const data2 = await res.text().then(text => (text ? JSON.parse(text) : null));
+      await this.addHerokuTokenForUser(userId, data2.access_token, email);
+      return data2.access_token;
+    }
   }
 
   /**
