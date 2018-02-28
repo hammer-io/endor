@@ -6,7 +6,7 @@
   "db": {
     "database": "hammer_endor",
     "username": "root",
-    "password": "password",
+    "password": "root",
     "options": {
       "host": "localhost",
       "dialect": "mysql",
