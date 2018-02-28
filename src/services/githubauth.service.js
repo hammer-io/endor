@@ -138,12 +138,12 @@ export default class GithubAuthenticationService {
    */
   async getAndSetGithubTokenForUser(userId, code, state, username) {
     try {
-      const secrets = config.get('oauth_secrets');
+      const clientData = config.get('oauth_apps').github;
       const res = await fetch('https://cors-anywhere.herokuapp.com/https://github.com/login/oauth/access_token', {
         method: 'POST',
         body: JSON.stringify({
-          client_id: '6b57706945fa18ee0397',
-          client_secret: secrets.github,
+          client_id: clientData.client_id,
+          client_secret: clientData.client_secret,
           code,
           state
         }),

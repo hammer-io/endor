@@ -45,7 +45,7 @@ export async function addHerokuTokenForUser(req, res, next) {
 }
 
 /**
- * Controller for POST /auth/heroku2
+ * Controller for POST /auth/heroku/code
  * @param req the request
  * @param res the response
  * @param next the next middleware

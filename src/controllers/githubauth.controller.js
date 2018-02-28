@@ -46,7 +46,7 @@ export async function createNewGithubToken(req, res, next) {
 }
 
 /**
- * Controller for POST /auth/github2
+ * Controller for POST /auth/github/code
  * @param req the request
  * @param res the response
  * @param next the next middleware

@@ -4,7 +4,6 @@ import express from 'express';
 import * as authController from '../controllers/auth.controller';
 import * as githubAuthController from '../controllers/githubauth.controller';
 import * as githubAuthValidator from '../middlewares/githubauth.middleware';
-import * as githubAuth2Validator from '../middlewares/githubauth2.middleware';
 
 export const router = express.Router();
 
@@ -73,9 +72,9 @@ router.post(
  * }
  */
 router.post(
-  '/auth/github2',
+  '/auth/github/code',
   authController.isAuthenticated,
-  githubAuth2Validator.checkIsValidRequest(),
+  githubAuthValidator.checkIsValidExchangeRequest(),
   githubAuthController.exchangeForNewGithubToken
 );
 

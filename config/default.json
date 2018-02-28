@@ -6,7 +6,7 @@
   "db": {
     "database": "hammer_endor",
     "username": "root",
-    "password": "root",
+    "password": "password",
     "options": {
       "host": "localhost",
       "dialect": "mysql",
@@ -65,8 +65,14 @@
   "encrypt": {
     "key": "some key here it should probably be really really long"
   },
-  "oauth_secrets": {
-    "github": "<Contact oauth app holder for this secret>",
-    "heroku": "<Contact oauth app holder for this secret>"
+  "oauth_apps": {
+    "github": {
+      "client_secret": "<Contact oauth app holder for this secret>",
+      "client_id": "6b57706945fa18ee0397"
+    },
+    "heroku": {
+      "client_secret": "<Contact oauth app holder for this secret>",
+      "client_id": "9a65de7d-f3d0-4457-9197-556e85d56bca"
+    }
   }
 }

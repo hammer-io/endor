@@ -4,7 +4,6 @@ import express from 'express';
 import * as authController from '../controllers/auth.controller';
 import * as herokuAuthAuthController from '../controllers/herokuauth.controller';
 import * as herokuAuthValidator from '../middlewares/herokuauth.middlware';
-import * as herokuAuth2Validator from '../middlewares/herokuauth2.middleware';
 
 export const router = express.Router();
 
@@ -75,9 +74,9 @@ router.post(
  * }
  */
 router.post(
-  '/auth/heroku2',
+  '/auth/heroku/code',
   authController.isAuthenticated,
-  herokuAuth2Validator.checkIsValidRequest(),
+  herokuAuthValidator.checkIsValidExchangeRequest(),
   herokuAuthAuthController.exchangeForNewHerokuToken
 );
 
