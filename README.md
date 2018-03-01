@@ -24,7 +24,10 @@ A web API to generate node.js applications in an opinionated way.
 2. Open your favorite terminal and go to the directory you want to install.
 3. git clone https://github.com/username/endor
 4. `npm install`
-5. You're all set!
+5. Set up the configuration file
+   - Duplicate `config/default-example.json` into a new file `config/default.json`
+   - Fill in any necessary information (either create new accounts or ask an owner)
+6. You're all set!
 
 
 ## Usage
