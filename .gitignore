@@ -19,7 +19,7 @@ build/Release
 npm-debug.lo
 .nyc_output/
 config/*
-!config/default.json
+!config/default-example.json
 !config/test.json
 
 .DS_Store
