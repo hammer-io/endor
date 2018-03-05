@@ -13,39 +13,171 @@ describe('Test Tools Service ', () => {
     await populateTools();
   });
 
-  it('should get the source control tools', async () => {
-    const tools = await toolsService.getSourceControlTools();
-    expect(tools.length).to.equal(1);
-    expect(tools[0].name).to.equal('GitHub');
+
+  describe('Continuous Integration Tests', async () => {
+    it('should get the continuous integration tools', async () => {
+      const tools = await toolsService.getCITools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('TravisCI');
+    });
+
+    it('should get the continuous integration tools', async () => {
+      const tools = await toolsService.getCITools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('TravisCI');
+
+      const toolName = tools[0].name;
+      const foundToolName = await toolsService.ciToolName(tools[0].id);
+      expect(foundToolName).to.equal(toolName);
+    });
+
+    it('should get the continuous integration tools', async () => {
+      const tools = await toolsService.getCITools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('TravisCI');
+
+      const wrongId = 'thisisanincorrectid';
+      const foundToolName = await toolsService.ciToolName(wrongId);
+      expect(foundToolName).to.be.an('undefined');
+    });
   });
-  it('should get the continuous integration tools', async () => {
-    const tools = await toolsService.getCITools();
-    expect(tools.length).to.equal(1);
-    expect(tools[0].name).to.equal('TravisCI');
+
+  describe('Containerization Tools', async () => {
+    it('should get the containerization tools', async () => {
+      const tools = await toolsService.getContainerizationTools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Docker');
+    });
+
+    it('should get the containerization tools', async () => {
+      const tools = await toolsService.getContainerizationTools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Docker');
+
+      const toolName = tools[0].name;
+      const foundToolName = await toolsService.containerizationToolName(tools[0].id);
+      expect(foundToolName).to.equal(toolName);
+    });
+
+    it('should get the containerization tools', async () => {
+      const tools = await toolsService.getContainerizationTools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Docker');
+
+      const wrongId = 'wrongId';
+      const foundToolName = await toolsService.containerizationToolName(wrongId);
+      expect(foundToolName).to.be.an('undefined');
+    });
   });
-  it('should get the containerization tools', async () => {
-    const tools = await toolsService.getContainerizationTools();
-    expect(tools.length).to.equal(1);
-    expect(tools[0].name).to.equal('Docker');
+
+  describe('Deployment Tools', async () => {
+    it('should get the deployment tools', async () => {
+      const tools = await toolsService.getDeploymentTools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Heroku');
+    });
+
+    it('should get the deployment tools', async () => {
+      const tools = await toolsService.getDeploymentTools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Heroku');
+
+      const toolName = tools[0].name;
+      const foundToolName = await toolsService.deploymentToolName(tools[0].id);
+      expect(foundToolName).to.equal(toolName);
+    });
+
+    it('should get the deployment tools', async () => {
+      const tools = await toolsService.getDeploymentTools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Heroku');
+
+      const wrongId = 'wrongId';
+      const foundToolName = await toolsService.deploymentToolName(wrongId);
+      expect(foundToolName).to.be.an('undefined');
+    });
   });
-  it('should get the deployment tools', async () => {
-    const tools = await toolsService.getDeploymentTools();
-    expect(tools.length).to.equal(1);
-    expect(tools[0].name).to.equal('Heroku');
+
+  describe('Web Frameworks', async () => {
+    it('should get the web framework tools', async () => {
+      const tools = await toolsService.getWebFrameworks();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('ExpressJS');
+    });
+
+    it('should get the web framework tools', async () => {
+      const tools = await toolsService.getWebFrameworks();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('ExpressJS');
+
+      const toolName = tools[0].name;
+      const foundToolName = await toolsService.webFrameworksName(tools[0].id);
+      expect(foundToolName).to.equal(toolName);
+    });
+
+    it('should get the web framework tools', async () => {
+      const tools = await toolsService.getWebFrameworks();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('ExpressJS');
+
+      const wrongId = 'wrongId';
+      const foundToolName = await toolsService.webFrameworksName(wrongId);
+      expect(foundToolName).to.be.an('undefined');
+    });
   });
-  it('should get the web framework tools', async () => {
-    const tools = await toolsService.getWebFrameworks();
-    expect(tools.length).to.equal(1);
-    expect(tools[0].name).to.equal('ExpressJS');
+  describe('Testing Frameworks', async () => {
+    it('should get the testing framework tools', async () => {
+      const tools = await toolsService.getTestFrameworks();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Mocha');
+    });
+
+    it('should get the testing framework tools', async () => {
+      const tools = await toolsService.getTestFrameworks();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Mocha');
+
+      const toolName = tools[0].name;
+      const foundToolName = await toolsService.testFrameworksName(tools[0].id);
+      expect(foundToolName).to.equal(toolName);
+    });
+
+    it('should get the testing framework tools', async () => {
+      const tools = await toolsService.getTestFrameworks();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Mocha');
+
+      const wrongId = 'wrongId';
+      const foundToolName = await toolsService.testFrameworksName(wrongId);
+      expect(foundToolName).to.be.an('undefined');
+    });
   });
-  it('should get the testing framework tools', async () => {
-    const tools = await toolsService.getTestFrameworks();
-    expect(tools.length).to.equal(1);
-    expect(tools[0].name).to.equal('Mocha');
-  });
-  it('should get the database tools', async () => {
-    const tools = await toolsService.getDatabaseTools();
-    expect(tools.length).to.equal(1);
-    expect(tools[0].name).to.equal('Sequelize');
+
+  describe('Database Tools', async () => {
+    it('should get the database tools', async () => {
+      const tools = await toolsService.getDatabaseTools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Sequelize');
+    });
+
+    it('should get the database tools', async () => {
+      const tools = await toolsService.getDatabaseTools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Sequelize');
+
+      const toolName = tools[0].name;
+      const foundToolName = await toolsService.databaseToolName(tools[0].id);
+      expect(foundToolName).to.equal(toolName);
+    });
+
+    it('should get the database tools', async () => {
+      const tools = await toolsService.getDatabaseTools();
+      expect(tools.length).to.equal(1);
+      expect(tools[0].name).to.equal('Sequelize');
+
+      const wrongId = 'wrongId';
+      const foundToolName = await toolsService.databaseToolName(wrongId);
+      expect(foundToolName).to.be.an('undefined');
+    });
   });
 });

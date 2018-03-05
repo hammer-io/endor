@@ -64,7 +64,7 @@ export default class GithubAuthenticationService {
       return { token: encryptionUtil.decrypt(token[0].token), username: token[0].username };
     }
 
-    return null;
+    throw new GithubTokenNotFoundException(`GitHub Token for user with id ${userId} does not exist.`);
   }
 
   /**

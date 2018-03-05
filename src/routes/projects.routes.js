@@ -216,46 +216,50 @@ router.get(
  * @apiParam {String} version the version of the project
  * @apiParam {String} license the name of the license
  * @apiParam {[String]} authors a string of comma separated values
- * @apiParam {String} containerizationTool the name of the containerization tool or <None>
- * @apiParam {String} continuousIntegrationTool the name of the continuous integration tool or
- * <None>
- * @apiParam {String} deploymentTool the name of the deployment tool or <None>
- * @apiParam {String} webFramework the name of the web framework or <None>
+ * @apiParam {String} containerizationTool the name of the containerization tool
+ * @apiParam {String} continuousIntegrationTool the name of the continuous integration tool
+ * @apiParam {String} deploymentTool the name of the deployment tool
+ * @apiParam {String} webFramework the name of the web framework
  *
  * @apiParamExample {json} Request Example:
  * {
- *  "projectName": "hammer-io",
- *  "description": "Hit it with a Hammer!",
- *  "version": "0.0.1",
- *  "license": "MIT",
- *  "authors": "Holmgang, Jack",
- *  "containerizationTool": "2",
- *  "continuousIntegrationTool": "1",
- *  "deploymentTool": "3",
- *  "webFramework": "4"
+ *     "projectName": "hammer-io",
+ *     "description": "Hit it with a hammer!",
+ *     "isPrivateProject": false,
+ *     "version": "0.0.0",
+ *     "author": "Jack",
+ *     "license": "MIT",
+ *     "sourceControl": "0271d7cf-8a2a-4ebb-9bc0-bd1278a4c3b8",
+ *     "ci": "9c9cace2-995b-462b-848b-48c47c5f31d3",
+ *     "containerization": "d0db39f6-452e-4461-abf5-146e5d8e4415",
+ *     "deployment": "1d56c031-2a60-4d61-a7a7-a260e7f98610",
+ *     "web": "7f6f84c3-3123-40ef-935b-479a133e7d63",
+ *     "test": "4a6c48ce-a3ef-4f7c-bb13-bef287dc6daa"
  * }
  *
  *
  * @apiSuccess {Object} project the created project
  * @apiSuccessExample {json} Success-Response:
- *  {
- *    "id": 1,
- *    "projectName": "hammer-io",
- *    "description": "Hit it with a Hammer!",
- *    "version": "0.0.1",
- *    "license": "MIT",
- *    "authors": "Holmgang, Jack",
- *    "createdAt": "2017-11-12T17:08:30.000Z",
- *    "updatedAt": "2017-11-12T17:08:30.000Z",
- *    "containerizationToolId": 2,
- *    "continuousIntegrationToolId": 1,
- *    "deploymentToolId": 3,
- *    "webFrameworkId": 4
- *  }
+ * {
+ *     "id": "38039974-763d-4956-9a1c-fedb9e8ca4ca",
+ *     "projectName": "tyrdemotest445",
+ *     "description": "a demo!",
+ *     "version": "0.0.0",
+ *     "license": "MIT",
+ *     "sourceControlId": "0271d7cf-8a2a-4ebb-9bc0-bd1278a4c3b8",
+ *     "continuousIntegrationToolId": "9c9cace2-995b-462b-848b-48c47c5f31d3",
+ *     "containerizationToolId": "d0db39f6-452e-4461-abf5-146e5d8e4415",
+ *     "deploymentToolId": "1d56c031-2a60-4d61-a7a7-a260e7f98610",
+ *     "webFrameworkId": "7f6f84c3-3123-40ef-935b-479a133e7d63",
+ *     "testToolId": "4a6c48ce-a3ef-4f7c-bb13-bef287dc6daa",
+ *     "updatedAt": "2018-03-05T06:11:49.865Z",
+ *     "createdAt": "2018-03-05T06:11:49.865Z"
+ * }
  */
 router.post(
   '/user/projects',
-  [authController.isAuthenticated].concat(projectValidator.checkCreateProject()),
+  authController.isAuthenticated,
+  projectValidator.checkCreateProject(),
   projectController.createProjectForAuthenticatedUser
 );
 
@@ -274,46 +278,62 @@ router.post(
  * @apiParam {String} version the version of the project
  * @apiParam {String} license the name of the license
  * @apiParam {[String]} authors a string of comma separated values
- * @apiParam {String} containerizationTool the name of the containerization tool or <None>
- * @apiParam {String} continuousIntegrationTool the name of the continuous integration tool or
- * <None>
- * @apiParam {String} deploymentTool the name of the deployment tool or <None>
- * @apiParam {String} webFramework the name of the web framework or <None>
+ * @apiParam {String} containerization the name of the containerization tool
+ * @apiParam {String} ci the name of the continuous integration tool
+ * @apiParam {String} deployment the name of the deployment tool
+ * @apiParam {String} web the name of the web framework
+ * @apiParam {String} sourceControl the name of the sourceControl
+ * @apiParam {String} test the name of the test framework
  *
  * @apiParamExample {json} Request Example:
  * {
- *  "projectName": "hammer-io",
- *  "description": "Hit it with a Hammer!",
- *  "version": "0.0.1",
- *  "license": "MIT",
- *  "authors": "Holmgang, Jack",
- *  "containerizationTool": "2",
- *  "continuousIntegrationTool": "1",
- *  "deploymentTool": "3",
- *  "webFramework": "4"
+ *     "projectName": "hammer-io",
+ *     "description": "Hit it with a hammer!",
+ *     "isPrivateProject": false,
+ *     "version": "0.0.0",
+ *     "author": "Jack",
+ *     "license": "MIT",
+ *     "sourceControl": "0271d7cf-8a2a-4ebb-9bc0-bd1278a4c3b8",
+ *     "ci": "9c9cace2-995b-462b-848b-48c47c5f31d3",
+ *     "containerization": "d0db39f6-452e-4461-abf5-146e5d8e4415",
+ *     "deployment": "1d56c031-2a60-4d61-a7a7-a260e7f98610",
+ *     "web": "7f6f84c3-3123-40ef-935b-479a133e7d63",
+ *     "test": "4a6c48ce-a3ef-4f7c-bb13-bef287dc6daa"
+ * }
+ * @apiParamExample {json} Request Example:
+ * {
+ *     "projectName": "hammer-io",
+ *     "description": "Hit it with a hammer!",
+ *     "isPrivateProject": false,
+ *     "version": "0.0.0",
+ *     "author": "Jack",
+ *     "license": "MIT",
+ *     "sourceControl": "0271d7cf-8a2a-4ebb-9bc0-bd1278a4c3b8"
  * }
  *
  *
  * @apiSuccess {Object} project the created project
  * @apiSuccessExample {json} Success-Response:
- *  {
- *    "id": 1,
- *    "projectName": "hammer-io",
- *    "description": "Hit it with a Hammer!",
- *    "version": "0.0.1",
- *    "license": "MIT",
- *    "authors": "Holmgang",
- *    "createdAt": "2017-11-12T17:08:30.000Z",
- *    "updatedAt": "2017-11-12T17:08:30.000Z",
- *    "containerizationToolId": 2,
- *    "continuousIntegrationToolId": 1,
- *    "deploymentToolId": 3,
- *    "webFrameworkId": 4
- *  }
+ * {
+ *     "id": "38039974-763d-4956-9a1c-fedb9e8ca4ca",
+ *     "projectName": "tyrdemotest445",
+ *     "description": "a demo!",
+ *     "version": "0.0.0",
+ *     "license": "MIT",
+ *     "sourceControlId": "0271d7cf-8a2a-4ebb-9bc0-bd1278a4c3b8",
+ *     "continuousIntegrationToolId": "9c9cace2-995b-462b-848b-48c47c5f31d3",
+ *     "containerizationToolId": "d0db39f6-452e-4461-abf5-146e5d8e4415",
+ *     "deploymentToolId": "1d56c031-2a60-4d61-a7a7-a260e7f98610",
+ *     "webFrameworkId": "7f6f84c3-3123-40ef-935b-479a133e7d63",
+ *     "testToolId": "4a6c48ce-a3ef-4f7c-bb13-bef287dc6daa",
+ *     "updatedAt": "2018-03-05T06:11:49.865Z",
+ *     "createdAt": "2018-03-05T06:11:49.865Z"
+ * }
  */
 router.post(
   '/users/:user/projects',
-  [authController.isAuthenticated].concat(projectValidator.checkCreateProject()),
+  authController.isAuthenticated,
+  projectValidator.checkCreateProject(),
   projectController.createProjectForUser
 );
 
@@ -330,20 +350,24 @@ router.post(
  *
  * @apiSuccess {Object} project the updated project
  * @apiSuccessExample {json} Success-Response:
- *  {
- *    "id": 1,
- *    "projectName": "TMNT",
- *    "description": "You gotta know what a crumpet is to understand cricket!",
- *    "version": "1.2.3",
- *    "license": "MIT",
- *    "authors": "Casey Jones, Raphael",
- *    "createdAt": "2017-11-12T17:08:30.000Z",
- *    "updatedAt": "2017-11-12T17:08:30.000Z",
- *    "containerizationToolId": null,
- *    "continuousIntegrationToolId": 1,
- *    "deploymentToolId": 3,
- *    "webFrameworkId": null
- *  }
+ * {
+ *     "id": "38039974-763d-4956-9a1c-fedb9e8ca4ca",
+ *     "projectName": "hammerio",
+ *     "description": "a demo!",
+ *     "version": "0.0.0",
+ *     "license": "MIT",
+ *     "githubRepositoryName": "/jackreach/hammerio",
+ *     "travisRepositoryName": "/jackreach/hammerio",
+ *     "herokuApplicationName": "hammerio",
+ *     "sourceControlId": "0271d7cf-8a2a-4ebb-9bc0-bd1278a4c3b8",
+ *     "continuousIntegrationToolId": "9c9cace2-995b-462b-848b-48c47c5f31d3",
+ *     "containerizationToolId": "d0db39f6-452e-4461-abf5-146e5d8e4415",
+ *     "deploymentToolId": "1d56c031-2a60-4d61-a7a7-a260e7f98610",
+ *     "webFrameworkId": "7f6f84c3-3123-40ef-935b-479a133e7d63",
+ *     "testToolId": "4a6c48ce-a3ef-4f7c-bb13-bef287dc6daa",
+ *     "updatedAt": "2018-03-05T06:11:49.865Z",
+ *     "createdAt": "2018-03-05T06:11:49.865Z"
+ * }
  */
 router.patch(
   '/projects/:projectId',
@@ -517,7 +541,7 @@ router.get(
  * @apiSuccess {String} finished_at when the build finished
  * @apiSuccess {String} url the url to the commit
  *
- * @apiSuccessExample {json} Success-Resonse:
+ * @apiSuccessExample {json} Success-Response:
  *  [
   {
      "id": 123456,
@@ -593,11 +617,46 @@ router.get(
 );
 
 /**
+ * @api {get} /projects/:projectId/zipFile
+ * @apiVersion 1.0.0
+ * @apiName get zip files for project
+ * @apiGroup Projects
+ *
+ * @apiHeader Authorization Basic Auth-Token
+ * @apiPermission Authenticated User
+ *
+ * @apiParam {String} projectId
+ *
+ * @apiSuccess {Zip} the zipped project files
+ */
+router.get(
+  '/projects/:projectId/zipFile',
+  authController.isAuthenticated,
+  projectController.getZipFileForAuthenticatedUser
+);
+
+/**
  * Sets the project service dependency for the controller
  * @param newProjectService the project service dependency
+ * @param newToolService the tool service dependency
+ * @param newGithubAuthService the github auth service dependency
+ * @param newHerokuAuthService the heroku auth service dependency
+ * @param newTravisAuthService the travis auth service dependency
  */
-export function setProjectService(newProjectService, newGithubAuthService, newHerokuAuthService) {
+export function setProjectService(
+  newProjectService,
+  newToolService,
+  newGithubAuthService,
+  newHerokuAuthService,
+  newTravisAuthService
+) {
   projectService = newProjectService;
-  projectController.setProjectService(projectService, newGithubAuthService, newHerokuAuthService);
+  projectController.setProjectService(
+    projectService,
+    newToolService,
+    newGithubAuthService,
+    newHerokuAuthService,
+    newTravisAuthService
+  );
   projectAuthorization.setDependencies(projectService);
 }
