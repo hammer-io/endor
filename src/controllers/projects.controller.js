@@ -1,10 +1,11 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars,no-restricted-syntax,no-await-in-loop */
 import zip from 'adm-zip';
 import * as tyr from 'tyr-cli/dist/tyr';
 import { validationResult } from 'express-validator/check';
 import fs from 'fs-extra';
 
 import * as responseHelper from './../utils/response-helper';
+import ZipFileNotFoundException from '../error/ZipFileNotFoundException';
 
 const del = require('del');
 
@@ -14,9 +15,98 @@ const del = require('del');
  */
 
 let projectService = {};
+let toolService = {};
 let herokuAuthService = {};
 let githubAuthService = {};
+let travisAuthService = {};
 const projectLocation = `${process.cwd()}/generated-projects`;
+let tooling = {};
+
+/**
+ * Updates the configs to be in a format necessary for the project to be added to the
+ * database. Adds credentials for specified tools if necessary.
+ * @param config the project's configs
+ * @param user the user creating the project
+ * @returns {Promise<*>}
+ */
+async function updateConfigs(config, user) {
+  const configs = config;
+  configs.toolingConfigurations = {};
+  for (const key of Object.keys(configs.projectConfigurations)) {
+    const toolId = configs.projectConfigurations[key];
+    if (tooling[key.toLowerCase()]) {
+      configs.toolingConfigurations[key] = await tooling[key.toLowerCase()](toolId);
+    }
+  }
+
+  configs.credentials = {};
+  if (configs.toolingConfigurations.sourceControl &&
+    configs.toolingConfigurations.sourceControl.toLowerCase() === 'github') {
+    configs.credentials.github = await githubAuthService.getGithubTokenAndUsernameForUser(user);
+  }
+  if (configs.toolingConfigurations.deployment &&
+    configs.toolingConfigurations.deployment.toLowerCase() === 'heroku') {
+    configs.credentials.heroku = await herokuAuthService.getHerokuTokenAndEmailForUser(user);
+    configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
+  }
+  if (configs.toolingConfigurations.ci &&
+    configs.toolingConfigurations.ci.toLowerCase() === 'travisci') {
+    await travisAuthService.getTravisTokenForUser(user);
+  }
+  return configs;
+}
+
+/**
+ * Updates the project in the database with the github url, travis url and heroku name.
+ * @param configs the new project's configs
+ * @param projectId the id of the new project
+ */
+function updateProjectTools(configs, projectId) {
+  const projectName = configs.projectConfigurations.projectName;
+  const githubUsername = configs.credentials.github.username;
+  const appNames = {};
+  if (configs.toolingConfigurations.sourceControl &&
+    configs.toolingConfigurations.sourceControl.toLowerCase() === 'github') {
+    appNames.githubRepositoryName = `/${githubUsername}/${projectName}`;
+  }
+  if (configs.toolingConfigurations.ci &&
+    configs.toolingConfigurations.ci.toLowerCase() === 'travisci') {
+    appNames.travisRepositoryName = `/${githubUsername}/${projectName}`;
+  }
+  if (configs.toolingConfigurations.deployment &&
+    configs.toolingConfigurations.deployment.toLowerCase() === 'heroku') {
+    appNames.herokuApplicationName = configs.projectConfigurations.herokuAppName;
+  }
+  projectService.updateProject(appNames, projectId);
+}
+
+/**
+ * Handles the GET /projects/:projectId/zipFiles
+ * @param req the request
+ * @param res the response
+ * @param next the next middleware
+ * @returns {Promise<void>}
+ */
+export async function getZipFileForAuthenticatedUser(req, res, next) {
+  try {
+    const user = req.user.id;
+    const projectId = req.params.projectId;
+
+    const zipper = zip();
+    const project = await projectService.getProjectById(projectId);
+    const filePath = `${projectLocation}/${user}/${project.projectName}`;
+
+    if (fs.existsSync(filePath)) {
+      zipper.addLocalFolder(`${filePath}`, `${project.projectName}`, undefined);
+      res.set('Content-Type', 'application/zip');
+      res.send(await zipper.toBuffer());
+    } else {
+      next(new ZipFileNotFoundException('Zipped files for the given project id not found!'));
+    }
+  } catch (error) {
+    next(error);
+  }
+}
 
 /**
  * Handles the GET /project endpoint
@@ -88,8 +178,10 @@ export async function getProjectById(req, res, next) {
 }
 
 /**
- * Helper function to create a new new project
- * @param user the user to create a project for
+ * Helper function to create a new new project. Creates the files for the project, then
+ * adds the project to the database, returns the newly created project data, and setups
+ * up all necessary third-party tools.
+ * @param user the user creating the project
  * @param project the project to create
  * @param req the request
  * @param res the response
@@ -101,21 +193,15 @@ async function createProject(user, project, req, res, next) {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const zipper = zip();
-  const configs = project;
+  let configs = {
+    projectConfigurations: project
+  };
+  let projectId;
 
   try {
-    configs.credentials = {};
-    if (configs.toolingConfigurations.sourceControl &&
-        configs.toolingConfigurations.sourceControl.toLowerCase() === 'github') {
-      configs.credentials.github = await githubAuthService.getGithubTokenAndUsernameForUser(user);
-    }
-    if (configs.toolingConfigurations.deployment &&
-        configs.toolingConfigurations.deployment.toLowerCase() === 'heroku') {
-      configs.credentials.heroku = await herokuAuthService.getHerokuTokenAndEmailForUser(user);
-      configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
-    }
-
+    configs = await updateConfigs(configs, user);
+    const newProject = await projectService.createProject(configs.projectConfigurations, user);
+    projectId = newProject.id;
     if (!fs.existsSync(`${projectLocation}`)) {
       fs.mkdirSync(`${projectLocation}`);
     }
@@ -123,26 +209,31 @@ async function createProject(user, project, req, res, next) {
     if (!fs.existsSync(filePath)) {
       fs.mkdirSync(filePath);
     }
-
-    await tyr.generateBasicNodeProject(configs, filePath);
-    await tyr.generateStaticFiles(configs, filePath);
-
-    // Only do this if there is success upon creating the project
-    await projectService.createProject(configs.projectConfigurations, user);
-
-    const projectName = project.projectConfigurations.projectName;
-
-    zipper.addLocalFolder(`${filePath}/${projectName}`, `${projectName}`, undefined);
-    res.set('Content-Type', 'application/zip');
-    res.send(await zipper.toBuffer());
+    const projectPath = `${filePath}/${projectId}`;
+    if (!fs.existsSync(projectPath)) {
+      fs.mkdirSync(projectPath);
+    }
+    await tyr.generateBasicNodeProject(configs, projectPath);
+    await tyr.generateStaticFiles(configs, projectPath);
+    res.set('Content-Type', 'application/json');
+    res.send(newProject);
 
     try {
       await tyr.setUpThirdPartyTools(configs);
-      await tyr.commitToGithub(configs, filePath);
+      await tyr.commitToGithub(configs, projectPath);
+      updateProjectTools(configs, projectId);
     } catch (error) {
       // do nothing, we already sent the res
     }
   } catch (error) {
+    try {
+      if (projectId) {
+        // If there was an error, and the project was created, delete it
+        await projectService.deleteProjectById(projectId, false);
+      }
+    } catch (deleteProjectError) {
+      // do nothing, the project was probably not created
+    }
     next(error);
   }
 }
@@ -339,11 +430,30 @@ export async function getHerokuAppInfoForProject(req, res, next) {
 /**
  * Injects the project service dependency
  * @param newProjectService the project service
+ * @param newToolService the tool service
  * @param newGithubAuthService the githubAuth service
- * @param newHerokuAuthService the githubAuth service
+ * @param newHerokuAuthService the heroku Auth service
+ * @param newTravisAuthService the travisAuth service
  */
-export function setProjectService(newProjectService, newGithubAuthService, newHerokuAuthService) {
+export function setProjectService(
+  newProjectService,
+  newToolService,
+  newGithubAuthService,
+  newHerokuAuthService,
+  newTravisAuthService
+) {
   projectService = newProjectService;
+  toolService = newToolService;
   githubAuthService = newGithubAuthService;
   herokuAuthService = newHerokuAuthService;
+  travisAuthService = newTravisAuthService;
+
+  tooling = {
+    sourcecontrol: toolService.sourceControlToolName,
+    ci: toolService.ciToolName,
+    containerization: toolService.containerizationToolName,
+    deployment: toolService.deploymentToolName,
+    web: toolService.webFrameworksName,
+    test: toolService.testFrameworksName
+  };
 }

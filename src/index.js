@@ -97,8 +97,10 @@ auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);
 projects.setProjectService(
   projectService,
+  toolsService,
   githubAuthenticationService,
-  herokuAuthenticationService
+  herokuAuthenticationService,
+  travisAuthenticationService
 );
 users.setDependencies(userService, githubAuthenticationService, herokuAuthenticationService);
 contributors.setDependencies(projectService);

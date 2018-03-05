@@ -64,7 +64,7 @@ export default class HerokuAuthService {
       return { apiKey: encryptUtil.decrypt(token[0].token), email: token[0].email };
     }
 
-    return null;
+    throw new HerokuTokenNotFoundException(`Heroku Token for user with id ${userId} does not exist.`);
   }
 
   /**

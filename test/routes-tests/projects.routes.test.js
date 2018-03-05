@@ -70,20 +70,18 @@ describe('Testing Project Routes', () => {
   describe('POST /user/projects', () => {
     it('should create a new project for the authenticated user', (done) => {
       const body = {
-        projectConfigurations: {
           projectName: 'Rock Opera',
           description: 'A new Rock Opera',
           version: '0.0.0',
           license: 'MIT',
           author: 'None'
-        },
-        toolingConfigurations:{}
       };
       chai.request(server)
         .post(`${apiUtil.API}/user/projects`)
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send(body)
         .end((err, res) => {
+          console.log(err);
           res.should.have.status(200);
           fs.remove(`${process.cwd()}/generated-projects/a3/`)
             .then(() => { done() })
