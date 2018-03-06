@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars,no-restricted-syntax,no-await-in-loop */
+/* eslint-disable no-unused-vars,no-restricted-syntax,no-await-in-loop,no-param-reassign */
 import zip from 'adm-zip';
 import * as tyr from 'tyr-cli/dist/tyr';
 import { validationResult } from 'express-validator/check';
@@ -6,6 +6,7 @@ import fs from 'fs-extra';
 
 import * as responseHelper from './../utils/response-helper';
 import ZipFileNotFoundException from '../error/ZipFileNotFoundException';
+import TravisTokenNotFoundException from '../error/TravisTokenNotFoundException';
 
 const del = require('del');
 
@@ -23,6 +24,100 @@ const projectLocation = `${process.cwd()}/generated-projects`;
 let tooling = {};
 
 /**
+ * Retrieves and sets the github credentials for the given user in the configs
+ * @param configs new project configuration
+ * @param user the user id
+ * @returns {Promise<void>}
+ */
+async function setGithubCredentials(configs, user) {
+  configs.credentials.github = await githubAuthService.getGithubTokenAndUsernameForUser(user);
+}
+
+/**
+ * Retrieves and sets the travis credentials for the given user in the configs
+ * @param configs new project configuration
+ * @param user the user id
+ * @returns {Promise<void>}
+ */
+async function setTravisCredentials(configs, user) {
+  const travisToken = await travisAuthService.getTravisTokenForUser(user);
+  if (!travisToken) {
+    throw new TravisTokenNotFoundException(`A travis token is not found for this ${user}`);
+  }
+}
+
+/**
+ * Retrieves and sets the heroku credentials for the given user in the configs
+ * @param configs new project configuration
+ * @param user the user id
+ * @returns {Promise<void>}
+ */
+async function setHerokuCredentials(configs, user) {
+  configs.credentials.heroku = await herokuAuthService.getHerokuTokenAndEmailForUser(user);
+  configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
+}
+
+/**
+ * Creates the github url extension for the user
+ * @param configs new project configurations
+ * @returns {Promise<string>}
+ */
+async function setGithubRepositoryName(configs) {
+  const projectName = configs.projectConfigurations.projectName;
+  const githubUsername = configs.credentials.github.username;
+  return `/${githubUsername}/${projectName}`;
+}
+
+/**
+ * Creates the travis url extension for the user
+ * @param configs new project configurations
+ * @returns {Promise<string>}
+ */
+async function setTravisRepositoryName(configs) {
+  const projectName = configs.projectConfigurations.projectName;
+  const githubUsername = configs.credentials.github.username;
+  return `/${githubUsername}/${projectName}`;
+}
+
+/**
+ * Creates the heroku app name for the user
+ * @param configs new project configurations
+ * @returns {Promise<string>}
+ */
+async function setHerokuUrl(configs) {
+  return configs.projectConfigurations.herokuAppName;
+}
+
+/**
+ * The credentials object maps the tool name to the corresponding method to setup the
+ * necessary credentials.
+ */
+const credentials = {
+  github: setGithubCredentials,
+  travisci: setTravisCredentials,
+  heroku: setHerokuCredentials
+};
+
+/**
+ * Maps the tool name to the url/repository name as is required by the database and a setupUrl
+ * function to structure the url according to how the tool structures its urls.
+ */
+const url = {
+  github: {
+    name: 'githubRepositoryName',
+    setupUrl: setGithubRepositoryName
+  },
+  travisci: {
+    name: 'travisRepositoryName',
+    setupUrl: setTravisRepositoryName
+  },
+  heroku: {
+    name: 'herokuApplicationName',
+    setupUrl: setHerokuUrl
+  }
+};
+
+/**
  * Updates the configs to be in a format necessary for the project to be added to the
  * database. Adds credentials for specified tools if necessary.
  * @param config the project's configs
@@ -32,26 +127,16 @@ let tooling = {};
 async function updateConfigs(config, user) {
   const configs = config;
   configs.toolingConfigurations = {};
+  configs.credentials = {};
   for (const key of Object.keys(configs.projectConfigurations)) {
     const toolId = configs.projectConfigurations[key];
     if (tooling[key.toLowerCase()]) {
-      configs.toolingConfigurations[key] = await tooling[key.toLowerCase()](toolId);
+      const toolName = await tooling[key.toLowerCase()](toolId);
+      configs.toolingConfigurations[key] = toolName;
+      if (credentials[toolName.toLowerCase()]) {
+        await credentials[toolName.toLowerCase()](configs, user);
+      }
     }
-  }
-
-  configs.credentials = {};
-  if (configs.toolingConfigurations.sourceControl &&
-    configs.toolingConfigurations.sourceControl.toLowerCase() === 'github') {
-    configs.credentials.github = await githubAuthService.getGithubTokenAndUsernameForUser(user);
-  }
-  if (configs.toolingConfigurations.deployment &&
-    configs.toolingConfigurations.deployment.toLowerCase() === 'heroku') {
-    configs.credentials.heroku = await herokuAuthService.getHerokuTokenAndEmailForUser(user);
-    configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
-  }
-  if (configs.toolingConfigurations.ci &&
-    configs.toolingConfigurations.ci.toLowerCase() === 'travisci') {
-    await travisAuthService.getTravisTokenForUser(user);
   }
   return configs;
 }
@@ -61,22 +146,15 @@ async function updateConfigs(config, user) {
  * @param configs the new project's configs
  * @param projectId the id of the new project
  */
-function updateProjectTools(configs, projectId) {
-  const projectName = configs.projectConfigurations.projectName;
-  const githubUsername = configs.credentials.github.username;
+async function updateProjectTools(configs, projectId) {
   const appNames = {};
-  if (configs.toolingConfigurations.sourceControl &&
-    configs.toolingConfigurations.sourceControl.toLowerCase() === 'github') {
-    appNames.githubRepositoryName = `/${githubUsername}/${projectName}`;
+  for (const key of Object.keys(configs.toolingConfigurations)) {
+    const toolName = configs.toolingConfigurations[key].toLowerCase();
+    if (url[toolName]) {
+      appNames[url[toolName].name] = await url[toolName].setupUrl(configs);
+    }
   }
-  if (configs.toolingConfigurations.ci &&
-    configs.toolingConfigurations.ci.toLowerCase() === 'travisci') {
-    appNames.travisRepositoryName = `/${githubUsername}/${projectName}`;
-  }
-  if (configs.toolingConfigurations.deployment &&
-    configs.toolingConfigurations.deployment.toLowerCase() === 'heroku') {
-    appNames.herokuApplicationName = configs.projectConfigurations.herokuAppName;
-  }
+
   projectService.updateProject(appNames, projectId);
 }
 
@@ -94,7 +172,7 @@ export async function getZipFileForAuthenticatedUser(req, res, next) {
 
     const zipper = zip();
     const project = await projectService.getProjectById(projectId);
-    const filePath = `${projectLocation}/${user}/${project.projectName}`;
+    const filePath = `${projectLocation}/${user}/${project.id}`;
 
     if (fs.existsSync(filePath)) {
       zipper.addLocalFolder(`${filePath}`, `${project.projectName}`, undefined);
@@ -221,11 +299,13 @@ async function createProject(user, project, req, res, next) {
     try {
       await tyr.setUpThirdPartyTools(configs);
       await tyr.commitToGithub(configs, projectPath);
-      updateProjectTools(configs, projectId);
+      await updateProjectTools(configs, projectId);
     } catch (error) {
       // do nothing, we already sent the res
+      console.log(error);
     }
   } catch (error) {
+    console.log(error);
     try {
       if (projectId) {
         // If there was an error, and the project was created, delete it
