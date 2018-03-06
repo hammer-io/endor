@@ -36,17 +36,10 @@ router.get('/auth/travis', authController.isAuthenticated, travisAuthController.
  * @apiDescription Adds a travis authentication token for the user to the database. If a token
  * already exists for the user, this function will overwrite the existing token. If it is
  * created/updated successfully, it will return a status code of 204.
- *
- * @apiParam {String} travisToken the user's travis token
- * @apiParamExample {json} Request-Example:
- * {
- *  "travisToken": "123abc456"
- * }
  */
 router.post(
   '/auth/travis',
   authController.isAuthenticated,
-  travisAuthValidator.checkIsValidRequest(),
   travisAuthController.addTravisTokenForUser
 );
 

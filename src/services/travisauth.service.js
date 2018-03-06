@@ -1,10 +1,15 @@
+import fetch from 'node-fetch';
+
 import * as encryptUtil from '../utils/encryption';
 import TravisTokenNotFoundException from '../error/TravisTokenNotFoundException';
+import TravisApiError from '../error/TravisApiError';
+import GithubTokenNotFoundException from '../error/GithubTokenNotFoundException';
 
 export default class TravisAuthenticationService {
-  constructor(travisTokenRepository, userService, logger) {
+  constructor(travisTokenRepository, userService, githubAuthService, logger) {
     this.travisTokenRepository = travisTokenRepository;
     this.userService = userService;
+    this.githubAuthService = githubAuthService;
     this.log = logger;
   }
 
@@ -55,6 +60,37 @@ export default class TravisAuthenticationService {
     return null;
   }
 
+
+  /**
+   * Exchanges a github token for a travis access token. This uses Travis API V2, which will be
+   * deprecated eventually.
+   *
+   * @param githubToken the github token to exchange
+   * @returns {Promise<string | *>} the travis access token
+   */
+  static async exchangeGithubTokenForTravisToken(githubToken) {
+    const url = 'https://api.travis-ci.org/auth/github';
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'User-Agent': 'Travis/1.0',
+          Accept: 'application/vnd.travis-ci.2+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          github_token: githubToken
+        })
+      });
+      const responseBody = await response.json();
+      return responseBody.access_token;
+    } catch (error) {
+      throw new TravisApiError(error.message);
+    }
+  }
+
+
   /**
    * Adds the Travis token for a user. If the user already has a token, it will update the
    * existing one. If the user does not have a token, it will create a new token.
@@ -62,21 +98,27 @@ export default class TravisAuthenticationService {
    * @param token the token to create
    * @returns {Object} the token that was created or updated.
    */
-  async addTravisTokenForUser(userId, token) {
+  async addTravisTokenForUser(userId) {
     const user = await this.userService.getUserByIdOrUsername(userId);
+    const githubToken = await this.githubAuthService.getGithubTokenForUser(userId);
+    if (!githubToken) {
+      throw new GithubTokenNotFoundException(`Github Token for user ${userId} not found`);
+    }
 
+    const travisToken = await this.exchangeGithubTokenForTravisToken(githubToken);
     const isTokenExisting = await this.getSequelizeTravisTokenForUser(userId);
     if (isTokenExisting) {
-      const updatedToken = await this.updateTravisTokenForUser(userId, token);
+      const updatedToken = await this.updateTravisTokenForUser(userId, travisToken);
       return updatedToken;
     }
 
     const tokenToBeCreated = {
-      token: encryptUtil.encrypt(token.toString())
+      token: encryptUtil.encrypt(travisToken.toString())
     };
 
     const tokenCreated = await this.travisTokenRepository.create(tokenToBeCreated);
     await user.addTravisToken(tokenCreated);
+
     return tokenCreated;
   }
 
