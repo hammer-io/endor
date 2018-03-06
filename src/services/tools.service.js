@@ -124,12 +124,13 @@ export default class ToolsService {
    * Find the name of the continuous integration tool. If the tool does not exist in the database,
    * it will return undefined.
    *
-   * @param ciToolId - the id of the continuous integration tool
+   * @param continuousIntegrationToolId - the id of the continuous integration tool
    * @returns {Promise<undefined>}
    */
-  async ciToolName(ciToolId) {
+  async ciToolName(continuousIntegrationToolId) {
     const ciToolsAvailable = await self.getToolsByType(sequelize.ToolType.CONTINUOUS_INTEGRATION);
-    const potentialMatch = ciToolsAvailable.filter(ciTool => ciTool.id === ciToolId);
+    const potentialMatch =
+      ciToolsAvailable.filter(ciTool => ciTool.id === continuousIntegrationToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
@@ -140,13 +141,14 @@ export default class ToolsService {
    * Find the name of the containerization tool. If the tool does not exist in the database, it
    * will return undefined.
    *
-   * @param cToolId - the id of the containerization tool
+   * @param containerizationToolId - the id of the containerization tool
    * @returns {Promise<undefined>}
    */
-  async containerizationToolName(cToolId) {
+  async containerizationToolName(containerizationToolId) {
     const containerizationToolsAvailable =
       await self.getToolsByType(sequelize.ToolType.CONTAINERIZATION);
-    const potentialMatch = containerizationToolsAvailable.filter(cTool => cTool.id === cToolId);
+    const potentialMatch =
+      containerizationToolsAvailable.filter(cTool => cTool.id === containerizationToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
@@ -157,12 +159,12 @@ export default class ToolsService {
    * Find the name of the deployment tool. If the tool does not exist in the database, it
    * will return undefined.
    *
-   * @param dToolId - the id of the deployment tool
+   * @param deploymentToolId - the id of the deployment tool
    * @returns {Promise<undefined>}
    */
-  async deploymentToolName(dToolId) {
+  async deploymentToolName(deploymentToolId) {
     const deploymentToolsAvailable = await self.getToolsByType(sequelize.ToolType.DEPLOYMENT);
-    const potentialMatch = deploymentToolsAvailable.filter(dTool => dTool.id === dToolId);
+    const potentialMatch = deploymentToolsAvailable.filter(dTool => dTool.id === deploymentToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
@@ -205,12 +207,12 @@ export default class ToolsService {
    * Finds the name of the database tool.  If the id does not exist in the database, it will
    * return undefined.
    *
-   * @param dbToolId - the id of the database tool
+   * @param databaseToolId - the id of the database tool
    * @returns {Promise<undefined>}
    */
-  async databaseToolName(dbToolId) {
+  async databaseToolName(databaseToolId) {
     const webFrameworksAvailable = await self.getToolsByType(sequelize.ToolType.DATABASE);
-    const potentialMatch = webFrameworksAvailable.filter(dbTool => dbTool.id === dbToolId);
+    const potentialMatch = webFrameworksAvailable.filter(dbTool => dbTool.id === databaseToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
