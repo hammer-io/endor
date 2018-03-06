@@ -81,7 +81,6 @@ describe('Testing Project Routes', () => {
         .set('Authorization', apiUtil.basicAuthorization('jreach', 'plaintext1'))
         .send(body)
         .end((err, res) => {
-          console.log(err);
           res.should.have.status(200);
           fs.remove(`${process.cwd()}/generated-projects/a3/`)
             .then(() => { done() })

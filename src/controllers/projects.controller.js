@@ -302,10 +302,8 @@ async function createProject(user, project, req, res, next) {
       await updateProjectTools(configs, projectId);
     } catch (error) {
       // do nothing, we already sent the res
-      console.log(error);
     }
   } catch (error) {
-    console.log(error);
     try {
       if (projectId) {
         // If there was an error, and the project was created, delete it
