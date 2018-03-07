@@ -112,8 +112,11 @@ export default class ToolsService {
    * @returns {Promise<undefined>}
    */
   async sourceControlToolName(sourceControlToolId) {
-    const scToolsAvailable = await self.getToolsByType(sequelize.ToolType.SOURCE_CONTROL);
-    const potentialMatch = scToolsAvailable.filter(scTool => scTool.id === sourceControlToolId);
+    const sourceControlToolsAvailable =
+      await self.getToolsByType(sequelize.ToolType.SOURCE_CONTROL);
+    const potentialMatch =
+      sourceControlToolsAvailable
+        .filter(tool => tool.id === sourceControlToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
@@ -128,9 +131,10 @@ export default class ToolsService {
    * @returns {Promise<undefined>}
    */
   async ciToolName(continuousIntegrationToolId) {
-    const ciToolsAvailable = await self.getToolsByType(sequelize.ToolType.CONTINUOUS_INTEGRATION);
+    const continuousIntegrationToolsAvailable =
+      await self.getToolsByType(sequelize.ToolType.CONTINUOUS_INTEGRATION);
     const potentialMatch =
-      ciToolsAvailable.filter(ciTool => ciTool.id === continuousIntegrationToolId);
+      continuousIntegrationToolsAvailable.filter(tool => tool.id === continuousIntegrationToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
@@ -148,7 +152,7 @@ export default class ToolsService {
     const containerizationToolsAvailable =
       await self.getToolsByType(sequelize.ToolType.CONTAINERIZATION);
     const potentialMatch =
-      containerizationToolsAvailable.filter(cTool => cTool.id === containerizationToolId);
+      containerizationToolsAvailable.filter(tool => tool.id === containerizationToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
@@ -164,7 +168,7 @@ export default class ToolsService {
    */
   async deploymentToolName(deploymentToolId) {
     const deploymentToolsAvailable = await self.getToolsByType(sequelize.ToolType.DEPLOYMENT);
-    const potentialMatch = deploymentToolsAvailable.filter(dTool => dTool.id === deploymentToolId);
+    const potentialMatch = deploymentToolsAvailable.filter(tool => tool.id === deploymentToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
@@ -180,7 +184,8 @@ export default class ToolsService {
    */
   async webFrameworksName(webFrameworkId) {
     const webFrameworksAvailable = await self.getToolsByType(sequelize.ToolType.WEB_FRAMEWORK);
-    const potentialMatch = webFrameworksAvailable.filter(wf => wf.id === webFrameworkId);
+    const potentialMatch = webFrameworksAvailable
+      .filter(framework => framework.id === webFrameworkId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
@@ -196,7 +201,8 @@ export default class ToolsService {
    */
   async testFrameworksName(testFrameworkId) {
     const testFrameworksAvailable = await self.getToolsByType(sequelize.ToolType.TEST);
-    const potentialMatch = testFrameworksAvailable.filter(tf => tf.id === testFrameworkId);
+    const potentialMatch = testFrameworksAvailable
+      .filter(framework => framework.id === testFrameworkId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
@@ -211,8 +217,8 @@ export default class ToolsService {
    * @returns {Promise<undefined>}
    */
   async databaseToolName(databaseToolId) {
-    const webFrameworksAvailable = await self.getToolsByType(sequelize.ToolType.DATABASE);
-    const potentialMatch = webFrameworksAvailable.filter(dbTool => dbTool.id === databaseToolId);
+    const databaseToolsAvailable = await self.getToolsByType(sequelize.ToolType.DATABASE);
+    const potentialMatch = databaseToolsAvailable.filter(tool => tool.id === databaseToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }
