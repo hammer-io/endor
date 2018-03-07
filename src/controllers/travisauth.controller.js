@@ -34,9 +34,8 @@ export async function addTravisTokenForUser(req, res, next) {
   }
 
   const userId = req.user.id;
-  const token = req.body.travisToken;
   try {
-    await travisAuthService.addTravisTokenForUser(userId, token);
+    await travisAuthService.addTravisTokenForUser(userId);
     res.status(204).send();
   } catch (error) {
     next(error);

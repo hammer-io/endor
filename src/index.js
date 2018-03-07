@@ -69,6 +69,7 @@ const githubAuthenticationService = new GithubAuthenticationService(
 const travisAuthenticationService = new TravisAuthenticationService(
   sequelize.TravisToken,
   userService,
+  githubAuthenticationService,
   getActiveLogger()
 );
 
