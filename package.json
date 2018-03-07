@@ -15,7 +15,8 @@
     "initDB": "npm run build && node dist/db/init_database.js",
     "importTestData": "npm run build && node dist/db/import_test_data.js",
     "productionStart": "apidoc -i src/ -o docs/ && npm start",
-    "initTestDB": "npm run createDB && npm run initDB && npm run importTestData"
+    "initTestDB": "npm run createDB && npm run initDB && npm run importTestData",
+    "addProjectsToTestUser": "npm run build && node dist/db/add_projects_to_test_user.js"
   },
   "pre-commit": [
     "lint"

@@ -89,7 +89,7 @@ describe('Testing User Routes', () => {
           expect(user.id).to.equal('a3');
           expect(user.firstName).to.equal('Jack');
           expect(user.lastName).to.equal('Dorsey');
-          expect(user.email).to.equal('jreach@gmail.com');
+          expect(user.email).to.equal('hammer.io.team@gmail.com');
           done();
         });
     });

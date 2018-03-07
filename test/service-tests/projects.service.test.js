@@ -70,7 +70,7 @@ describe('Testing Project Service', async () => {
 
       expect(owners[0].id).to.equal('a4');
       expect(owners[0].username).to.equal('johnnyb');
-      expect(owners[0].email).to.equal('jbravo@cartoonnetwork.com');
+      expect(owners[0].email).to.equal('hammer.io.team@gmail.com');
       expect(owners[0].firstName).to.equal('Johnny');
       expect(owners[0].lastName).to.equal('Bravo');
     });

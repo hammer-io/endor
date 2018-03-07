@@ -9,35 +9,35 @@ export async function populateUsers() {
     {
       id: 'a1',
       username: 'BobSagat',
-      email: 'Bob@AFV.com',
+      email: 'hammer.io.team@gmail.com',
       firstName: 'Bob',
       lastName: 'Sagat'
     },
     {
       id: 'a2',
       username: 'globalwarmingguy56',
-      email: 'Al@saveourplanet.com',
+      email: 'hammer.io.team@gmail.com',
       firstName: 'Al',
       lastName: 'Gore'
     },
     {
       id: 'a3',
       username: 'jreach',
-      email: 'jreach@gmail.com',
+      email: 'hammer.io.team@gmail.com',
       firstName: 'Jack',
       lastName: 'Reacher'
     },
     {
       id: 'a4',
       username: 'johnnyb',
-      email: 'jbravo@cartoonnetwork.com',
+      email: 'hammer.io.team@gmail.com',
       firstName: 'Johnny',
       lastName: 'Bravo'
     },
     {
       id: 'a5',
       username: 'buddy',
-      email: 'buddy@carnegiehall.org',
+      email: 'hammer.io.team@gmail.com',
       firstName: 'Buddy',
       lastName: 'Rich'
     }

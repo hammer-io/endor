@@ -17,7 +17,7 @@ describe('Testing User Service', () => {
       const userServiceFoundUser = await userService.getUserByIdOrUsername('BobSagat');
       expect(userServiceFoundUser.id).to.equal('a1');
       expect(userServiceFoundUser.username).to.equal('BobSagat');
-      expect(userServiceFoundUser.email).to.equal('Bob@AFV.com');
+      expect(userServiceFoundUser.email).to.equal('hammer.io.team@gmail.com');
       expect(userServiceFoundUser.firstName).to.equal('Bob');
       expect(userServiceFoundUser.lastName).to.equal('Sagat');
     });
@@ -26,7 +26,7 @@ describe('Testing User Service', () => {
       const userServiceFoundUser = await userService.getUserByIdOrUsername('a1');
       expect(userServiceFoundUser.id).to.equal('a1');
       expect(userServiceFoundUser.username).to.equal('BobSagat');
-      expect(userServiceFoundUser.email).to.equal('Bob@AFV.com');
+      expect(userServiceFoundUser.email).to.equal('hammer.io.team@gmail.com');
       expect(userServiceFoundUser.firstName).to.equal('Bob');
       expect(userServiceFoundUser.lastName).to.equal('Sagat');
     });
@@ -60,10 +60,10 @@ describe('Testing User Service', () => {
 
   describe('get user by email', async () => {
     it('should find a user by email', async () => {
-      const userServiceFoundUser = await userService.getUserByEmail('Bob@AFV.com');
+      const userServiceFoundUser = await userService.getUserByEmail('hammer.io.team@gmail.com');
       expect(userServiceFoundUser.id).to.equal('a1');
       expect(userServiceFoundUser.username).to.equal('BobSagat');
-      expect(userServiceFoundUser.email).to.equal('Bob@AFV.com');
+      expect(userServiceFoundUser.email).to.equal('hammer.io.team@gmail.com');
       expect(userServiceFoundUser.firstName).to.equal('Bob');
       expect(userServiceFoundUser.lastName).to.equal('Sagat');
     });
@@ -344,7 +344,7 @@ describe('Testing User Service', () => {
     it('should have an error for duplicate email', async () => {
       const newUser = {
         username: 'newusername',
-        email: 'Bob@AFV.com',
+        email: 'hammer.io.team@gmail.com',
         firstName: 'Bob',
         lastName: 'Sagat'
       };
@@ -469,7 +469,7 @@ describe('Testing User Service', () => {
     it('should have an error for duplicate email', async () => {
       const newUser = {
         username: 'newusername',
-        email: 'Bob@AFV.com',
+        email: 'hammer.io.team@gmail.com',
         firstName: 'Bob',
         lastName: 'Sagat'
       };
@@ -511,7 +511,7 @@ describe('Testing User Service', () => {
       // check the deleted user information
       expect(deletedUser.id).to.equal('a1');
       expect(deletedUser.username).to.equal('BobSagat');
-      expect(deletedUser.email).to.equal('Bob@AFV.com');
+      expect(deletedUser.email).to.equal('hammer.io.team@gmail.com');
       expect(deletedUser.firstName).to.equal('Bob');
       expect(deletedUser.lastName).to.equal('Sagat');
     });
@@ -635,7 +635,7 @@ describe('Testing User Service', () => {
     it('should validate for duplicate usernames and emails', async () => {
       const newUser = {
         username: 'BobSagat',
-        email: 'Bob@AFV.com',
+        email: 'hammer.io.team@gmail.com',
         firstName: 'Bob',
         lastName: 'Sagat'
       };
@@ -657,7 +657,7 @@ describe('Testing User Service', () => {
       const user = await userService.getCredentialsByUsername(username, password);
       expect(user.username).to.equal(username);
       expect(user.password).to.be.an('undefined');
-      expect(user.email).to.equal('jreach@gmail.com');
+      expect(user.email).to.equal('hammer.io.team@gmail.com');
       expect(user.firstName).to.equal('Jack');
       expect(user.lastName).to.equal('Reacher');
     });
