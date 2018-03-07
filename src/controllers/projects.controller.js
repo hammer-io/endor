@@ -150,8 +150,9 @@ async function updateProjectTools(configs, projectId) {
   const appNames = {};
   for (const key of Object.keys(configs.toolingConfigurations)) {
     const toolName = configs.toolingConfigurations[key].toLowerCase();
-    if (url[toolName]) {
-      appNames[url[toolName].name] = await url[toolName].setupUrl(configs);
+    const urlName = url[toolName].name;
+    if (urlName) {
+      appNames[urlName] = await url[toolName].setupUrl(configs);
     }
   }
 
@@ -275,6 +276,7 @@ async function createProject(user, project, req, res, next) {
     projectConfigurations: project
   };
   let projectId;
+  let projectPath;
 
   try {
     configs = await updateConfigs(configs, user);
@@ -287,7 +289,7 @@ async function createProject(user, project, req, res, next) {
     if (!fs.existsSync(filePath)) {
       fs.mkdirSync(filePath);
     }
-    const projectPath = `${filePath}/${projectId}`;
+    projectPath = `${filePath}/${projectId}`;
     if (!fs.existsSync(projectPath)) {
       fs.mkdirSync(projectPath);
     }
@@ -295,14 +297,6 @@ async function createProject(user, project, req, res, next) {
     await tyr.generateStaticFiles(configs, projectPath);
     res.set('Content-Type', 'application/json');
     res.send(newProject);
-
-    try {
-      await tyr.setUpThirdPartyTools(configs);
-      await tyr.commitToGithub(configs, projectPath);
-      await updateProjectTools(configs, projectId);
-    } catch (error) {
-      // do nothing, we already sent the res
-    }
   } catch (error) {
     try {
       if (projectId) {
@@ -312,7 +306,14 @@ async function createProject(user, project, req, res, next) {
     } catch (deleteProjectError) {
       // do nothing, the project was probably not created
     }
-    next(error);
+    return next(error);
+  }
+  try {
+    await tyr.setUpThirdPartyTools(configs);
+    await tyr.commitToGithub(configs, projectPath);
+    await updateProjectTools(configs, projectId);
+  } catch (error) {
+    // do nothing, we already sent the res, and it cannot be sent again
   }
 }
 
