@@ -105,7 +105,8 @@ export default class TravisAuthenticationService {
       throw new GithubTokenNotFoundException(`Github Token for user ${userId} not found`);
     }
 
-    const travisToken = await this.exchangeGithubTokenForTravisToken(githubToken);
+    const travisToken = await
+      TravisAuthenticationService.exchangeGithubTokenForTravisToken(githubToken);
     const isTokenExisting = await this.getSequelizeTravisTokenForUser(userId);
     if (isTokenExisting) {
       const updatedToken = await this.updateTravisTokenForUser(userId, travisToken);
