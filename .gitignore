@@ -21,6 +21,7 @@ npm-debug.lo
 config/*
 !config/default-example.json
 !config/test.json
+/generated-projects/
 
 .DS_Store
 */.DS_Store
