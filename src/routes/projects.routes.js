@@ -234,7 +234,8 @@ router.get(
  *     "containerization": "d0db39f6-452e-4461-abf5-146e5d8e4415",
  *     "deployment": "1d56c031-2a60-4d61-a7a7-a260e7f98610",
  *     "web": "7f6f84c3-3123-40ef-935b-479a133e7d63",
- *     "test": "4a6c48ce-a3ef-4f7c-bb13-bef287dc6daa"
+ *     "test": "4a6c48ce-a3ef-4f7c-bb13-bef287dc6daa",
+ *     "database": "94b1b4c8-3c8a-4de8-9d44-160d0a6dc84e"
  * }
  *
  *
@@ -298,7 +299,8 @@ router.post(
  *     "containerization": "d0db39f6-452e-4461-abf5-146e5d8e4415",
  *     "deployment": "1d56c031-2a60-4d61-a7a7-a260e7f98610",
  *     "web": "7f6f84c3-3123-40ef-935b-479a133e7d63",
- *     "test": "4a6c48ce-a3ef-4f7c-bb13-bef287dc6daa"
+ *     "test": "4a6c48ce-a3ef-4f7c-bb13-bef287dc6daa",
+ *     "database": "94b1b4c8-3c8a-4de8-9d44-160d0a6dc84e"
  * }
  * @apiParamExample {json} Request Example:
  * {

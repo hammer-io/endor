@@ -57,6 +57,10 @@ async function setHerokuCredentials(configs, user) {
   configs.projectConfigurations.herokuAppName = configs.projectConfigurations.projectName;
 }
 
+async function setSequelizeCredentials(configs, user) {
+  configs.credentials.sequelize = { username: 'root', password: 'root' };
+}
+
 /**
  * Creates the github url extension for the user
  * @param configs new project configurations
@@ -95,7 +99,8 @@ async function setHerokuUrl(configs) {
 const credentials = {
   github: setGithubCredentials,
   travisci: setTravisCredentials,
-  heroku: setHerokuCredentials
+  heroku: setHerokuCredentials,
+  sequelize: setSequelizeCredentials
 };
 
 /**
@@ -533,6 +538,7 @@ export function setProjectService(
     containerization: toolService.containerizationToolName,
     deployment: toolService.deploymentToolName,
     web: toolService.webFrameworksName,
-    test: toolService.testFrameworksName
+    test: toolService.testFrameworksName,
+    database: toolService.databaseToolName
   };
 }
