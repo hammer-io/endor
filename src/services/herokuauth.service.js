@@ -107,6 +107,7 @@ export default class HerokuAuthService {
    * @returns {Object} the token that was created or updated.
    */
   async addHerokuTokenForUser(userId, token, email) {
+    this.log.info(`Adding Heroku token for user ${userId} with email ${email}`);
     const user = await this.userService.getUserByIdOrUsername(userId);
 
     const isTokenExisting = await this.getSequelizeHerokuTokenForUser(userId);
@@ -134,6 +135,7 @@ export default class HerokuAuthService {
    * @returns {Object} the token that was created or updated.
    */
   async getAndSetHerokuTokenForUser(userId, code) {
+    this.log.info(`Exchanging Heroku token for user ${userId}`);
     let res;
     const clientData = config.get('oauth_apps').heroku;
     try {
