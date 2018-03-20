@@ -35,9 +35,8 @@ export async function addHerokuTokenForUser(req, res, next) {
 
   const userId = req.user.id;
   const token = req.body.herokuToken;
-  const email = req.body.email;
   try {
-    await herokuAuthService.addHerokuTokenForUser(userId, token, email);
+    await herokuAuthService.addHerokuTokenForUser(userId, token);
     res.status(204).send();
   } catch (error) {
     next(error);

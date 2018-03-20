@@ -22,6 +22,27 @@ export async function checkIfUserIsAuthenticated(token) {
 }
 
 /**
+ * Gets the user from heroku by a token
+ * @param token the token to get a user by
+ * @returns {Promise<boolean>}
+ */
+export async function getHerokuAuthenticatedUser(token) {
+  try {
+    const result = await fetch(`${herokuApiUrl}/account`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept
+      }
+    });
+
+    return result.json();
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
  * Get app info from Heroku API
  * @param appName the app name to get
  * @param token the token
