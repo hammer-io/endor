@@ -35,10 +35,9 @@ export async function createNewGithubToken(req, res, next) {
 
   const userId = req.user.id;
   const token = req.body.githubToken;
-  const username = req.body.githubUsername;
 
   try {
-    await githubAuthenticationService.addGithubTokenForUser(userId, token, username);
+    await githubAuthenticationService.addGithubTokenForUser(userId, token);
     res.status(204).send();
   } catch (error) {
     next(error);

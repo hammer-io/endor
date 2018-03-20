@@ -104,12 +104,14 @@ export default class GithubAuthenticationService {
    * exists for the user, it will automatically update the old one.
    * @param userId the user id to add the token for
    * @param token the token to add to the table
-   * @param username the github username of the user
+   * @param username the user's github username
    * @returns {Object} the token that was created
    */
   async addGithubTokenForUser(userId, token, username) {
     const user = await this.userService.getUserByIdOrUsername(userId);
     const isTokenExisting = await this.getSequelizeGithubTokenForUser(userId);
+
+
     // update token if it already exists
     if (isTokenExisting) {
       const updatedToken = await this.updateTokenForUser(userId, token);
@@ -136,7 +138,7 @@ export default class GithubAuthenticationService {
    * @param username the github username of the user
    * @returns {Object} the token that was created
    */
-  async getAndSetGithubTokenForUser(userId, code, state, username) {
+  async getAndSetGithubTokenForUser(userId, code, state) {
     try {
       const clientData = config.get('oauth_apps').github;
       const res = await fetch('https://cors-anywhere.herokuapp.com/https://github.com/login/oauth/access_token', {
@@ -155,6 +157,8 @@ export default class GithubAuthenticationService {
       });
       if (res.status < 400) {
         const data = await res.text().then(text => (text ? JSON.parse(text) : null));
+        const githubUser = await githubService.getAuthenticatedUser(data.access_token);
+        const username = githubUser.login;
         await this.addGithubTokenForUser(userId, data.access_token, username);
         return data.access_token;
       }
