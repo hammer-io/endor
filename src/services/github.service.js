@@ -20,7 +20,7 @@ export async function getAuthenticatedUser(token) {
 
   try {
     const user = await octokit.users.get({});
-    return user;
+    return user.data;
   } catch (error) {
     return null;
   }
