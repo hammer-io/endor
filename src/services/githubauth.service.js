@@ -108,6 +108,7 @@ export default class GithubAuthenticationService {
    * @returns {Object} the token that was created
    */
   async addGithubTokenForUser(userId, token, username) {
+    this.log.info(`Adding github token for user ${userId} with a github username of ${username}`);
     const user = await this.userService.getUserByIdOrUsername(userId);
     const isTokenExisting = await this.getSequelizeGithubTokenForUser(userId);
 
@@ -139,6 +140,8 @@ export default class GithubAuthenticationService {
    * @returns {Object} the token that was created
    */
   async getAndSetGithubTokenForUser(userId, code, state) {
+    this.log.info(`Exchanging GitHub token for user ${userId}`);
+
     try {
       const clientData = config.get('oauth_apps').github;
       const res = await fetch('https://cors-anywhere.herokuapp.com/https://github.com/login/oauth/access_token', {
