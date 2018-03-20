@@ -254,7 +254,7 @@ export async function getProjectById(req, res, next) {
   const projectId = req.params.projectId;
 
   try {
-    const project = await projectService.getProjectById(projectId);
+    const project = await projectService.getProjectInformationById(projectId);
     res.send(project);
   } catch (error) {
     next(error);

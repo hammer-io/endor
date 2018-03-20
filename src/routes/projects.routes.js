@@ -193,7 +193,8 @@ router.get('/users/:user/projects', authController.isAuthenticated, projectContr
  *    "containerizationToolId": null,
  *    "continuousIntegrationToolId": 1,
  *    "deploymentToolId": 3,
- *    "webFrameworkId": null
+ *    "webFrameworkId": null,
+ *    "markdownDescription": "<markdown text>"
  *  }
  */
 router.get(

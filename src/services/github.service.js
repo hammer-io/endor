@@ -1,4 +1,9 @@
 /* eslint-disable no-param-reassign,no-await-in-loop */
+import fetch from 'node-fetch';
+import { getActiveLogger } from '../utils/winston';
+
+const log = getActiveLogger();
+
 const octokit = require('@octokit/rest')(); // using the form to be compatible with their
 // documentation and it does not work with import.
 
@@ -164,4 +169,27 @@ export async function getCommitsForRepository(repositoryName, token) {
 
   const formattedCommits = data.map(mapGithubCommitsToEndorCommits);
   return formattedCommits;
+}
+
+/**
+ * Gets the contents of the README file for a GitHub repository
+ *
+ * @param repositoryName Repository name in the form of user/projectName
+ * @returns {Promise<String>}
+ */
+export async function getREADMEForProject(repositoryName) {
+  log.info(`ProjectService: getting README.md file for GitHub repo: ${repositoryName}`);
+  try {
+    const url = `https://raw.githubusercontent.com/${repositoryName}/master/README.md`;
+    const response = await fetch(url);
+    if (response.status !== 200) {
+      return '';
+    }
+
+    const readmeData = await response.text();
+    return readmeData;
+  } catch (error) {
+    // just return an empty string if there was an error
+    return '';
+  }
 }

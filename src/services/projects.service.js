@@ -43,6 +43,24 @@ export default class ProjectService {
   }
 
   /**
+   * Gets the project information by id, including README data from GitHub.
+   * @param projectId
+   * @returns {Promise<void>}
+   */
+  async getProjectInformationById(projectId) {
+    this.log.info(`ProjectService: get project information with id ${projectId}`);
+    const project = await this.getProjectById(projectId);
+    let readmeData = await githubService.getREADMEForProject(project.githubRepositoryName);
+
+    if (readmeData.length === 0) {
+      readmeData = `# ${project.projectName}\n\n ${project.description}`;
+    }
+
+    project.dataValues.markdownDescription = readmeData;
+    return project;
+  }
+
+  /**
    * Gets project by id
    * @param projectId the id to find by
    * @returns the project with the given id
