@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import sequelize from './sequelize';
 import { defineTables, populateTools } from './init_database';
+import * as encryptionUtil from '../utils/encryption';
 
 // This file fills the database with data for testing
 
@@ -233,6 +234,48 @@ export async function populateTokens() {
   ]);
 }
 
+export async function populateGithubAuth() {
+  const token = 'this is a fake token';
+  const githubTokenToBeCreated = {
+    token: encryptionUtil.encrypt(token.toString()),
+    username: 'johnnyBUsername'
+  };
+
+  const userJohnny = await sequelize.User.findOne({
+    where: { username: 'johnnyb' }
+  });
+  const tokenCreated = await sequelize.GithubCredentials.create(githubTokenToBeCreated);
+  await userJohnny.addGithubCredentials(tokenCreated);
+}
+
+export async function populateHerokuAuth() {
+  const token = 'this is a fake token';
+  const herokuTokenToBeCreated = {
+    token: encryptionUtil.encrypt(token.toString()),
+    username: 'johnnyBUsername'
+  };
+
+  const userJohnny = await sequelize.User.findOne({
+    where: { username: 'johnnyb' }
+  });
+  const tokenCreated = await sequelize.HerokuCredentials.create(herokuTokenToBeCreated);
+  await userJohnny.addHerokuCredentials(tokenCreated);
+}
+
+export async function populateTravisAuth() {
+  const token = 'this is a fake token';
+  const travisTokenToBeCreated = {
+    token: encryptionUtil.encrypt(token.toString()),
+    email: 'johnnyBEmail@email.com'
+  };
+
+  const userJohnny = await sequelize.User.findOne({
+    where: { username: 'johnnyb' }
+  });
+  const tokenCreated = await sequelize.TravisCredentials.create(travisTokenToBeCreated);
+  await userJohnny.addTravisCredentials(tokenCreated);
+}
+
 /**
  * This should be the primary entry method to populate all test data.
  * @param purgeOldData boolean if true will re-initialize database, overwriting old data
@@ -249,6 +292,9 @@ export async function populateAllTestData(purgeOldData) {
   await populateAccessCodes();
   await populateTokens();
   await populateClients();
+  await populateGithubAuth();
+  await populateHerokuAuth();
+  await populateTravisAuth();
 }
 
 
