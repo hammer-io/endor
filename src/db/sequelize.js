@@ -17,7 +17,8 @@ const ToolType = {
   DEPLOYMENT: 'deployment',
   WEB_FRAMEWORK: 'web',
   TEST: 'test',
-  DATABASE: 'database'
+  DATABASE: 'database',
+  SKADI: 'skadi'
 };
 
 const InviteStatus = {
@@ -123,7 +124,8 @@ function initManually(database, username, password, options) {
         ToolType.WEB_FRAMEWORK,
         ToolType.DEPLOYMENT,
         ToolType.TEST,
-        ToolType.DATABASE
+        ToolType.DATABASE,
+        ToolType.SKADI
       ]
     },
     websiteUrl: STRING(2000),
@@ -151,10 +153,12 @@ function initManually(database, username, password, options) {
     authors: STRING,
     githubRepositoryName: STRING,
     travisRepositoryName: STRING,
-    herokuApplicationName: STRING
+    herokuApplicationName: STRING,
+    komaApiKey: STRING,
   }, {
     paranoid: true
   });
+
   Project.belongsTo(Tool, { as: 'containerizationTool' });
   Project.belongsTo(Tool, { as: 'continuousIntegrationTool' });
   Project.belongsTo(Tool, { as: 'deploymentTool' });
@@ -162,7 +166,6 @@ function initManually(database, username, password, options) {
   Project.belongsTo(Tool, { as: 'sourceControl' });
   Project.belongsTo(Tool, { as: 'databaseTool' });
   Project.belongsTo(Tool, { as: 'testTool' });
-
 
   const ProjectOwner = model.define('projectOwner', {
     // ASSOCIATIONS DEFINED BELOW

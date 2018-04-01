@@ -71,6 +71,11 @@ export async function populateTools() {
     documentationUrl: 'http://docs.sequelizejs.com/',
     logoSmallUrl: 'http://docs.sequelizejs.com/manual/asset/logo-small.png'
   });
+  await sequelize.Tool.create({
+    name: 'Skadi',
+    toolType: sequelize.ToolType.SKADI,
+    websiteUrl: 'https://www.npmjs.com/package/skadi-hammerio'
+  });
 }
 
 export function initializeSequelizeStore() {

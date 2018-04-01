@@ -651,7 +651,8 @@ export function setProjectService(
   newToolService,
   newGithubAuthService,
   newHerokuAuthService,
-  newTravisAuthService
+  newTravisAuthService,
+  newKomaService
 ) {
   projectService = newProjectService;
   projectController.setProjectService(
@@ -659,7 +660,8 @@ export function setProjectService(
     newToolService,
     newGithubAuthService,
     newHerokuAuthService,
-    newTravisAuthService
+    newTravisAuthService,
+    newKomaService
   );
   projectAuthorization.setDependencies(projectService);
 }
