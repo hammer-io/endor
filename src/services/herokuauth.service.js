@@ -146,7 +146,6 @@ export default class HerokuAuthService {
         body: JSON.stringify({}),
         headers: new fetch.Headers({
           'Content-Type': 'application/json',
-          origin: 'http://localhost:8080/', // included to satisfy cors-anywhere
           Accept: 'application/json'
         }),
       });
@@ -167,7 +166,6 @@ export default class HerokuAuthService {
           body: JSON.stringify({}),
           headers: new fetch.Headers({
             'Content-Type': 'application/json',
-            origin: 'http://localhost:8080/', // included to satisfy cors-anywhere
             Accept: 'application/json'
           }),
         });
