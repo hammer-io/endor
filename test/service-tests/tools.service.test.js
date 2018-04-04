@@ -155,28 +155,28 @@ describe('Test Tools Service ', () => {
 
   describe('Database Tools', async () => {
     it('should get the database tools', async () => {
-      const tools = await toolsService.getDatabaseTools();
+      const tools = await toolsService.getOrmTools();
       expect(tools.length).to.equal(1);
       expect(tools[0].name).to.equal('Sequelize');
     });
 
     it('should get the database tools', async () => {
-      const tools = await toolsService.getDatabaseTools();
+      const tools = await toolsService.getOrmTools();
       expect(tools.length).to.equal(1);
       expect(tools[0].name).to.equal('Sequelize');
 
       const toolName = tools[0].name;
-      const foundToolName = await toolsService.databaseToolName(tools[0].id);
+      const foundToolName = await toolsService.ormToolName(tools[0].id);
       expect(foundToolName).to.equal(toolName);
     });
 
     it('should get the database tools', async () => {
-      const tools = await toolsService.getDatabaseTools();
+      const tools = await toolsService.getOrmTools();
       expect(tools.length).to.equal(1);
       expect(tools[0].name).to.equal('Sequelize');
 
       const wrongId = 'wrongId';
-      const foundToolName = await toolsService.databaseToolName(wrongId);
+      const foundToolName = await toolsService.ormToolName(wrongId);
       expect(foundToolName).to.be.an('undefined');
     });
   });

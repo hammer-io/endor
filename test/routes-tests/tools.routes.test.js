@@ -97,10 +97,10 @@ describe('Tools Route Test', () => {
           });
       });
     });
-    describe('GET /tools/database', async () => {
-      it('should get database tools', (done) => {
+    describe('GET /tools/orm', async () => {
+      it('should get orm tools', (done) => {
         chai.request(server)
-          .get(`${apiUtil.API}/tools/database`)
+          .get(`${apiUtil.API}/tools/orm`)
           .send()
           .end((err, res) => {
             res.should.have.status(200);

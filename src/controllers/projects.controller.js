@@ -155,8 +155,8 @@ async function updateProjectTools(configs, projectId) {
   const appNames = {};
   for (const key of Object.keys(configs.toolingConfigurations)) {
     const toolName = configs.toolingConfigurations[key].toLowerCase();
-    const urlName = url[toolName].name;
-    if (urlName) {
+    if (url[toolName]) {
+      const urlName = url[toolName].name;
       appNames[urlName] = await url[toolName].setupUrl(configs);
     }
   }
@@ -303,6 +303,7 @@ async function createProject(user, project, req, res, next) {
     res.set('Content-Type', 'application/json');
     res.send(newProject);
   } catch (error) {
+    console.log(error);
     try {
       if (projectId) {
         // If there was an error, and the project was created, delete it
@@ -314,11 +315,13 @@ async function createProject(user, project, req, res, next) {
     return next(error);
   }
   try {
+    console.log(configs);
     await tyr.setUpThirdPartyTools(configs);
     await tyr.commitToGithub(configs, projectPath);
     await updateProjectTools(configs, projectId);
   } catch (error) {
     // do nothing, we already sent the res, and it cannot be sent again
+    console.log(error);
   }
 }
 
@@ -539,6 +542,6 @@ export function setProjectService(
     deployment: toolService.deploymentToolName,
     web: toolService.webFrameworksName,
     test: toolService.testFrameworksName,
-    database: toolService.databaseToolName
+    ormx: toolService.ormToolName
   };
 }

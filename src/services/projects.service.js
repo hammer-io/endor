@@ -180,14 +180,14 @@ export default class ProjectService {
       description: project.description,
       version: project.version,
       license: project.license,
-      authors: project.authors,
+      authors: project.author,
       sourceControlId: project.sourceControl,
       continuousIntegrationToolId: project.ci,
       containerizationToolId: project.containerization,
       deploymentToolId: project.deployment,
       webFrameworkId: project.web,
       testToolId: project.test,
-      databaseToolId: project.database
+      ormToolId: project.orm
     };
 
     // create
