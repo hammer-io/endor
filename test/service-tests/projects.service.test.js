@@ -136,7 +136,7 @@ describe('Testing Project Service', async () => {
         description: 'good bye world',
         version: '1.2.3',
         license: 'MIT',
-        authors: 'Creator'
+        author: 'Creator'
       };
 
       const project = await projectService.createProject(newProject, 'a1');
@@ -154,7 +154,7 @@ describe('Testing Project Service', async () => {
         description: 'good bye world',
         version: '1.2.3',
         license: 'MIT',
-        authors: 'Creator'
+        author: 'Creator'
       };
 
       // // double check to make sure that the project was created
@@ -181,7 +181,7 @@ describe('Testing Project Service', async () => {
         description: 'good bye world',
         version: '1.2.3',
         license: 'MIT',
-        authors: 'Creator'
+        author: 'Creator'
       };
 
       // double check to make sure that the project was created
@@ -213,7 +213,7 @@ describe('Testing Project Service', async () => {
         description: 'good bye world',
         version: '1.2.3',
         license: 'MIT',
-        authors: 'Creator'
+        author: 'Creator'
       };
 
       try {

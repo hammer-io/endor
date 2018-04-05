@@ -100,8 +100,8 @@ export default class ToolsService {
    *
    * @returns {Promise<Array<Model>>}
    */
-  async getDatabaseTools() {
-    return self.getToolsByType(sequelize.ToolType.DATABASE);
+  async getOrmTools() {
+    return self.getToolsByType(sequelize.ToolType.ORM);
   }
 
   /**
@@ -213,12 +213,12 @@ export default class ToolsService {
    * Finds the name of the database tool.  If the id does not exist in the database, it will
    * return undefined.
    *
-   * @param databaseToolId - the id of the database tool
+   * @param ormToolId - the id of the database tool
    * @returns {Promise<undefined>}
    */
-  async databaseToolName(databaseToolId) {
-    const databaseToolsAvailable = await self.getToolsByType(sequelize.ToolType.DATABASE);
-    const potentialMatch = databaseToolsAvailable.filter(tool => tool.id === databaseToolId);
+  async ormToolName(ormToolId) {
+    const ormToolsAvailable = await self.getToolsByType(sequelize.ToolType.ORM);
+    const potentialMatch = ormToolsAvailable.filter(tool => tool.id === ormToolId);
     if (potentialMatch[0]) {
       return potentialMatch[0].name;
     }

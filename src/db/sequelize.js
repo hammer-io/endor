@@ -17,7 +17,7 @@ const ToolType = {
   DEPLOYMENT: 'deployment',
   WEB_FRAMEWORK: 'web',
   TEST: 'test',
-  DATABASE: 'database',
+  ORM: 'orm',
   SKADI: 'skadi'
 };
 
@@ -124,8 +124,9 @@ function initManually(database, username, password, options) {
         ToolType.WEB_FRAMEWORK,
         ToolType.DEPLOYMENT,
         ToolType.TEST,
-        ToolType.DATABASE,
+        ToolType.ORM,
         ToolType.SKADI
+
       ]
     },
     websiteUrl: STRING(2000),
@@ -164,7 +165,7 @@ function initManually(database, username, password, options) {
   Project.belongsTo(Tool, { as: 'deploymentTool' });
   Project.belongsTo(Tool, { as: 'webFramework' });
   Project.belongsTo(Tool, { as: 'sourceControl' });
-  Project.belongsTo(Tool, { as: 'databaseTool' });
+  Project.belongsTo(Tool, { as: 'ormTool' });
   Project.belongsTo(Tool, { as: 'testTool' });
 
   const ProjectOwner = model.define('projectOwner', {

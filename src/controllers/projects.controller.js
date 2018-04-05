@@ -156,8 +156,8 @@ async function updateProjectTools(configs, projectId) {
   const appNames = {};
   for (const key of Object.keys(configs.toolingConfigurations)) {
     const toolName = configs.toolingConfigurations[key].toLowerCase();
-    const urlName = url[toolName].name;
-    if (urlName) {
+    if (url[toolName]) {
+      const urlName = url[toolName].name;
       appNames[urlName] = await url[toolName].setupUrl(configs);
     }
   }
@@ -576,7 +576,7 @@ export function setProjectService(
     deployment: toolService.deploymentToolName,
     web: toolService.webFrameworksName,
     test: toolService.testFrameworksName,
-    database: toolService.databaseToolName,
+    orm: toolService.ormToolName,
     skadi: toolService.skadiToolName
   };
 }

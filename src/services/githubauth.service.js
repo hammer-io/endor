@@ -154,7 +154,7 @@ export default class GithubAuthenticationService {
         }),
         headers: new fetch.Headers({
           'Content-Type': 'application/json',
-          origin: 'http://localhost:8080/', // included to satisfy cors-anywhere
+          origin: 'Hammerio', // Some string must be passed to satisfy cors-anywhere
           Accept: 'application/json'
         }),
       });

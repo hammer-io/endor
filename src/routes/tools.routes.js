@@ -245,20 +245,20 @@ router.get('/tools/web', toolsController.getWebTools);
 router.get('/tools/test', toolsController.getTestTools);
 
 /**
- * @api {get} /tools/database Get  database tools
+ * @api {get} /tools/orm Get orm tools
  * @apiVersion 1.0.0
- * @apiName get database tools
+ * @apiName get orm tools
  * @apiGroup Tools
  *
  * @apiPermission none
  *
- * @apiSuccess {Object[]} tools Returns a list of all test database.
+ * @apiSuccess {Object[]} tools Returns a list of all test orm.
  * @apiSuccessExample {json} Success-Response:
  * [
  {
      "id": "ff9d2ed2-e1d8-4f4e-a316-80f06f49d2a6",
      "name": "Sequelize",
-     "toolType": "database",
+     "toolType": "orm",
      "websiteUrl": "http://docs.sequelizejs.com/",
      "apiUrl": null,
      "documentationUrl": "http://docs.sequelizejs.com/",
@@ -272,7 +272,7 @@ router.get('/tools/test', toolsController.getTestTools);
  }
  ]
  */
-router.get('/tools/database', toolsController.getDatabaseTools);
+router.get('/tools/orm', toolsController.getOrmTools);
 
 export function setDependencies(newToolsService) {
   toolsController.setDependencies(newToolsService);
