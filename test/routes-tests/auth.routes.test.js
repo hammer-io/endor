@@ -14,7 +14,7 @@ describe('Testing Auth Routes', () => {
     await populateAllTestData(true);
   });
 
-  describe('POST /oauth2/token', () => {
+  describe('POST /auth/login', () => {
     it('should return a new token for the user', (done) => {
       const req = {
         "code": "randomValue",
@@ -22,7 +22,7 @@ describe('Testing Auth Routes', () => {
         "redirect_uri": "http://localhost:3000/api/v1/oauth2/authorize/successRedirect"
       };
       chai.request(server)
-        .post(`${apiUtil.API}/oauth2/token`)
+        .post(`${apiUtil.API}/auth/login`)
         .send(req)
         .end((err, res) => {
           res.should.have.status(200);
@@ -43,7 +43,7 @@ describe('Testing Auth Routes', () => {
         "redirect_uri": "http://localhost:3000/api/v1/oauth2/authorize/successRedirect"
       };
       chai.request(server)
-        .post(`${apiUtil.API}/oauth2/token`)
+        .post(`${apiUtil.API}/auth/login`)
         .send(req)
         .end((err, res) => {
           res.should.have.status(403);
@@ -58,7 +58,7 @@ describe('Testing Auth Routes', () => {
         grant_type: "password"
       };
       chai.request(server)
-        .post(`${apiUtil.API}/oauth2/token`)
+        .post(`${apiUtil.API}/auth/login`)
         .send(req)
         .end((err, res) => {
           res.should.have.status(200);
@@ -79,7 +79,7 @@ describe('Testing Auth Routes', () => {
         grant_type: "password"
       };
       chai.request(server)
-        .post(`${apiUtil.API}/oauth2/token`)
+        .post(`${apiUtil.API}/auth/login`)
         .send(req)
         .end((err, res) => {
           res.should.have.status(403);
@@ -94,7 +94,7 @@ describe('Testing Auth Routes', () => {
         grant_type: "password"
       };
       chai.request(server)
-        .post(`${apiUtil.API}/oauth2/token`)
+        .post(`${apiUtil.API}/auth/login`)
         .send(req)
         .end((err, res) => {
           res.should.have.status(403);
