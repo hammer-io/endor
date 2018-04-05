@@ -283,8 +283,8 @@ async function addSkadi(projectId, configs) {
   configs.skadi.interval = '5000';
   configs.skadi.apiKey = apiKey;
   configs.skadi.heartbeatUrl = `${koma.url}/heartbeats`;
-  configs.skadi.httpDataUrl = `${koma.url}/osdata`;
-  configs.skadi.osDataUrl = `${koma.url}/httpdata`;
+  configs.skadi.httpDataUrl = `${koma.url}/httpdata`;
+  configs.skadi.osDataUrl = `${koma.url}/osdata`;
 }
 
 /**
