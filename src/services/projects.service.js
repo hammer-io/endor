@@ -141,7 +141,7 @@ export default class ProjectService {
    * @returns {Boolean} true if the user is a contributor, false if not
    */
   async checkIfUserIsContributorOnProject(projectId, user) {
-    this.log.info(`ProjectServiceL check if user ${user} is an contributor on project with id ${projectId}`);
+    this.log.info(`ProjectService check if user ${user} is an contributor on project with id ${projectId}`);
     const projectContributors = await this.getContributorsByProjectId(projectId);
     const filteredContributors = projectContributors.filter(userObject =>
       userObject.id === user || userObject.username === user);

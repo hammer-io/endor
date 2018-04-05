@@ -224,4 +224,13 @@ export default class ToolsService {
     }
     return undefined;
   }
+
+  /**
+   * Gets the tool name for skadi
+   * @returns {Promise<Model>}
+   */
+  async skadiToolName() {
+    const skadiToolsAvailable = await self.getToolsByType(sequelize.ToolType.SKADI);
+    return skadiToolsAvailable[0];
+  }
 }

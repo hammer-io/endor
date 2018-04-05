@@ -3,12 +3,11 @@ import zip from 'adm-zip';
 import * as tyr from 'tyr-cli/dist/tyr';
 import { validationResult } from 'express-validator/check';
 import fs from 'fs-extra';
+import config from 'config';
 
 import * as responseHelper from './../utils/response-helper';
 import ZipFileNotFoundException from '../error/ZipFileNotFoundException';
 import TravisTokenNotFoundException from '../error/TravisTokenNotFoundException';
-
-const del = require('del');
 
 /**
  * The project controller. This controller is for any routes dealing with projects. It is
@@ -20,6 +19,7 @@ let toolService = {};
 let herokuAuthService = {};
 let githubAuthService = {};
 let travisAuthService = {};
+let komaService = {};
 const projectLocation = `${process.cwd()}/generated-projects`;
 let tooling = {};
 
@@ -129,8 +129,8 @@ const url = {
  * @param user the user creating the project
  * @returns {Promise<*>}
  */
-async function updateConfigs(config, user) {
-  const configs = config;
+async function updateConfigs(inputConfig, user) {
+  const configs = inputConfig;
   configs.toolingConfigurations = {};
   configs.credentials = {};
   for (const key of Object.keys(configs.projectConfigurations)) {
@@ -143,6 +143,7 @@ async function updateConfigs(config, user) {
       }
     }
   }
+
   return configs;
 }
 
@@ -252,13 +253,38 @@ export async function getProjectsByUser(req, res, next) {
  */
 export async function getProjectById(req, res, next) {
   const projectId = req.params.projectId;
+  const user = req.params.user;
 
   try {
     const project = await projectService.getProjectInformationById(projectId);
+
+    // remove sensitive information from the project if they are not an owner
+    if (!projectService.checkIfUserIsOwnerOnProject(user, projectId)) {
+      delete project.komaApiKey;
+    }
+
     res.send(project);
   } catch (error) {
     next(error);
   }
+}
+
+/**
+ * Adds proper configurations for skadi and authenticates the application with koma.
+ * @param projectId the project id
+ * @param configs the configurations for the project
+ * @returns {Promise<void>}
+ */
+async function addSkadi(projectId, configs) {
+  const koma = config.get('koma');
+  const apiKey = await komaService.authenticateWithKoma(projectId);
+  configs.toolingConfigurations.skadi = 'skadi';
+  configs.skadi = {};
+  configs.skadi.interval = '5000';
+  configs.skadi.apiKey = apiKey;
+  configs.skadi.heartbeatsUrl = `${koma.url}/heartbeats`;
+  configs.skadi.httpDataUrl = `${koma.url}/osdata`;
+  configs.skadi.osDataUrl = `${koma.url}/httpdata`;
 }
 
 /**
@@ -280,6 +306,7 @@ async function createProject(user, project, req, res, next) {
   let configs = {
     projectConfigurations: project
   };
+
   let projectId;
   let projectPath;
 
@@ -287,6 +314,14 @@ async function createProject(user, project, req, res, next) {
     configs = await updateConfigs(configs, user);
     const newProject = await projectService.createProject(configs.projectConfigurations, user);
     projectId = newProject.id;
+
+    // add skadi and koma
+    if (configs.toolingConfigurations.web === 'ExpressJS') {
+      await addSkadi(projectId, configs);
+      await projectService.updateProject({ komaApiKey: configs.skadi.apiKey }, projectId);
+    }
+
+
     if (!fs.existsSync(`${projectLocation}`)) {
       fs.mkdirSync(`${projectLocation}`);
     }
@@ -524,13 +559,15 @@ export function setProjectService(
   newToolService,
   newGithubAuthService,
   newHerokuAuthService,
-  newTravisAuthService
+  newTravisAuthService,
+  newKomaService,
 ) {
   projectService = newProjectService;
   toolService = newToolService;
   githubAuthService = newGithubAuthService;
   herokuAuthService = newHerokuAuthService;
   travisAuthService = newTravisAuthService;
+  komaService = newKomaService;
 
   tooling = {
     sourcecontrol: toolService.sourceControlToolName,
@@ -539,6 +576,7 @@ export function setProjectService(
     deployment: toolService.deploymentToolName,
     web: toolService.webFrameworksName,
     test: toolService.testFrameworksName,
-    ormx: toolService.ormToolName
+    orm: toolService.ormToolName,
+    skadi: toolService.skadiToolName
   };
 }

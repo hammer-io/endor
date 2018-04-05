@@ -21,7 +21,7 @@ describe('Tools Route Test', () => {
         .send()
         .end((err, res) => {
           res.should.have.status(200);
-          expect(res.body.length).to.equal(7);
+          expect(res.body.length).to.equal(8);
           done();
         });
     });

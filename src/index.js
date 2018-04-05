@@ -29,6 +29,7 @@ import AuthService from './services/auth.service';
 import ClientService from './services/client.service';
 import EmailService from './services/email.service';
 import ToolsService from './services/tools.service';
+import KomaService from './services/koma.service';
 import GithubAuthenticationService from './services/githubauth.service';
 import TravisAuthenticationService from './services/travisauth.service';
 import HerokuAuthService from './services/herokuauth.service';
@@ -92,6 +93,7 @@ const authService = new AuthService(sequelize.Token, sequelize.AccessCode, getAc
 const clientService = new ClientService(sequelize.Client, getActiveLogger());
 const emailService = new EmailService(getActiveLogger());
 const toolsService = new ToolsService(sequelize.Tool, getActiveLogger());
+const komaService = new KomaService(getActiveLogger());
 
 auth.setDependencies(userService, clientService, authService);
 client.setDependencies(userService, clientService, authService);
@@ -100,7 +102,8 @@ projects.setProjectService(
   toolsService,
   githubAuthenticationService,
   herokuAuthenticationService,
-  travisAuthenticationService
+  travisAuthenticationService,
+  komaService
 );
 users.setDependencies(userService, githubAuthenticationService, herokuAuthenticationService);
 contributors.setDependencies(projectService);
