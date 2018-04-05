@@ -66,7 +66,7 @@ export async function populateTools() {
   });
   await sequelize.Tool.create({
     name: 'Sequelize',
-    toolType: sequelize.ToolType.DATABASE,
+    toolType: sequelize.ToolType.ORM,
     websiteUrl: 'http://docs.sequelizejs.com/',
     documentationUrl: 'http://docs.sequelizejs.com/',
     logoSmallUrl: 'http://docs.sequelizejs.com/manual/asset/logo-small.png'

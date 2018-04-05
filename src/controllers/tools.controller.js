@@ -53,9 +53,9 @@ export async function getTestTools(req, res, next) {
   }
 }
 
-export async function getDatabaseTools(req, res, next) {
+export async function getOrmTools(req, res, next) {
   try {
-    res.send(await toolsService.getDatabaseTools());
+    res.send(await toolsService.getOrmTools());
   } catch (error) {
     next(error);
   }
