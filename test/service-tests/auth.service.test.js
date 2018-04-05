@@ -13,6 +13,20 @@ describe('Testing Auth Service', () => {
     await populateAllTestData(true);
   });
 
+  describe('delete token', async () => {
+    it('should delete the token', async () => {
+      const accessToken = 'longRandomTokenValue';
+      await authService.deleteToken(accessToken);
+
+      try {
+        const accessCode = await authService.findOneCodeByValue(accessToken);
+        expect(accessCode).to.be.an('undefined');
+      } catch (err) {
+        expect(err.type).to.equal('Forbidden');
+      }
+    });
+  });
+
   describe('should find an access code when a valid, correct value is given', async () => {
     it('should find the correct access code by value', async () => {
       const accessCodeValue = 'randomValue';
