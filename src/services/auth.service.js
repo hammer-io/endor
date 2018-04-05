@@ -119,6 +119,17 @@ export default class AuthService {
   }
 
   /**
+   * Deletes a token.
+   *
+   * @param tokenValue the value of the token to delete
+   * @returns {Promise<void>}
+   */
+  async deleteToken(tokenValue) {
+    const token = await this.findOneTokenByValue(tokenValue);
+    await token.destroy();
+  }
+
+  /**
    * Create a code for a given client.
    *
    * @param redirectUri where the client should be redirected upon success

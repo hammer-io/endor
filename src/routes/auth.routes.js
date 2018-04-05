@@ -147,7 +147,19 @@ router.post('/oauth2/token', authValidator.checkToken(), authController.token())
 router.get('/oauth2/authorize/successRedirect', authController.isAuthenticated, authController.success);
 
 /**
- * @api { post } /auth/register Register a new user
+ * @api { delete} /auth/logout Logout
+ * @apiVersion 1.0.0
+ * @apiName Logout User
+ * @apiGroup Auth
+ *
+ * @apiPermission Authenticated User
+ *
+ * @apiSuccess status 204
+ */
+router.delete('/auth/logout', authController.isAuthenticated, authController.logout);
+
+/**
+ * @api { post } /auth/register Register
  * @apiVersion 1.0.0
  * @apiName Register User
  * @apiGroup Auth
