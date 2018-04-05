@@ -303,7 +303,6 @@ async function createProject(user, project, req, res, next) {
     res.set('Content-Type', 'application/json');
     res.send(newProject);
   } catch (error) {
-    console.log(error);
     try {
       if (projectId) {
         // If there was an error, and the project was created, delete it
@@ -315,13 +314,11 @@ async function createProject(user, project, req, res, next) {
     return next(error);
   }
   try {
-    console.log(configs);
     await tyr.setUpThirdPartyTools(configs);
     await tyr.commitToGithub(configs, projectPath);
     await updateProjectTools(configs, projectId);
   } catch (error) {
     // do nothing, we already sent the res, and it cannot be sent again
-    console.log(error);
   }
 }
 
