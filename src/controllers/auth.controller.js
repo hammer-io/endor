@@ -67,7 +67,7 @@ passport.use(new BearerStrategy('bearer', (accessToken, next) => {
 }));
 
 /**
- * Logs out a user, effectively killing their session
+ * Logs out a user, effectively killing their session by deleting their token from the tokens table
  * @param req the request
  * @param res the response
  * @param next the next middleware
