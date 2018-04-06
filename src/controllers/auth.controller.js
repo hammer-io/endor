@@ -67,6 +67,52 @@ passport.use(new BearerStrategy('bearer', (accessToken, next) => {
 }));
 
 /**
+ * Logs out a user, effectively killing their session by deleting their token from the tokens table
+ * @param req the request
+ * @param res the response
+ * @param next the next middleware
+ */
+export async function logout(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (authHeader.includes('Bearer')) {
+      const authToken = authHeader.replace('Bearer ', '');
+      await authService.deleteToken(authToken.trim());
+    }
+
+    await req.logout();
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Given a username, and password create a bare-bones user and a token for the new user.
+ *
+ * @param req the request
+ * @param res the response
+ * @param next the next middleware
+ * @returns {Promise.<void>}
+ */
+export async function register(req, res, next) {
+  const user = {};
+  if (req.body.username) {
+    user.username = req.body.username;
+  }
+  if (req.body.email) {
+    user.email = req.body.email;
+  }
+  try {
+    const newUser = await userService.createUser(user, req.body.password, false);
+    const newToken = await authService.createToken(newUser.id);
+    res.send({ user: newUser, token: newToken });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
  * Registers the function to serialize the client for sessions on the auth server's side
  */
 server.serializeClient((client, next) => next(null, client.id), null);
@@ -117,6 +163,8 @@ server.exchange(oauth2orize.exchange.code((client, code, redirectUri, next) => {
 /**
  * Server's password for token exchange.  This method will be used if the grant_type is "password".
  * The username must first be converted into a userId for the function to operate.
+ *
+ * Eventually the POST oauth2/token gets here and this is where the token is created for the user
  */
 server.exchange(oauth2orize.exchange.password((client, username, password, scope, next) => {
   userService.getCredentialsByUsername(username, password)
@@ -127,31 +175,6 @@ server.exchange(oauth2orize.exchange.password((client, username, password, scope
     })
     .catch(err => next(err));
 }));
-
-/**
- * Given a username, and password create a bare-bones user and a token for the new user.
- *
- * @param req the request
- * @param res the response
- * @param next the next middleware
- * @returns {Promise.<void>}
- */
-export async function register(req, res, next) {
-  const user = {};
-  if (req.body.username) {
-    user.username = req.body.username;
-  }
-  if (req.body.email) {
-    user.email = req.body.email;
-  }
-  try {
-    const newUser = await userService.createUser(user, req.body.password, false);
-    const newToken = await authService.createToken(newUser.id);
-    res.send({ user: newUser, token: newToken });
-  } catch (err) {
-    next(err);
-  }
-}
 
 /**
  * If the request gets this far, then return success because the token is valid.
