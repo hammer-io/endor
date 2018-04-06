@@ -10,6 +10,115 @@ export const router = express.Router();
 
 
 /**
+ * @api { get } /auth/token Check Authentication Token
+ * @apiVersion 1.0.0
+ * @apiName Check Auth Token
+ * @apiGroup Auth
+ *
+ * @apiDescription Ensures that the token provided in the Authenitcation header is valid
+ * and non expired.
+ *
+ * @apiHeader Authorization Auth-Token
+ *
+ * @apiSuccess status 200
+ */
+router.get('/auth/token', authController.isBearerAuthenticated, authController.checkToken);
+
+/**
+ * @api { post } /auth/login Login
+ * @apiVersion 1.0.0
+ * @apiName Login
+ * @apiGroup Auth
+ *
+ * @apiPermission None
+ *
+ * @apiDescription The access token is deleted if the redirectURI and the access codes' client id is
+ * the same as the client requesting the new token, and then the new token is created and returned
+ * to in the response. The Authentication at this endpoint should be client authentication so as
+ * to verify that this is the client's token.
+ *
+ * This endpoint is the "login" which exchanges usernames and password for a token.
+ *
+ * @apiParam { STRING } code the access code if grant_type = authorization_code
+ * @apiParam { STRING } username the username if grant_type = password
+ * @apiParam { STRING } password the corresponding password if grant_type = password
+ * @apiParam { STRING } grant_type the value should be "authorization_code" or "password"
+ * @apiParamExample Param-Example:
+ * {
+ *   "code": "YxTKMd9l8ZAvof2GEwiP6w",
+ *   "grant_type": "authorization_code"
+ * }
+ * @apiParamExample Param-Example:
+ * {
+ *   "username": "jreach",
+ *   "password": "password_of_jreach",
+ *   "grant_type": "password"
+ * }
+ *
+ * @apiSuccess { json } returns the access token and the token_type ("bearer")
+ * @apiSuccessExample { json } Success-Example:
+ * {
+ *   "access_token": {
+ *       "id": 1,
+ *       "value": "<Long String>"
+ *       "userId": 3,
+ *       "updatedAt": "2017-12-04T01:08:36.415Z",
+ *       "createdAt": "2017-12-04T01:08:36.415Z"
+ *   },
+ *   "token_type": "Bearer"
+ * }
+ */
+router.post('/auth/login', authValidator.checkToken(), authController.token());
+
+/**
+ * @api { delete} /auth/logout Logout
+ * @apiVersion 1.0.0
+ * @apiName Logout User
+ * @apiGroup Auth
+ *
+ * @apiPermission Authenticated User
+ *
+ * @apiSuccess status 204
+ */
+router.delete('/auth/logout', authController.isAuthenticated, authController.logout);
+
+/**
+ * @api { post } /auth/register Register
+ * @apiVersion 1.0.0
+ * @apiName Register User
+ * @apiGroup Auth
+ *
+ * @apiPermission None
+ *
+ * @apiParam { STRING } username The new user's desired username. Must only
+ * contain letters, numbers and underscores.
+ * @apiParam { STRING } email The new user's desired email
+ * @apiParam { STRING } password The new user's desired password. Must have
+ * at least 8 characters, with one letter and one number.
+ *
+ * @apiSuccess { json } returns the new user and corresponding token
+ * @apiSuccessExample { json } Success-Example:
+ * {
+ *  "user": {
+ *       "id": 10,
+ *       "username": "jreach6",
+ *       "updatedAt": "2018-01-22T02:02:12.447Z",
+ *       "createdAt": "2018-01-22T02:02:12.447Z"
+ *   },
+ *   "token": {
+ *       "expired": false,
+ *       "id": 12,
+ *       "value": "<a really long token value here>"
+ *       "userId": 10,
+ *       "updatedAt": "2018-01-22T02:02:12.473Z",
+ *       "createdAt": "2018-01-22T02:02:12.473Z"
+ *   }
+ * }
+ *
+ */
+router.post('/auth/register', authController.register);
+
+/**
  * @api { get } /oauth2/authorize Get permissions
  * @apiVersion 1.0.0
  * @apiName Get Authorization Data
@@ -82,51 +191,6 @@ router.get('/oauth2/authorize', authController.isAuthenticated, authController.a
  */
 router.post('/oauth2/authorize', [authController.isAuthenticated].concat(authValidator.checkAuthorize()), authController.decision());
 
-
-/**
- * @api { post } /oauth2/token Exchange access code to create a token
- * @apiVersion 1.0.0
- * @apiName Post Token
- * @apiGroup Auth
- *
- * @apiPermission None
- *
- * @apiDescription The access token is deleted if the redirectURI and the access codes' client id is
- * the same as the client requesting the new token, and then the new token is created and returned
- * to in the response. The Authentication at this endpoint should be client authentication so as
- * to verify that this is the client's token
- *
- * @apiParam { STRING } code the access code if grant_type = authorization_code
- * @apiParam { STRING } username the username if grant_type = password
- * @apiParam { STRING } password the corresponding password if grant_type = password
- * @apiParam { STRING } grant_type the value should be "authorization_code" or "password"
- * @apiParamExample Param-Example:
- * {
- *   "code": "YxTKMd9l8ZAvof2GEwiP6w",
- *   "grant_type": "authorization_code"
- * }
- * @apiParamExample Param-Example:
- * {
- *   "username": "jreach",
- *   "password": "password_of_jreach",
- *   "grant_type": "password"
- * }
- *
- * @apiSuccess { json } returns the access token and the token_type ("bearer")
- * @apiSuccessExample { json } Success-Example:
- * {
- *   "access_token": {
- *       "id": 1,
- *       "value": "<Long String>"
- *       "userId": 3,
- *       "updatedAt": "2017-12-04T01:08:36.415Z",
- *       "createdAt": "2017-12-04T01:08:36.415Z"
- *   },
- *   "token_type": "Bearer"
- * }
- */
-router.post('/oauth2/token', authValidator.checkToken(), authController.token());
-
 /**
  * @api { get } /oauth2/authorize/successRedirect Get access code redirect
  * @apiVersion 1.0.0
@@ -145,69 +209,6 @@ router.post('/oauth2/token', authValidator.checkToken(), authController.token())
  * }
  */
 router.get('/oauth2/authorize/successRedirect', authController.isAuthenticated, authController.success);
-
-/**
- * @api { delete} /auth/logout Logout
- * @apiVersion 1.0.0
- * @apiName Logout User
- * @apiGroup Auth
- *
- * @apiPermission Authenticated User
- *
- * @apiSuccess status 204
- */
-router.delete('/auth/logout', authController.isAuthenticated, authController.logout);
-
-/**
- * @api { post } /auth/register Register
- * @apiVersion 1.0.0
- * @apiName Register User
- * @apiGroup Auth
- *
- * @apiPermission None
- *
- * @apiParam { STRING } username The new user's desired username. Must only
- * contain letters, numbers and underscores.
- * @apiParam { STRING } email The new user's desired email
- * @apiParam { STRING } password The new user's desired password. Must have
- * at least 8 characters, with one letter and one number.
- *
- * @apiSuccess { json } returns the new user and corresponding token
- * @apiSuccessExample { json } Success-Example:
- * {
- *  "user": {
- *       "id": 10,
- *       "username": "jreach6",
- *       "updatedAt": "2018-01-22T02:02:12.447Z",
- *       "createdAt": "2018-01-22T02:02:12.447Z"
- *   },
- *   "token": {
- *       "expired": false,
- *       "id": 12,
- *       "value": "<a really long token value here>"
- *       "userId": 10,
- *       "updatedAt": "2018-01-22T02:02:12.473Z",
- *       "createdAt": "2018-01-22T02:02:12.473Z"
- *   }
- * }
- *
- */
-router.post('/auth/register', authController.register);
-
-/**
- * @api { get } /auth/token Check Authentication Token
- * @apiVersion 1.0.0
- * @apiName Check Auth Token
- * @apiGroup Auth
- *
- * @apiDescription Ensures that the token provided in the Authenitcation header is valid
- * and non expired.
- *
- * @apiHeader Authorization Auth-Token
- *
- * @apiSuccess status 200
- */
-router.get('/auth/token', authController.isBearerAuthenticated, authController.checkToken);
 
 /**
  * Sets dependencies for the routes
