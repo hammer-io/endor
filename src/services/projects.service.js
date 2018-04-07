@@ -4,6 +4,7 @@ import * as githubService from './github.service';
 import * as travisService from './travis.service';
 import * as herokuService from './heroku.service';
 import DuplicateException from '../error/DuplicateException';
+import LastOwnerException from '../error/LastOwnerException';
 
 export default class ProjectService {
   /**
@@ -309,6 +310,16 @@ export default class ProjectService {
   async deleteOwnerFromProject(projectId, user) {
     this.log.info(`ProjectService: delete contributor ${user} from project with id ${projectId}`);
     const project = await this.getProjectById(projectId);
+
+    // convert the result from the sequelize query to a string, then parse the json.
+    // we have to do this because project.getOwners() can't have .length or .count called on it
+    // converting into a json string and parsing it allows us to use .length
+    const owners = JSON.parse(JSON.stringify(await project.getOwners()));
+
+    // don't allow the owner to be deleted if it is the last one...
+    if (owners.length <= 1) {
+      throw new LastOwnerException();
+    }
 
     const userFound = await this.userService.getUserByIdOrUsername(user);
     await project.removeOwners(userFound);
