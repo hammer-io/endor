@@ -69,7 +69,7 @@ async function setSequelizeCredentials(configs, user) {
 async function setGithubRepositoryName(configs) {
   const projectName = configs.projectConfigurations.projectName;
   const githubUsername = configs.credentials.github.username;
-  return `/${githubUsername}/${projectName}`;
+  return `${githubUsername}/${projectName}`;
 }
 
 /**
@@ -80,7 +80,7 @@ async function setGithubRepositoryName(configs) {
 async function setTravisRepositoryName(configs) {
   const projectName = configs.projectConfigurations.projectName;
   const githubUsername = configs.credentials.github.username;
-  return `/${githubUsername}/${projectName}`;
+  return `${githubUsername}/${projectName}`;
 }
 
 /**
