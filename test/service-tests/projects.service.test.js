@@ -481,15 +481,28 @@ describe('Testing Project Service', async () => {
     });
 
     it('should delete an owner from a project', async () => {
-      await projectService.deleteOwnerFromProject('b1', 'a4');
-      const owners = await projectService.getOwnersByProjectId('b1');
-      expect(owners.length).to.equal(0);
+        await projectService.addOwnerToProject('b1', 'a5')
+        await projectService.deleteOwnerFromProject('b1', 'a4');
+        const owners = await projectService.getOwnersByProjectId('b1');
+        expect(owners.length).to.equal(1);
+    });
+
+    it('should throw an error if the owner being deleted is the last owner', async () => {
+      try {
+        await projectService.deleteOwnerFromProject('b1', 'a4');
+        const owners = await projectService.getOwnersByProjectId('b1');
+        expect(owners).to.equal('undefined');
+      } catch (error) {
+        expect(error.message).to.equal('Cannot delete the last owner for a project.');
+        expect(error.status).to.equal(422);
+      }
     });
 
     it('should return the owners after deletion', async () => {
+      await projectService.addOwnerToProject('b1', 'a5')
       const owners = await projectService.deleteOwnerFromProject('b1', 'a4');
       expect(Array.isArray(owners)).to.equal(true);
-      expect(owners.length).to.equal(0);
+      expect(owners.length).to.equal(1);
     });
 
     it('should throw a ProjectNotFoundException if the project does not exist', async () => {
@@ -506,6 +519,7 @@ describe('Testing Project Service', async () => {
 
     it('should throw a UserNotFoundException if the user does not exist', async () => {
       try {
+        await projectService.addOwnerToProject('b1', 'a5')
         const projects = await projectService.deleteOwnerFromProject('b1', 'a10000');
         expect(projects).to.equal('undefined');
       } catch (error) {
