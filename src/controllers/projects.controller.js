@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars,no-restricted-syntax,no-await-in-loop,no-param-reassign */
 import zip from 'adm-zip';
-import * as tyr from 'tyr-cli/dist/tyr';
+import * as tyr from 'tyr-cli';
 import { validationResult } from 'express-validator/check';
 import fs from 'fs-extra';
 import config from 'config';
