@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import sequelizeStore from 'connect-session-sequelize';
+import skadi from 'skadi-hammerio';
 import config from 'config';
 
 import * as auth from './routes/auth.routes';
@@ -41,6 +42,10 @@ getActiveLogger().info(`NODE_ENV = ${process.env.NODE_ENV}`);
 const SequelizeStore = sequelizeStore(session.Store);
 sequelize.initSequelize();
 
+// Run Skadi for data monitoring
+skadi.heartbeat();
+skadi.osdata();
+
 const app = express();
 
 // middleware //
@@ -50,6 +55,10 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use((req, res, next) => {
+  skadi.captureRequestData(req);
+  next();
+});
 
 app.use(session({
   secret: config.get('session').secret,
@@ -171,6 +180,11 @@ app.use((err, req, res) => {
     message: err.message,
     error: {}
   });
+});
+
+// Used for data monitoring
+app.use((req, res) => {
+  skadi.captureResponseData(req, res);
 });
 
 app.listen(3000, () => {
