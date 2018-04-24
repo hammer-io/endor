@@ -152,10 +152,21 @@ app.use((req, res) => {
   });
 });
 
+// Used for data monitoring (when there's no error)
+app.use((req, res) => {
+  skadi.captureResponseData(req, res);
+});
+
 // route error logging
 // will print any errors that the middleware spits out
 app.use((err, req, res, next) => {
   getActiveLogger().error(`Routing: ${req.method} ${req.originalUrl} : ${err}`);
+  next(err);
+});
+
+// Used for data monitoring (when there IS an error)
+app.use((err, req, res, next) => {
+  skadi.captureResponseData(req, res);
   next(err);
 });
 
@@ -171,21 +182,6 @@ if (app.get('env') === 'development') {
     });
   });
 }
-
-// production error handler
-// no stacktraces leaked to user
-app.use((err, req, res) => {
-  res.status(err.status || 500);
-  res.json({
-    message: err.message,
-    error: {}
-  });
-});
-
-// Used for data monitoring
-app.use((req, res) => {
-  skadi.captureResponseData(req, res);
-});
 
 app.listen(3000, () => {
   getActiveLogger().info('Endor has now started on port 3000!');
