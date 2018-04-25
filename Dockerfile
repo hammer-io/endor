@@ -19,7 +19,7 @@ RUN npm install --only=production && npm install \
   babel-preset-env@1.6.0
 
 # Bundle app source
-COPY apidoc.json .babelrc README.md ./
+COPY apidoc.json .babelrc .skadiconfig.json README.md ./
 COPY ./config ./config
 COPY ./src ./src
 

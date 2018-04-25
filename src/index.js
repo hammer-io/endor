@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import sequelizeStore from 'connect-session-sequelize';
+import skadi from 'skadi-hammerio';
 import config from 'config';
 
 import * as auth from './routes/auth.routes';
@@ -41,6 +42,10 @@ getActiveLogger().info(`NODE_ENV = ${process.env.NODE_ENV}`);
 const SequelizeStore = sequelizeStore(session.Store);
 sequelize.initSequelize();
 
+// Run Skadi for data monitoring
+skadi.heartbeat();
+skadi.osdata();
+
 const app = express();
 
 // middleware //
@@ -50,6 +55,10 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use((req, res, next) => {
+  skadi.captureRequestData(req);
+  next();
+});
 
 app.use(session({
   secret: config.get('session').secret,
@@ -143,10 +152,21 @@ app.use((req, res) => {
   });
 });
 
+// Used for data monitoring (when there's no error)
+app.use((req, res) => {
+  skadi.captureResponseData(req, res);
+});
+
 // route error logging
 // will print any errors that the middleware spits out
 app.use((err, req, res, next) => {
   getActiveLogger().error(`Routing: ${req.method} ${req.originalUrl} : ${err}`);
+  next(err);
+});
+
+// Used for data monitoring (when there IS an error)
+app.use((err, req, res, next) => {
+  skadi.captureResponseData(req, res);
   next(err);
 });
 
@@ -162,16 +182,6 @@ if (app.get('env') === 'development') {
     });
   });
 }
-
-// production error handler
-// no stacktraces leaked to user
-app.use((err, req, res) => {
-  res.status(err.status || 500);
-  res.json({
-    message: err.message,
-    error: {}
-  });
-});
 
 app.listen(3000, () => {
   getActiveLogger().info('Endor has now started on port 3000!');

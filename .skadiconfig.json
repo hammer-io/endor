@@ -1,0 +1,7 @@
+{
+  "interval": "30000",
+  "apiKey": "666da892-6870-491c-a9d2-4d337a100b2e",
+  "heartbeatUrl": "http://koma-hammer-io-test.ece.iastate.edu/api/v1/heartbeats",
+  "httpDataUrl": "http://koma-hammer-io-test.ece.iastate.edu/api/v1/httpdata",
+  "osDataUrl": "http://koma-hammer-io-test.ece.iastate.edu/api/v1/osdata"
+}
