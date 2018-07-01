@@ -106,7 +106,7 @@ export default class TravisAuthenticationService {
     }
 
     const travisToken = await
-      TravisAuthenticationService.exchangeGithubTokenForTravisToken(githubToken);
+    TravisAuthenticationService.exchangeGithubTokenForTravisToken(githubToken);
     const isTokenExisting = await this.getSequelizeTravisTokenForUser(userId);
     if (isTokenExisting) {
       const updatedToken = await this.updateTravisTokenForUser(userId, travisToken);
